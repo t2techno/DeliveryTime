@@ -4,19 +4,16 @@ import { Text, Button } from "react-native";
 type ThingProps = {
     name: string,
     displayTime: string,
-    isBold: boolean,
+    thresholdColor: string,
     logAction: (tStamp: string, action: string) => void
 }
 
 const ThingTimer: React.FC<ThingProps> = (props) => {
-    const {name, displayTime, isBold, logAction} = props;
-
-    const notBold="#0000a0";
-    const bold="#770080";
+    const {name, displayTime, thresholdColor, logAction} = props;
 
     return (<>
         <Text>Time since last {name}: {displayTime}</Text>
-        <Button color={isBold ? bold: notBold} title="+1" onPress={() => {logAction(Date(), name)}}></Button>
+        <Button color={"#"+thresholdColor+"00a0"} title="+1" onPress={() => {logAction(Date(), name)}}></Button>
     </>);
 }
 

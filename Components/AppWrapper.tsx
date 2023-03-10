@@ -12,7 +12,7 @@ type LogAction = {
 
 const AppWrapper = () => {
     const testDate   = new Date("01/18/1993");
-    const storageKey = "storage";
+    const storageKey = "log";
 
     const [begin, setBegin] = useState(false);
 
@@ -26,15 +26,15 @@ const AppWrapper = () => {
 
     const [lastWater, setLastWater] = useState(new Date());
     const [waterDisplay, setWaterDisplay] = useState("");
-    const [boldWater, setBoldWater] = useState(false);
+    const [waterThreshold, setWaterThreshold] = useState(1800);
 
     const [lastFood,  setLastFood]  = useState(new Date());
     const [foodDisplay, setFoodDisplay] = useState("");
-    const [boldFood, setBoldFood] = useState(false);
+    const [foodThreshold, setFoodThreshold] = useState(6400);
 
     const [lastPee,   setLastPee]   = useState(new Date());
     const [peeDisplay, setPeeDisplay] = useState("");
-    const [boldPee, setBoldPee] = useState(false);
+    const [peeThreshold, setPeeThreshold] = useState(3600);
 
     const [actionLog,setActionLog]  = useState<LogAction[]>([]);
 
@@ -168,7 +168,7 @@ const AppWrapper = () => {
             setWaterDisplay(generateTimeString(now,lastWater));
             setFoodDisplay(generateTimeString(now, lastFood));
             setPeeDisplay(generateTimeString(now,  lastPee));
-        }, 500);
+        }, 750);
         //Cleanup method
         return () => clearInterval(intervalId);
     });
@@ -235,16 +235,27 @@ const AppWrapper = () => {
         setActionLog([...actionLog, {tStamp, action}]);
     }
 
+    const deriveThingColor = (d: Date, threshold: number) => {
+        const now = new Date();
+        let compareTime = now.getTime() - d.getTime();
+        compareTime = Math.floor(compareTime/1000);
+        console.log("time: " + compareTime);
+        const diff  = compareTime/threshold;
+        const redAmount = Math.floor(Math.min(diff*255,255));
+        return redAmount.toString(16).padStart(2,'0');
+    }
+
     return (<>
         {!begin ? <Button title='Begin Labor' color={"#008000"} onPress={init}></Button> : <></>}
-        <ContractionTimer logAction={handleAction} 
-            isContracting={isContracting}
-            contractionLengthText={currContractLengthText} 
-            interContractText={interContractText} />
-            <Text>Previous contraction Length: {prevContractLength}</Text>
-        <ThingTimer name="Water" displayTime={waterDisplay} isBold={boldWater} logAction={handleAction}/>
-        <ThingTimer name="Food"  displayTime={foodDisplay}  isBold={boldFood} logAction={handleAction}/>
-        <ThingTimer name="Pee"   displayTime={peeDisplay}   isBold={boldPee} logAction={handleAction}/>
+        <ContractionTimer logAction={handleAction} isContracting={isContracting}/>
+        
+        <Text>Previous contraction Length: {prevContractLength}</Text>
+        <Text>{currContractLengthText}</Text>
+        <Text>{interContractText}</Text>
+
+        <ThingTimer name="Water" displayTime={waterDisplay} thresholdColor={deriveThingColor(lastWater,waterThreshold)} logAction={handleAction}/>
+        <ThingTimer name="Food"  displayTime={foodDisplay}  thresholdColor={deriveThingColor(lastFood,foodThreshold)} logAction={handleAction}/>
+        <ThingTimer name="Pee"   displayTime={peeDisplay}   thresholdColor={deriveThingColor(lastPee,peeThreshold)} logAction={handleAction}/>
 
         <Button title="Restart" onPress={init}></Button>
     </>);
