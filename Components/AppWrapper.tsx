@@ -295,6 +295,8 @@ const AppWrapper = () => {
         let compareTime = now.getTime() - d.getTime();
         compareTime = Math.floor(compareTime/1000);
         const diff  = compareTime/threshold;
+
+        //have to compare to contractions
         let redAmount = Math.floor(Math.min(diff*255,255));
         let redContract = Math.floor((lastWaterContract/4)*255);
         redAmount = Math.max(redAmount,redContract);
@@ -312,7 +314,7 @@ const AppWrapper = () => {
             <Text style={{flex: 1}}>Number of Contractions: {numContractions}</Text>
         </View>
         <View style={[styles.container]}>
-            <Text>{lastWaterContract} Contraction{lastWaterContract == 1 ? "":"s"} since last Drink</Text>
+            <Text>{lastWaterContract} Contraction{lastWaterContract == 1 ? "":"s"} since last Water</Text>
             <ThingTimer name="Water" displayTime={waterDisplay} thresholdColor={deriveWaterColor(lastWater,waterThreshold)} logAction={handleAction}/>
         </View>
         <View style={[styles.container]}>
@@ -321,8 +323,9 @@ const AppWrapper = () => {
         <View style={[styles.container]}>
             <ThingTimer name="Pee"   displayTime={peeDisplay}   thresholdColor={deriveThingColor(lastPee,peeThreshold)} logAction={handleAction}/>
         </View>
-
-        <LogDisplay logs={actionLog}/>
+        <View style={[styles.container]}>
+            <LogDisplay logs={actionLog}/>
+        </View>
         <Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text>
         <View style={{alignSelf: "flex-end"}}><Button title="Restart" onPress={init}></Button></View>
     </View>);
@@ -332,8 +335,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       padding: 20,
-      flexDirection: 'column',
-      fontSize: 20
+      flexDirection: 'column'
     }
   });
 
