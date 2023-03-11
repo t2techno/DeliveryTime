@@ -13,25 +13,31 @@ type LogAction = {
 
 const AppWrapper = () => {
     const testDate   = new Date("01/18/1993");
-    const storageKey = "log";
+    const logKey = "log_key";
+    const prevContractKey  = "prevContract_key";
+    const interContractKey = "interContract_key";
+    const numContractKey   = "numContract_key";
+    const lastWaterContractKey = "waterContract_key";
 
     const [begin, setBegin] = useState(false);
 
     const [currContractLength,setCurrContractLength] = useState("");
     const [prevContractLength, setPrevContractLength] = useState("");
     const [interContractLength,setInterContractLength] = useState("");
+    const [numContractions, setNumContractions] = useState(0);
 
     const [isContracting, setIsContracting] = useState(false);
     const [contractStart, setContractStart] = useState(new Date());
     const [lastContractStart, setLastContractStart] = useState(new Date());
 
     const [lastWater, setLastWater] = useState(new Date());
+    const [lastWaterContract, setLastWaterContract] = useState(0);
     const [waterDisplay, setWaterDisplay] = useState("");
     const [waterThreshold, setWaterThreshold] = useState(1800);
 
     const [lastFood,  setLastFood]  = useState(new Date());
     const [foodDisplay, setFoodDisplay] = useState("");
-    const [foodThreshold, setFoodThreshold] = useState(6400);
+    const [foodThreshold, setFoodThreshold] = useState(5400);
 
     const [lastPee,   setLastPee]   = useState(new Date());
     const [peeDisplay, setPeeDisplay] = useState("");
@@ -56,9 +62,6 @@ const AppWrapper = () => {
             setContractStart(firstTime);
             setLastContractStart(firstTime);
         }
-        
-
-        console.log("parsing " + logs.length + " logs");
 
         for(let i=logs.length-1; i>=0; i--){
             const time = new Date(logs[i].tStamp);
@@ -79,10 +82,6 @@ const AppWrapper = () => {
 
                     if(startMark){
                         setLastContractStart(time);
-                        if(prevContractLength === ""){
-                            setPrevContractLength(generateTimeString(time, endTime));
-                        }
-                        setInterContractLength(generateTimeString(contractStart,time))
                         lastMark = true;
                         break;
                     }
@@ -90,9 +89,6 @@ const AppWrapper = () => {
                     setContractStart(time);
                     startMark = true;
                     setIsContracting(!endMark);
-                    if(endMark){
-                        setPrevContractLength(generateTimeString(time,endTime));
-                    }
                     break;
 
                 case "Water":
@@ -134,8 +130,8 @@ const AppWrapper = () => {
     // Load Data on app open
     useEffect(() => {
         const getData = async() => {
-            console.log("loading data...");
-            AsyncStorage.getItem(storageKey).then(val => {
+            console.log("loading logs...");
+            AsyncStorage.getItem(logKey).then(val => {
                 if (val != null){
                     console.log("data retrieved!");
                     console.log(val);
@@ -148,6 +144,27 @@ const AppWrapper = () => {
                 console.log(e);
                 console.log("nothing retrieved");
             });
+
+            AsyncStorage.getItem(prevContractKey).then(res => {
+                if(res != null){
+                    setPrevContractLength(res);
+                }
+            }).catch(e =>{console.log("No previous contraction length")});
+            AsyncStorage.getItem(interContractKey).then(res => {
+                if(res != null){
+                    setInterContractLength(res);
+                }
+            }).catch(e =>{console.log("No inter-contraction length")});
+            AsyncStorage.getItem(numContractKey).then(res => {
+                if(res != null){
+                    setNumContractions(Number.parseInt(res));
+                }
+            }).catch(e =>{console.log("No num contractions")});
+            AsyncStorage.getItem(lastWaterContractKey).then(res => {
+                if(res != null){
+                    setLastWaterContract(Number.parseInt(res));
+                }
+            }).catch(e =>{console.log("No num contractions since water")});
         };
         
         getData();
@@ -160,7 +177,11 @@ const AppWrapper = () => {
             try {
               console.log("storing data");
               const jsonValue = JSON.stringify(actionLog);
-              AsyncStorage.setItem(storageKey, jsonValue);
+              AsyncStorage.setItem(logKey, jsonValue);
+              AsyncStorage.setItem(prevContractKey, prevContractLength);
+              AsyncStorage.setItem(interContractKey, interContractLength);
+              AsyncStorage.setItem(numContractKey, numContractions.toString());
+              AsyncStorage.setItem(lastWaterContractKey, lastWaterContract.toString());
             } catch (e) {
             }
         });
@@ -214,11 +235,13 @@ const AppWrapper = () => {
         const now = new Date();
         setBegin(true);
         setIsContracting(true);
+        setNumContractions(numContractions+1);
         setLastContractStart(testDate);
         setContractStart(now);
         setLastWater(now);
         setLastFood(now);
         setLastPee(now);
+        setLastWaterContract(0);
         setActionLog([{tStamp: now.toString(),
                        action: "Start"}]);
     }
@@ -228,8 +251,10 @@ const AppWrapper = () => {
         switch(action) {
             case 'Start':
                 setIsContracting(true);
+                setNumContractions(numContractions+1);
                 setLastContractStart(new Date(contractStart));
                 setContractStart(actionTime);
+                setLastWaterContract(lastWaterContract+1);
                 break;
 
             case 'End':
@@ -239,6 +264,7 @@ const AppWrapper = () => {
 
             case 'Water':
                 setLastWater(actionTime);
+                setLastWaterContract(0);
                 break;
 
             case 'Food':
@@ -261,6 +287,17 @@ const AppWrapper = () => {
         return redAmount.toString(16).padStart(2,'0');
     }
 
+    const deriveWaterColor = (d: Date, threshold: number) => {
+        const now = new Date();
+        let compareTime = now.getTime() - d.getTime();
+        compareTime = Math.floor(compareTime/1000);
+        const diff  = compareTime/threshold;
+        let redAmount = Math.floor(Math.min(diff*255,255));
+        let redContract = Math.floor((lastWaterContract/4)*255);
+        redAmount = Math.max(redAmount,redContract);
+        return redAmount.toString(16).padStart(2,'0');
+    }
+
     return (<View style={[styles.container]}>
         {!begin ? <Button title='Begin Labor' color={"#008000"} onPress={init}></Button> : <></>}
         <View style={[styles.container]}>
@@ -271,7 +308,8 @@ const AppWrapper = () => {
             <Text style={{flex: 1}}>Inter-Contraction Time: {interContractLength}</Text>
         </View>
         <View style={[styles.container]}>
-            <ThingTimer name="Water" displayTime={waterDisplay} thresholdColor={deriveThingColor(lastWater,waterThreshold)} logAction={handleAction}/>
+            <Text>{lastWaterContract} Contraction{lastWaterContract == 1 ? "":"s"} since last Drink</Text>
+            <ThingTimer name="Water" displayTime={waterDisplay} thresholdColor={deriveWaterColor(lastWater,waterThreshold)} logAction={handleAction}/>
         </View>
         <View style={[styles.container]}>
             <ThingTimer name="Food"  displayTime={foodDisplay}  thresholdColor={deriveThingColor(lastFood,foodThreshold)} logAction={handleAction}/>

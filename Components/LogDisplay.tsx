@@ -16,10 +16,11 @@ const LogDisplay: React.FC<LogDisplayProps> = (props) => {
 
     const renderLogs = () => {
         return props.logs.map( (val: LogAction, i: number) => {
-            console.log("rendering: " + val.action + " - " + val.tStamp);
-            const actionTime = new Date(val.tStamp);
+            const actionTime   = new Date(val.tStamp);
+            const actionString = (val.action === "Start" || val.action === "End") ? 
+                val.action + " Contraction" : val.action;  
             return (
-                <Text key={val.action+"_"+i}>{val.action + " - " + actionTime.toLocaleTimeString()}</Text>
+                <Text key={val.action+"_"+i}>{actionString + " - " + actionTime.toLocaleTimeString()}</Text>
             )
         });
     }
