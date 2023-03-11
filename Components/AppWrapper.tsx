@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Text } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import ContractionTimer from './ContractionTimer';
 import ThingTimer from './ThingTimer';
+import LogDisplay from './LogDisplay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -16,9 +17,9 @@ const AppWrapper = () => {
 
     const [begin, setBegin] = useState(false);
 
-    const [currContractLengthText,setCurrContractLengthText] = useState("");
+    const [currContractLength,setCurrContractLength] = useState("");
     const [prevContractLength, setPrevContractLength] = useState("");
-    const [interContractText,setInterContractText] = useState("");
+    const [interContractLength,setInterContractLength] = useState("");
 
     const [isContracting, setIsContracting] = useState(false);
     const [contractStart, setContractStart] = useState(new Date());
@@ -43,6 +44,8 @@ const AppWrapper = () => {
         let foodMark  = false;
         let peeMark   = false;
         let startMark = false;
+        let endMark   = false;
+        let endTime   = new Date();
         let lastMark  = false;
 
         if(logs.length > 0){
@@ -58,9 +61,17 @@ const AppWrapper = () => {
         console.log("parsing " + logs.length + " logs");
 
         for(let i=logs.length-1; i>=0; i--){
-            console.log(logs[i]);
             const time = new Date(logs[i].tStamp);
             switch(logs[i].action){
+                case "End":
+                    if(endMark){
+                        break;
+                    }
+
+                    endMark = true;
+                    endTime = time;
+                    break;
+
                 case "Start":
                     if(startMark && lastMark){
                         break;
@@ -68,32 +79,43 @@ const AppWrapper = () => {
 
                     if(startMark){
                         setLastContractStart(time);
+                        if(prevContractLength === ""){
+                            setPrevContractLength(generateTimeString(time, endTime));
+                        }
+                        setInterContractLength(generateTimeString(contractStart,time))
                         lastMark = true;
                         break;
                     }
 
                     setContractStart(time);
                     startMark = true;
-                    let contraction = true;
-                    for(let j=i+1; j<logs.length; j++){
-                        if(logs[j].action === "End"){
-                            contraction = false;
-                        }
+                    setIsContracting(!endMark);
+                    if(endMark){
+                        setPrevContractLength(generateTimeString(time,endTime));
                     }
-                    setIsContracting(contraction);
                     break;
 
                 case "Water":
+                    if(waterMark){
+                        break;
+                    }
                     setLastWater(time);
                     waterMark = true;
                     break;
 
                 case "Food":
+                    if(foodMark){
+                        break;
+                    }
+
                     setLastFood(time);
                     foodMark = true;
                     break;
 
                 case "Pee":
+                    if(peeMark){
+                        break;
+                    }
                     setLastPee(time);
                     peeMark = true;
                     break;
@@ -158,12 +180,7 @@ const AppWrapper = () => {
             }
             let newContractLengthText  = "";
             const now = new Date();
-            if (isContracting){
-                newContractLengthText = "Current Contraction: " + generateTimeString(now, contractStart);
-            } else {
-                newContractLengthText = "Time Since Last Contraction: " + generateTimeString(now, contractStart);
-            }
-            setCurrContractLengthText(newContractLengthText);
+            setCurrContractLength(generateTimeString(now, contractStart));
 
             setWaterDisplay(generateTimeString(now,lastWater));
             setFoodDisplay(generateTimeString(now, lastFood));
@@ -176,7 +193,7 @@ const AppWrapper = () => {
     // Update inter-contraction time
     useEffect(() => {
         let newInterContractText = "Inter-Contraction Time: ";
-        setInterContractText(newInterContractText + generateTimeString(contractStart,lastContractStart));
+        setInterContractLength(generateTimeString(contractStart,lastContractStart));
     }, [contractStart, lastContractStart])
 
     const generateTimeString = (now: Date, then: Date) => {
@@ -239,26 +256,43 @@ const AppWrapper = () => {
         const now = new Date();
         let compareTime = now.getTime() - d.getTime();
         compareTime = Math.floor(compareTime/1000);
-        console.log("time: " + compareTime);
         const diff  = compareTime/threshold;
         const redAmount = Math.floor(Math.min(diff*255,255));
         return redAmount.toString(16).padStart(2,'0');
     }
 
-    return (<>
+    return (<View style={[styles.container]}>
         {!begin ? <Button title='Begin Labor' color={"#008000"} onPress={init}></Button> : <></>}
-        <ContractionTimer logAction={handleAction} isContracting={isContracting}/>
-        
-        <Text>Previous contraction Length: {prevContractLength}</Text>
-        <Text>{currContractLengthText}</Text>
-        <Text>{interContractText}</Text>
+        <View style={[styles.container]}>
+            <View style={{flex: 2}}><ContractionTimer logAction={handleAction} isContracting={isContracting}/></View>
+            <Text style={{flex: 1}}>Previous Contraction Length: {prevContractLength}</Text>
+            <Text style={{flex: 1}}>{(isContracting ? "Current Contraction: ":"Time Since Last Contraction: ") 
+                + currContractLength}</Text>
+            <Text style={{flex: 1}}>Inter-Contraction Time: {interContractLength}</Text>
+        </View>
+        <View style={[styles.container]}>
+            <ThingTimer name="Water" displayTime={waterDisplay} thresholdColor={deriveThingColor(lastWater,waterThreshold)} logAction={handleAction}/>
+        </View>
+        <View style={[styles.container]}>
+            <ThingTimer name="Food"  displayTime={foodDisplay}  thresholdColor={deriveThingColor(lastFood,foodThreshold)} logAction={handleAction}/>
+        </View>
+        <View style={[styles.container]}>
+            <ThingTimer name="Pee"   displayTime={peeDisplay}   thresholdColor={deriveThingColor(lastPee,peeThreshold)} logAction={handleAction}/>
+        </View>
 
-        <ThingTimer name="Water" displayTime={waterDisplay} thresholdColor={deriveThingColor(lastWater,waterThreshold)} logAction={handleAction}/>
-        <ThingTimer name="Food"  displayTime={foodDisplay}  thresholdColor={deriveThingColor(lastFood,foodThreshold)} logAction={handleAction}/>
-        <ThingTimer name="Pee"   displayTime={peeDisplay}   thresholdColor={deriveThingColor(lastPee,peeThreshold)} logAction={handleAction}/>
-
-        <Button title="Restart" onPress={init}></Button>
-    </>);
+        <LogDisplay logs={actionLog}/>
+        <Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text>
+        <View style={{alignSelf: "flex-end"}}><Button title="Restart" onPress={init}></Button></View>
+    </View>);
 };
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 20,
+      flexDirection: 'column',
+      fontSize: 20
+    }
+  });
 
 export default AppWrapper;
