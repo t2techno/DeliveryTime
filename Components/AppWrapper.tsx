@@ -235,7 +235,10 @@ const AppWrapper = () => {
         const now = new Date();
         setBegin(true);
         setIsContracting(true);
-        setNumContractions(numContractions+1);
+        setNumContractions(1);
+        setPrevContractLength("");
+        setCurrContractLength("");
+        setInterContractLength("");
         setLastContractStart(testDate);
         setContractStart(now);
         setLastWater(now);
@@ -306,6 +309,7 @@ const AppWrapper = () => {
             <Text style={{flex: 1}}>{(isContracting ? "Current Contraction: ":"Time Since Last Contraction: ") 
                 + currContractLength}</Text>
             <Text style={{flex: 1}}>Inter-Contraction Time: {interContractLength}</Text>
+            <Text style={{flex: 1}}>Number of Contractions: {numContractions}</Text>
         </View>
         <View style={[styles.container]}>
             <Text>{lastWaterContract} Contraction{lastWaterContract == 1 ? "":"s"} since last Drink</Text>
