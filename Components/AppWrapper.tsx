@@ -11,6 +11,8 @@ type LogAction = {
     action: string
 }
 
+
+// Gradually highlight Time since last contraction as it approaches last inter-contraction time
 const AppWrapper = () => {
     const testDate   = new Date("01/18/1993");
     const logKey = "log_key";
@@ -337,6 +339,6 @@ const styles = StyleSheet.create({
       padding: 20,
       flexDirection: 'column'
     }
-  });
+});
 
 export default AppWrapper;
