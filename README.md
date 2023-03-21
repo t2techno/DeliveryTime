@@ -3,6 +3,10 @@
 A Timer app to help me keep track of information while my wife labored. Originally built in one day between water breaking and contractions beginning. 
 Since I now have a newborn, I will be coming back to polish this up later.
 
+| Base UI        | Logs view    | Post Use  |
+| :-------------: |:-------------:| :-----:|
+| ![Alt text](./screenshots/empty.jpg?raw=true "Base UI")      | ![Alt text](./screenshots/deliveryLogs.jpg?raw=true "Logs view") | ![Alt text](./screenshots/deliveryTimeButtons.jpg?raw=true "Post Birth")
+
 ## Features
 
 <ul>
