@@ -12,12 +12,6 @@ const Header: React.FC<{ className?: string }> = ({ className }) => {
 };
 
 const Wrapper = styled.header`
-  background-image: linear-gradient(
-    var(--gray-one) 2%,
-    var(--dark-mode-background) 10%,
-    var(--dark-mode-background) 45%,
-    var(--gray-one)
-  );
 `;
 
 const Title = styled.h1`

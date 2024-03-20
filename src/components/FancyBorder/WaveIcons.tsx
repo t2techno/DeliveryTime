@@ -4,7 +4,7 @@ const BaseIcon: React.FC<{ color: string; path: string; fill?: boolean }> = ({
   fill = false,
 }) => {
   return (
-    <svg viewBox="0 0 100 80">
+    <svg viewBox="0 0 100 40">
       <path
         d={path}
         fill={color}

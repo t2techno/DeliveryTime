@@ -4,7 +4,7 @@
 /* Color vars */
 :root {
   --dark-mode-background: hsl(110 20% 5%);
-  --dark-mode-text-color: hsl(110,6%,84%);
+  --dark-mode-text-color: hsl(110, 6%, 84%);
 
-  --gray-one: hsl(110,8%,28%);
+  --gray-one: hsl(110, 8%, 20%);
 }

@@ -6,22 +6,29 @@ import FancyBorder from "./components/FancyBorder";
 
 function App() {
   return (
-    <Wrapper>
-      <Header />
-      <FancyBorder color="var(--dark-mode-background)" />
-    </Wrapper>
+    <Main>
+      <MaxWidthWrapper>
+        <Header />
+        <FancyBorder color="var(--dark-mode-background)" />
+      </MaxWidthWrapper>
+    </Main>
   );
 }
 
-const Wrapper = styled.main`
+const Main = styled.main`
   height: 100%;
   width: 100%;
   background-color: var(--dark-mode-background);
   color: var(--dark-mode-text-color);
 `;
 
-const Header = styled(BaseHeader)`
-  height: 30%;
+const MaxWidthWrapper = styled.body`
+  height: 100%;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
 `;
+
+const Header = styled(BaseHeader)``;
 
 export default App;
