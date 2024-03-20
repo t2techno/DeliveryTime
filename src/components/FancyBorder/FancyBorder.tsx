@@ -1,10 +1,16 @@
-import { Sine } from "./WaveIcons";
+import { Prego } from "./WaveIcons";
 import styled from "styled-components";
 
-const FancyBorder = ({ color, className }: { color: string, className?: string }) => {
+const FancyBorder = ({
+  color,
+  className,
+}: {
+  color: string;
+  className?: string;
+}) => {
   return (
     <Wrapper className={className}>
-      <Sine color={color} />
+      <Prego color={color} />
     </Wrapper>
   );
 };
@@ -15,7 +21,6 @@ const Wrapper = styled.div`
     var(--gray-one) 97%,
     var(--dark-mode-background) 98%
   );
-  
 `;
 
 export default FancyBorder;
