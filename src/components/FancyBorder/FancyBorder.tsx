@@ -1,10 +1,9 @@
-import React from "react";
 import { Sine } from "./WaveIcons";
 import styled from "styled-components";
 
-const FancyBorder = ({ color }: { color: string }) => {
+const FancyBorder = ({ color, className }: { color: string, className?: string }) => {
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       <Sine color={color} />
     </Wrapper>
   );
@@ -16,7 +15,7 @@ const Wrapper = styled.div`
     var(--gray-one) 97%,
     var(--dark-mode-background) 98%
   );
-  height: fit-content;
+  
 `;
 
-export default React.memo(FancyBorder);
+export default FancyBorder;

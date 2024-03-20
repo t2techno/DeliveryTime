@@ -1,15 +1,18 @@
-import React, { useState } from "react";
 import "./App.css";
 import styled from "styled-components";
 import BaseHeader from "./components/Header";
-import FancyBorder from "./components/FancyBorder";
+import LaborBox from "./components/LaborBox";
+import useTimer from "./hooks/use-timer";
 
 function App() {
+
+  const [time, toggleTimer, startTime] = useTimer();
+
   return (
     <Main>
       <MaxWidthWrapper>
         <Header />
-        <FancyBorder color="var(--dark-mode-background)" />
+        <LaborBox timeElapsed={time} startLabor={() => {toggleTimer()}} startTime={startTime} />
       </MaxWidthWrapper>
     </Main>
   );
