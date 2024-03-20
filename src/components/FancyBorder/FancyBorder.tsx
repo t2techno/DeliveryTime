@@ -1,4 +1,4 @@
-import { Prego } from "./WaveIcons";
+import { Squiggle } from "./WaveIcons";
 import styled from "styled-components";
 
 const FancyBorder = ({
@@ -10,7 +10,7 @@ const FancyBorder = ({
 }) => {
   return (
     <Wrapper className={className}>
-      <Prego color={color} />
+      <Squiggle color={color} />
     </Wrapper>
   );
 };

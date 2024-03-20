@@ -8,7 +8,7 @@ function App() {
   const [time, toggleTimer, startTime] = useTimer();
 
   return (
-    <Main>
+    <Wrapper>
       <MaxWidthWrapper>
         <Header />
         <LaborBox
@@ -17,18 +17,18 @@ function App() {
           startTime={startTime}
         />
       </MaxWidthWrapper>
-    </Main>
+    </Wrapper>
   );
 }
 
-const Main = styled.main`
+const Wrapper = styled.main`
   height: 100%;
   width: 100%;
   background-color: var(--dark-mode-background);
   color: var(--dark-mode-text-color);
 `;
 
-const MaxWidthWrapper = styled.body`
+const MaxWidthWrapper = styled.div`
   height: 100%;
   width: 100%;
   max-width: 800px;

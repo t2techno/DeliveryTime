@@ -13,8 +13,7 @@ const Header: React.FC<{ className?: string }> = ({ className }) => {
   );
 };
 
-const Wrapper = styled.header`
-`;
+const Wrapper = styled.header``;
 
 const Title = styled.h1`
   font-size: 3.5rem;
