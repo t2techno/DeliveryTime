@@ -5,7 +5,7 @@ import LaborBox from "./components/LaborBox";
 import useTimer from "./hooks/use-timer";
 
 function App() {
-  const [time, toggleTimer, startTime] = useTimer();
+  const [time, toggleTimer, resetTimer, startTime] = useTimer();
 
   return (
     <Wrapper>
@@ -15,6 +15,7 @@ function App() {
           elapsedTime={time}
           toggleTimer={toggleTimer}
           startTime={startTime}
+          resetTimer={resetTimer}
         />
       </MaxWidthWrapper>
     </Wrapper>
