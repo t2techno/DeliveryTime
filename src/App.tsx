@@ -2,8 +2,11 @@ import "./App.css";
 import styled from "styled-components";
 import BaseHeader from "./components/Header";
 import LaborBox from "./components/LaborBox";
+import ReminderBox from "./components/ReminderBox";
 import useTimer from "./hooks/use-timer";
 
+// Large ToDo: Hospital bag/ToDo-ToGrab list
+// 5 starred thing - show up whe you leave to the hospital
 function App() {
   const [time, toggleTimer, resetTimer, startTime] = useTimer();
 
@@ -17,6 +20,7 @@ function App() {
           startTime={startTime}
           resetTimer={resetTimer}
         />
+        <ReminderBox />
       </MaxWidthWrapper>
     </Wrapper>
   );
