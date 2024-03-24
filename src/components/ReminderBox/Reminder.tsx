@@ -20,7 +20,7 @@ const Reminder: React.FC<ReminderProps> = ({
   updateValue,
 }) => {
 
-  // timeLimit / contractionLimity for color
+  // timeLimit / contractionLimit for color
   return (
     <Wrapper className={className}>
       <Label>{label}</Label>
