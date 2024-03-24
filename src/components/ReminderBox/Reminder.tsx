@@ -23,7 +23,7 @@ const Reminder: React.FC<ReminderProps> = ({
   return (
     <Wrapper className={className}>
       <InfoDisplay>
-        <Label>Time Since Last {label}</Label>
+        <Label>Last {label}</Label>
         <p>Time: {timeSince}</p>
         <p>Contractions: {contractionsSince}</p>
       </InfoDisplay>

@@ -4,7 +4,6 @@ import BaseBorder from "../FancyBorder";
 import { DarkModeToggle, ThemeContext } from "../../Providers/ThemeProvider";
 
 const Header: React.FC<{ className?: string }> = ({ className }) => {
-  console.info("Header ReRender");
   const { color, setColor } = useContext(ThemeContext);
   const [showColor, setShowColor] = useState(false);
 
@@ -62,4 +61,4 @@ const ColorChangeButton = styled.button`
   background-color: transparent;
 `;
 
-export default Header;
+export default React.memo(Header);

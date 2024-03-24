@@ -34,7 +34,9 @@ const ReminderBox = ({
     ) => {
       console.log(`timer ${time} - contraction ${contraction}`);
       setter((state) => {
-        console.log(`updating ${label} - ${state[state.length].time + 1}`);
+        if (state.length > 0) {
+          console.log(`updating ${label} - ${state[state.length].time + 1}`);
+        }
         return [...state, { time, contraction }];
       });
     },
