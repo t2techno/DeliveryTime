@@ -60,7 +60,9 @@ const Started = ({
 };
 
 const Wrapper = styled.div`
-  border: white solid 1px;
+  border: solid var(--text-color) 2px;
+  border-radius: 8px;
+  padding: 16px 32px;
 `;
 
 export default LaborBox;

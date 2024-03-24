@@ -1,7 +1,7 @@
 import "./App.css";
 import styled from "styled-components";
 import BaseHeader from "./components/Header";
-import LaborBox from "./components/LaborBox";
+import BaseLaborBox from "./components/LaborBox";
 import ReminderBox from "./components/ReminderBox";
 import useTimer from "./hooks/use-timer";
 
@@ -31,6 +31,7 @@ const Wrapper = styled.main`
   width: 100%;
   background-color: var(--background-color);
   color: var(--text-color);
+  font-size: 1.5rem;
 `;
 
 const MaxWidthWrapper = styled.div`
@@ -41,5 +42,9 @@ const MaxWidthWrapper = styled.div`
 `;
 
 const Header = styled(BaseHeader)``;
+
+const LaborBox = styled(BaseLaborBox)`
+  margin: 16px 0;
+`;
 
 export default App;

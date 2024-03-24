@@ -19,13 +19,15 @@ const Reminder: React.FC<ReminderProps> = ({
   contractionsSince,
   updateValue,
 }) => {
-
   // timeLimit / contractionLimit for color
   return (
     <Wrapper className={className}>
-      <Label>{label}</Label>
-      <p>Time Since: {timeSince}</p>
-      <p>Contractions Since: {contractionsSince}</p>
+      <InfoDisplay>
+        <Label>Time Since Last {label}</Label>
+        <p>Time: {timeSince}</p>
+        <p>Contractions: {contractionsSince}</p>
+      </InfoDisplay>
+
       <Button
         onClick={() => {
           updateValue();
@@ -37,9 +39,12 @@ const Reminder: React.FC<ReminderProps> = ({
   );
 };
 
-const Wrapper = styled.div`
-  border: white solid 2px;
-  background-color: var(--blue);
+const Wrapper = styled.div``;
+
+const InfoDisplay = styled.div`
+  padding: 8px;
+  border: solid var(--text-color) 2px;
+  border-radius: 8px;
 `;
 
 const Label = styled.h3`

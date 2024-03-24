@@ -10,23 +10,25 @@ const Header: React.FC<{ className?: string }> = ({ className }) => {
 
   return (
     <Wrapper className={className}>
-      <ColorChangeButton
-        onClick={() => {
-          setShowColor((color) => !color);
-        }}
-      >
-        <Title>Delivery Time!</Title>
-      </ColorChangeButton>
-      <DarkModeToggle />
-      {showColor && (
-        <input
-          type="number"
-          value={color}
-          onChange={(event) =>
-            setColor(Number.parseInt(event.target.value) % 360)
-          }
-        />
-      )}
+      <FlexWrapper>
+        <ColorChangeButton
+          onClick={() => {
+            setShowColor((color) => !color);
+          }}
+        >
+          <Title>Delivery Time!</Title>
+        </ColorChangeButton>
+        {showColor && (
+          <input
+            type="number"
+            value={color}
+            onChange={(event) =>
+              setColor(Number.parseInt(event.target.value) % 360)
+            }
+          />
+        )}
+        <DarkMode />
+      </FlexWrapper>
       <FancyBorder />
     </Wrapper>
   );
@@ -34,10 +36,18 @@ const Header: React.FC<{ className?: string }> = ({ className }) => {
 
 const Wrapper = styled.header``;
 
+const FlexWrapper = styled.div`
+  display: flex;
+`;
+
 const Title = styled.h1`
-  font-size: 3.5rem;
-  text-align: center;
+  font-size: 3rem;
   padding-top: 1.5rem;
+`;
+
+const DarkMode = styled(DarkModeToggle)`
+  align-self: baseline;
+  margin: auto 16px;
 `;
 
 const FancyBorder = styled(BaseBorder)`

@@ -35,25 +35,25 @@ const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <ThemeContext.Provider value={value}>
       {children}
-      <GlobalStyles baseTheme={color} isDark={isDark} />
+      <GlobalStyles baseHue={color} isDark={isDark} />
     </ThemeContext.Provider>
   );
 };
 
 export const GlobalStyles = createGlobalStyle<{
-  baseTheme: number;
+  baseHue: number;
   isDark: boolean;
 }>`
   :root {
-    --dark-mode-background: hsl(${(p) => p.baseTheme} 20% 10%);
-    --light-mode-background: hsl(${(p) => p.baseTheme} 20% 75%);
+    --dark-mode-background: hsl(${(p) => p.baseHue} 20% 10%);
+    --light-mode-background: hsl(${(p) => p.baseHue} 20% 75%);
 
-    --dark-mode-text-color: hsl(${(p) => p.baseTheme}, 6%, 84%);
-    --light-mode-text-color: hsl(${(p) => p.baseTheme}, 6%, 5%);
+    --dark-mode-text-color: hsl(${(p) => p.baseHue}, 6%, 84%);
+    --light-mode-text-color: hsl(${(p) => p.baseHue}, 6%, 5%);
 
-    --gray-one: hsl(${(p) => p.baseTheme}, 8%, 20%);
-    --dark-blue: hsl(240,50%,10%);
-    --light-blue:hsl(200,50%,60%);
+    --gray-one: hsl(${(p) => p.baseHue}, 8%, 20%);
+    --dark-button-norm: hsl(${(p) => p.baseHue + 130},50%,10%);
+    --light-button-norm:hsl(${(p) => p.baseHue + 90},50%,60%);
 
     --background-color: ${(p) =>
       p.isDark

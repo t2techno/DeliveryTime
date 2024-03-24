@@ -89,6 +89,7 @@ const ReminderBox = ({
 
 const Wrapper = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: space-around;
 `;
