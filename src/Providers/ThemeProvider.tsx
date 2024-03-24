@@ -2,28 +2,33 @@ import React, {
   createContext,
   PropsWithChildren,
   useCallback,
+  useContext,
   useState,
 } from "react";
 import { Sunrise, Sunset } from "react-feather";
 import styled, { createGlobalStyle } from "styled-components";
 
-export type ThemeOut = { color: number; setColor: (newColor: number) => void };
+export type ThemeOut = { color: number; setColor: (newColor: number) => void ;
+                          isDark: boolean; setIsDark: React.Dispatch<React.SetStateAction<boolean>>};
 
 export const InitTheme: ThemeOut = {
   color: 0,
-  setColor: (newColor: number) =>
-    console.log("empty setColor method in context"),
+  setColor: () => console.log("empty setColor method in context"),
+  isDark: true,
+  setIsDark: () => {console.log("empty dark setter")}
+
 };
 export const ThemeContext = createContext(InitTheme);
 
 const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [color, setColor] = useState(110);
+  const [color,  setColor] = useState(110);
+  const [isDark, setIsDark] = useState(true);
   const updateColor = useCallback((newColor: number) => {
     setColor(newColor);
   }, []);
   const value = React.useMemo(() => {
-    return { color, setColor: updateColor };
-  }, [color]);
+    return { color, setColor: updateColor, isDark, setIsDark };
+  }, [color, isDark]);
   return (
     <ThemeContext.Provider value={value}>
       {children}
@@ -46,11 +51,11 @@ export const GlobalStyles = createGlobalStyle<{ baseTheme: number }>`
 export const DarkModeToggle: React.FC<{ className?: string }> = ({
   className,
 }) => {
-  const isDark = useContext(DarkModeContext);
-  const toggleDarkMode = useContext(DarkModeToggleContext);
+  const {isDark, setIsDark} = useContext(ThemeContext);
 
   return (
-    <ToggleWrapper className={className} onClick={toggleDarkMode}>
+    <ToggleWrapper className={className} 
+      onClick={()=>{setIsDark((isDark: boolean) => !isDark)}}>
       {isDark ? <ToLightMode /> : <ToDarkMode />}
     </ToggleWrapper>
   );
