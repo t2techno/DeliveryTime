@@ -20,7 +20,7 @@ function App() {
           startTime={startTime}
           resetTimer={resetTimer}
         />
-        <ReminderBox />
+        <ReminderBox elapsedTime={time} elapsedContractions={0} />
       </MaxWidthWrapper>
     </Wrapper>
   );
@@ -29,8 +29,8 @@ function App() {
 const Wrapper = styled.main`
   height: 100%;
   width: 100%;
-  background-color: var(--dark-mode-background);
-  color: var(--dark-mode-text-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
 `;
 
 const MaxWidthWrapper = styled.div`

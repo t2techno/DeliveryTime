@@ -1,25 +1,19 @@
 import { Squiggle } from "./WaveIcons";
 import styled from "styled-components";
 
-const FancyBorder = ({
-  color,
-  className,
-}: {
-  color: string;
-  className?: string;
-}) => {
+const FancyBorder = ({ className }: { className?: string }) => {
   return (
     <Wrapper className={className}>
-      <Squiggle color={color} />
+      <Squiggle color={"var(--background-color)"} />
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
   background-image: linear-gradient(
-    var(--dark-mode-background) 0%,
+    var(--background-color) 0%,
     var(--gray-one) 97%,
-    var(--dark-mode-background) 98%
+    var(--background-color) 98%
   );
 `;
 

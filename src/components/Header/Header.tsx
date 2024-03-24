@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import BaseBorder from "../FancyBorder";
-import { ThemeContext } from "../../Providers/ThemeProvider";
+import { DarkModeToggle, ThemeContext } from "../../Providers/ThemeProvider";
 
 const Header: React.FC<{ className?: string }> = ({ className }) => {
   console.info("Header ReRender");
@@ -17,6 +17,7 @@ const Header: React.FC<{ className?: string }> = ({ className }) => {
       >
         <Title>Delivery Time!</Title>
       </ColorChangeButton>
+      <DarkModeToggle />
       {showColor && (
         <input
           type="number"
@@ -26,7 +27,7 @@ const Header: React.FC<{ className?: string }> = ({ className }) => {
           }
         />
       )}
-      <FancyBorder color="var(--dark-mode-background)" />
+      <FancyBorder />
     </Wrapper>
   );
 };
@@ -47,7 +48,7 @@ const ColorChangeButton = styled.button`
   display: block;
   margin: auto;
   border: none;
-  color: var(--dark-mode-text-color);
+  color: var(--text-color);
   background-color: transparent;
 `;
 
