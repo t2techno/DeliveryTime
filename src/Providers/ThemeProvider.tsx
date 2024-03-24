@@ -32,6 +32,8 @@ export const GlobalStyles = createGlobalStyle<{ baseTheme: number }>`
     --dark-mode-text-color: hsl(${(p) => p.baseTheme}, 6%, 84%);
 
     --gray-one: hsl(${(p) => p.baseTheme}, 8%, 20%);
+    --blue: hsl(240,50%,10%);
+
   }
 `;
 
