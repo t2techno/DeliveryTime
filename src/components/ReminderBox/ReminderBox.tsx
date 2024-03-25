@@ -21,6 +21,8 @@ const ReminderBox = ({
 
     return { waterTime: 15 * minute, foodTime: 2 * hour, peeTime: 1.5 * hour };
   }, []); // in ms
+
+  // ToDo: Use Icon instead of label to save space
   const [waterHistory, setWaterHistory] = useState<Array<HistoryItem>>([]);
   const [foodHistory, setFoodHistory] = useState<Array<HistoryItem>>([]);
   const [peeHistory, setPeeHistory] = useState<Array<HistoryItem>>([]);
@@ -35,7 +37,9 @@ const ReminderBox = ({
       console.log(`timer ${time} - contraction ${contraction}`);
       setter((state) => {
         if (state.length > 0) {
-          console.log(`updating ${label} - ${state[state.length].time + 1}`);
+          console.log(
+            `updating ${label} - ${state[state.length - 1]?.time + 1}`
+          );
         }
         return [...state, { time, contraction }];
       });

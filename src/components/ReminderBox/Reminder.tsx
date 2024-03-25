@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import FancyButton from "../FancyButton";
 
 interface ReminderProps {
   label: string;
@@ -28,18 +29,17 @@ const Reminder: React.FC<ReminderProps> = ({
         <p>Contractions: {contractionsSince}</p>
       </InfoDisplay>
 
-      <Button
-        onClick={() => {
-          updateValue();
-        }}
-      >
-        +1
-      </Button>
+      <FancyButton>+1</FancyButton>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+`;
 
 const InfoDisplay = styled.div`
   padding: 8px;
@@ -49,12 +49,6 @@ const InfoDisplay = styled.div`
 
 const Label = styled.h3`
   text-align: center;
-`;
-
-const Button = styled.button`
-  background-color: transparent;
-  border: none;
-  color: inherit;
 `;
 
 export default Reminder;

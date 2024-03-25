@@ -9,16 +9,16 @@ import useTimer from "./hooks/use-timer";
 // 5 starred thing - show up whe you leave to the hospital
 function App() {
   const [time, toggleTimer, resetTimer, startTime] = useTimer();
-
+  const hasStarted = time > 0;
   return (
     <Wrapper>
       <MaxWidthWrapper>
         <Header />
+        {hasStarted && <button onClick={resetTimer}>restart</button>}
         <LaborBox
           elapsedTime={time}
           toggleTimer={toggleTimer}
           startTime={startTime}
-          resetTimer={resetTimer}
         />
         <ReminderBox elapsedTime={time} elapsedContractions={0} />
       </MaxWidthWrapper>
@@ -39,6 +39,7 @@ const MaxWidthWrapper = styled.div`
   width: 100%;
   max-width: 800px;
   margin: auto;
+  padding: 16px;
 `;
 
 const Header = styled(BaseHeader)``;
