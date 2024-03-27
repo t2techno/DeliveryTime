@@ -40,15 +40,24 @@ const Squiggle: React.FC<ColorProp> = ({ color }) => {
   return <BaseIcon color={color} path={squigglePath} />;
 };
 
-const legPath = `m 54, 31 
-                 c 19, 
-                  -5 27,
-                  -5 39,7`;
+const bodyPath = `M -10,19
+                  C 27,-2
+                    30,2
+                    30,2
+                    31,11
+                    39,15 
+                    60.2,3
+                    65.5,0
+                    92,0 
+                    115.3,19`;
+
+const legPath = `m 64, 12 
+                 c 10, 0 27, -5 39, 7`;
 
 const Body: React.FC<ColorProp> = ({ color }) => {
   return (
-    <svg viewBox="0 0 100 40">
-      <BodyPath d={squigglePath} fill={color} stroke={color} />
+    <svg viewBox="0 0 100 20">
+      <BodyPath d={bodyPath} fill={color} stroke={color} />
       <HighlightPath d={legPath} stroke="var(--text-color)" />
     </svg>
   );

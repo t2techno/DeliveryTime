@@ -10,11 +10,7 @@ const FancyBorder = ({ className }: { className?: string }) => {
 };
 
 const Wrapper = styled.div`
-  background-image: linear-gradient(
-    var(--background-color) 0%,
-    var(--gray-one) 97%,
-    var(--background-color) 98%
-  );
+
 `;
 
 export default FancyBorder;
