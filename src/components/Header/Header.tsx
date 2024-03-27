@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import BaseBorder from "../FancyBorder";
-import { DarkModeToggle, ThemeContext } from "../../Providers/ThemeProvider";
+import { DarkModeToggle, ThemeContext } from "../../providers/ThemeProvider";
 
 const Header: React.FC<{ className?: string }> = ({ className }) => {
   const { color, setColor } = useContext(ThemeContext);

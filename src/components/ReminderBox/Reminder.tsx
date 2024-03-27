@@ -25,10 +25,7 @@ const Reminder: React.FC<ReminderProps> = ({
   return (
     <Wrapper className={className}>
       <InfoDisplay>
-        <Label>
-          <LabelText>Last</LabelText>
-          <Icon type={label} />
-        </Label>
+        <LabelIcon type={label} />
         <p>Time: {timeSince}</p>
         <p>Contractions: {contractionsSince}</p>
       </InfoDisplay>
@@ -43,6 +40,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  height: 100%;
 `;
 
 const InfoDisplay = styled.div`
@@ -51,12 +49,9 @@ const InfoDisplay = styled.div`
   border-radius: 8px;
 `;
 
-const Label = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
+const LabelIcon = styled(Icon)`
+  height: 3rem;
+  width: 3rem;
 `;
-
-const LabelText = styled.h3``;
 
 export default Reminder;

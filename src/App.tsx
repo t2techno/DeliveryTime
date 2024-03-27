@@ -32,6 +32,7 @@ const Wrapper = styled.main`
   background-color: var(--background-color);
   color: var(--text-color);
   font-size: 1.5rem;
+  overflow: auto;
 `;
 
 const MaxWidthWrapper = styled.div`

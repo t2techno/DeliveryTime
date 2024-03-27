@@ -53,60 +53,70 @@ const ReminderBox = ({
 
   return (
     <Wrapper>
-      <Reminder
-        label="Water"
-        timeLimit={waterTime}
-        timeSince={elapsedTime}
-        contractionLimit={4}
-        contractionsSince={0}
-        updateValue={() => {
-          updateHistory(
-            "Water",
-            elapsedTime,
-            elapsedContractions,
-            setWaterHistory
-          );
-        }}
-      />
-      <Reminder
-        label="Food"
-        timeLimit={foodTime}
-        timeSince={elapsedTime}
-        contractionLimit={50}
-        contractionsSince={0}
-        updateValue={() => {
-          updateHistory(
-            "Food",
-            elapsedTime,
-            elapsedContractions,
-            setFoodHistory
-          );
-        }}
-      />
-      <Reminder
-        label="Toilet"
-        timeLimit={toiletTime}
-        timeSince={elapsedTime}
-        contractionLimit={35}
-        contractionsSince={0}
-        updateValue={() => {
-          updateHistory(
-            "Toilet",
-            elapsedTime,
-            elapsedContractions,
-            setToiletHistory
-          );
-        }}
-      />
+      <SectionHeader>How long since...</SectionHeader>
+      <FlexWrapper>
+        <Reminder
+          label="Water"
+          timeLimit={waterTime}
+          timeSince={elapsedTime}
+          contractionLimit={4}
+          contractionsSince={0}
+          updateValue={() => {
+            updateHistory(
+              "Water",
+              elapsedTime,
+              elapsedContractions,
+              setWaterHistory
+            );
+          }}
+        />
+        <Reminder
+          label="Food"
+          timeLimit={foodTime}
+          timeSince={elapsedTime}
+          contractionLimit={50}
+          contractionsSince={0}
+          updateValue={() => {
+            updateHistory(
+              "Food",
+              elapsedTime,
+              elapsedContractions,
+              setFoodHistory
+            );
+          }}
+        />
+        <Reminder
+          label="Toilet"
+          timeLimit={toiletTime}
+          timeSince={elapsedTime}
+          contractionLimit={35}
+          contractionsSince={0}
+          updateValue={() => {
+            updateHistory(
+              "Toilet",
+              elapsedTime,
+              elapsedContractions,
+              setToiletHistory
+            );
+          }}
+        />
+      </FlexWrapper>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div``;
+
+const SectionHeader = styled.h3`
+  font-size: 3rem;
+  margin-bottom: 16px;
+`;
+
+const FlexWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: space-around;
+  justify-content: space-between;
 `;
 
 export default ReminderBox;
