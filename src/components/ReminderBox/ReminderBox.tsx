@@ -15,17 +15,21 @@ const ReminderBox = ({
   elapsedTime: number;
   elapsedContractions: number;
 }) => {
-  const { waterTime, foodTime, peeTime } = React.useMemo(() => {
+  const { waterTime, foodTime, toiletTime } = React.useMemo(() => {
     const minute = 1000 * 60;
     const hour = minute * 60;
 
-    return { waterTime: 15 * minute, foodTime: 2 * hour, peeTime: 1.5 * hour };
+    return {
+      waterTime: 15 * minute,
+      foodTime: 2 * hour,
+      toiletTime: 1.5 * hour,
+    };
   }, []); // in ms
 
   // ToDo: Use Icon instead of label to save space
   const [waterHistory, setWaterHistory] = useState<Array<HistoryItem>>([]);
   const [foodHistory, setFoodHistory] = useState<Array<HistoryItem>>([]);
-  const [peeHistory, setPeeHistory] = useState<Array<HistoryItem>>([]);
+  const [toiletHistory, setToiletHistory] = useState<Array<HistoryItem>>([]);
 
   const updateHistory = React.useCallback(
     (
@@ -80,13 +84,18 @@ const ReminderBox = ({
         }}
       />
       <Reminder
-        label="Pee"
-        timeLimit={peeTime}
+        label="Toilet"
+        timeLimit={toiletTime}
         timeSince={elapsedTime}
         contractionLimit={35}
         contractionsSince={0}
         updateValue={() => {
-          updateHistory("Pee", elapsedTime, elapsedContractions, setPeeHistory);
+          updateHistory(
+            "Toilet",
+            elapsedTime,
+            elapsedContractions,
+            setToiletHistory
+          );
         }}
       />
     </Wrapper>

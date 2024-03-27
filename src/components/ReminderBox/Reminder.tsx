@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import FancyButton from "../FancyButton";
+import Icon from "../Icon";
 
 interface ReminderProps {
   label: string;
@@ -24,7 +25,10 @@ const Reminder: React.FC<ReminderProps> = ({
   return (
     <Wrapper className={className}>
       <InfoDisplay>
-        <Label>Last {label}</Label>
+        <Label>
+          <LabelText>Last</LabelText>
+          <Icon type={label} />
+        </Label>
         <p>Time: {timeSince}</p>
         <p>Contractions: {contractionsSince}</p>
       </InfoDisplay>
@@ -47,8 +51,12 @@ const InfoDisplay = styled.div`
   border-radius: 8px;
 `;
 
-const Label = styled.h3`
-  text-align: center;
+const Label = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
 `;
+
+const LabelText = styled.h3``;
 
 export default Reminder;

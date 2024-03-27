@@ -1,3 +1,5 @@
+import styled from "styled-components";
+
 const BaseIcon: React.FC<{ color: string; path: string; fill?: boolean }> = ({
   color,
   path,
@@ -26,11 +28,44 @@ const squigglePath = `M -10 40
                       T 50 20
                       T 105 40`;
 
-const Sine: React.FC<{ color: string }> = ({ color }) => {
+interface ColorProp {
+  color: string;
+}
+
+const Sine: React.FC<ColorProp> = ({ color }) => {
   return <BaseIcon color={color} path={sinePath} />;
 };
 
-const Squiggle: React.FC<{ color: string }> = ({ color }) => {
+const Squiggle: React.FC<ColorProp> = ({ color }) => {
   return <BaseIcon color={color} path={squigglePath} />;
 };
-export { Squiggle };
+
+const legPath = `m 54, 31 
+                 c 19, 
+                  -5 27,
+                  -5 39,7`;
+
+const Body: React.FC<ColorProp> = ({ color }) => {
+  return (
+    <svg viewBox="0 0 100 40">
+      <BodyPath d={squigglePath} fill={color} stroke={color} />
+      <HighlightPath d={legPath} stroke="var(--text-color)" />
+    </svg>
+  );
+};
+
+const BodyPath = styled.path`
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+`;
+
+const HighlightPath = styled.path`
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.05;
+  filter: blur(0.5px);
+`;
+export { Body };

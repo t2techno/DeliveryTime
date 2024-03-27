@@ -1,10 +1,10 @@
-import { Squiggle } from "./WaveIcons";
+import { Body } from "./WaveIcons";
 import styled from "styled-components";
 
 const FancyBorder = ({ className }: { className?: string }) => {
   return (
     <Wrapper className={className}>
-      <Squiggle color={"var(--background-color)"} />
+      <Body color={"var(--background-color)"} />
     </Wrapper>
   );
 };
