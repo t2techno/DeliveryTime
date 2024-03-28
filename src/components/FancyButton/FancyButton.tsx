@@ -1,18 +1,12 @@
 import styled from "styled-components";
-import React, { useState } from "react";
+import React, { ComponentProps } from "react";
 
-// ToDo: make this more responsive;
-const FancyButton: React.FC<
-  React.PropsWithChildren<{ className?: string }>
-> = ({ children, className }) => {
-  const [isActive, setIsActive] = useState(false);
+type FancyButtonProps = React.PropsWithChildren<{className?: string}> & ComponentProps<'button'>;
+
+const FancyButton: React.FC<FancyButtonProps> = ({ children, className, ...delegated }) => {
   return (
     <Wrapper className={className}>
-      <PushableButton
-        onClick={() => {
-          setIsActive((isActive) => !isActive);
-        }}
-      >
+      <PushableButton {...delegated}>
         <ShadowSpan></ShadowSpan>
         <EdgeSpan></EdgeSpan>
         <FrontSpan>{children}</FrontSpan>
@@ -21,9 +15,11 @@ const FancyButton: React.FC<
   );
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+`;
 
 const PushableButton = styled.button`
+  width: 100%;
   position: relative;
   border: none;
   background: transparent;
@@ -83,7 +79,8 @@ const EdgeSpan = styled.span`
 const FrontSpan = styled.span`
   display: block;
   position: relative;
-  width: 7rem;
+  width: 100%;
+  height: 100%;
   padding: 25px;
   border-radius: 16px;
   font-size: 1.25rem;

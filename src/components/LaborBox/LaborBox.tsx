@@ -56,7 +56,7 @@ const Started = ({
         <Info>Began: {startTime.toLocaleTimeString()}</Info>
         <Info>Length: {elapsedTime}</Info>
       </LaborSection>
-      <FancyButton/>
+      <ContractionButton>{"Start Contraction"}</ContractionButton>
       <ContractionSection>
         <ContractWrapper>
           <InfoLabel>Contractions</InfoLabel>
@@ -81,13 +81,6 @@ const RunningWrapper = styled.div`
   }
 `;
 
-const Divider = styled.div`
-  border-radius: 9999px;
-  height: 11.5rem;
-  width: 4px;
-  background-color: var(--text-color);
-`;
-
 const RunningInfoSection = styled.div`
   align-self: baseline;
   padding: 16px 32px;
@@ -105,6 +98,10 @@ const Info = styled.p`
 `;
 
 const LaborSection = styled(RunningInfoSection)``;
+
+const ContractionButton = styled(FancyButton)`
+  flex: 1;
+`;
 
 const ContractionSection = styled(RunningInfoSection)`
   display: flex;
