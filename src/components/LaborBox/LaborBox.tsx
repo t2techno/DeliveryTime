@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { INIT_TIME } from "../../hooks/use-timer";
+import FancyButton from "../FancyButton";
 
 interface LaborBoxProps {
   className?: string;
@@ -55,6 +56,7 @@ const Started = ({
         <Info>Began: {startTime.toLocaleTimeString()}</Info>
         <Info>Length: {elapsedTime}</Info>
       </LaborSection>
+      <FancyButton/>
       <ContractionSection>
         <ContractWrapper>
           <InfoLabel>Contractions</InfoLabel>
@@ -68,12 +70,10 @@ const Started = ({
 };
 
 const RunningWrapper = styled.div`
-  height: 100%;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: space-around;
-  align-items: baseline;
 
   @media (max-width: 625px) {
     flex-direction: column;
@@ -81,7 +81,15 @@ const RunningWrapper = styled.div`
   }
 `;
 
+const Divider = styled.div`
+  border-radius: 9999px;
+  height: 11.5rem;
+  width: 4px;
+  background-color: var(--text-color);
+`;
+
 const RunningInfoSection = styled.div`
+  align-self: baseline;
   padding: 16px 32px;
   flex: 1;
   height: 100%;

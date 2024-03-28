@@ -73,10 +73,10 @@ const EdgeSpan = styled.span`
   border-radius: 16px;
   background: linear-gradient(
     to left,
-    hsl(340deg 100% 16%) 0%,
-    hsl(340deg 100% 32%) 8%,
-    hsl(340deg 100% 32%) 92%,
-    hsl(340deg 100% 16%) 100%
+    hsl(var(--base-hue) 50% 5%) 0%,
+    hsl(var(--base-hue) 50% 32%) 8%,
+    hsl(var(--base-hue) 50% 32%) 92%,
+    hsl(var(--base-hue) 50% 5%) 100%
   );
 `;
 
@@ -87,8 +87,8 @@ const FrontSpan = styled.span`
   padding: 25px;
   border-radius: 16px;
   font-size: 1.25rem;
-  color: white;
-  background: hsl(345deg 100% 47%);
+  color: var(--text-color);
+  background: hsl(var(--base-hue) 50% 15%);
   will-change: transform;
   transform: translateY(-4px);
   transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);

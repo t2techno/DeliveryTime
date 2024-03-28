@@ -45,11 +45,13 @@ export const GlobalStyles = createGlobalStyle<{
   isDark: boolean;
 }>`
   :root {
-    --dark-mode-background: hsl(${(p) => p.baseHue} 40% 10%);
-    --light-mode-background: hsl(${(p) => p.baseHue} 40% 75%);
 
-    --dark-mode-text-color: hsl(${(p) => p.baseHue}, 6%, 84%);
-    --light-mode-text-color: hsl(${(p) => p.baseHue}, 6%, 5%);
+    --base-hue: ${(p) => p.baseHue};
+    --dark-mode-background: hsl(var(--base-hue) 40% 10%);
+    --light-mode-background: hsl(var(--base-hue) 40% 75%);
+
+    --dark-mode-text-color: hsl(var(--base-hue), 6%, 84%);
+    --light-mode-text-color: hsl(var(--base-hue), 6%, 5%);
 
     --gray-one: hsl(${(p) => p.baseHue}, 18%, 20%);
     --dark-button-norm: hsl(${(p) => p.baseHue + 130},50%,10%);
