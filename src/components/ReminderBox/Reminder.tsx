@@ -5,7 +5,7 @@ import Icon from "../Icon";
 interface ReminderProps {
   label: string;
   timeLimit: number; // ms
-  timeSince: number; // ms
+  timeSince: string; // ms
   contractionLimit: number;
   contractionsSince: number;
   updateValue: () => void;

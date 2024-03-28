@@ -4,19 +4,21 @@ import BaseHeader from "./components/Header";
 import BaseLaborBox from "./components/LaborBox";
 import ReminderBox from "./components/ReminderBox";
 import useTimer from "./hooks/use-timer";
+import { generateTime } from "./utilities/time-stuff";
 
 // Large ToDo: Hospital bag/ToDo-ToGrab list
 // 5 starred thing - show up whe you leave to the hospital
 function App() {
   const [time, toggleTimer, resetTimer, startTime] = useTimer();
   const hasStarted = time > 0;
+  const timeString = generateTime(time);
   return (
     <Wrapper>
       <MaxWidthWrapper>
         <Header />
         {hasStarted && <button onClick={resetTimer}>restart</button>}
         <LaborBox
-          elapsedTime={time}
+          elapsedTime={timeString}
           toggleTimer={toggleTimer}
           startTime={startTime}
         />

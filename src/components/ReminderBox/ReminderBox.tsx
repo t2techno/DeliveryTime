@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
+import { generateTime } from "../../utilities/time-stuff";
 
 interface HistoryItem {
   time: number;
@@ -26,10 +27,24 @@ const ReminderBox = ({
     };
   }, []); // in ms
 
-  // ToDo: Use Icon instead of label to save space
   const [waterHistory, setWaterHistory] = useState<Array<HistoryItem>>([]);
+  let lastWater = elapsedTime;
+  if (waterHistory.length > 0) {
+    lastWater -= waterHistory[waterHistory.length - 1]?.time;
+  }
+
   const [foodHistory, setFoodHistory] = useState<Array<HistoryItem>>([]);
+  let lastFood = elapsedTime;
+  if (foodHistory.length > 0) {
+    lastFood -= foodHistory[foodHistory.length - 1]?.time;
+  }
+
   const [toiletHistory, setToiletHistory] = useState<Array<HistoryItem>>([]);
+
+  let lastToilet = elapsedTime;
+  if (toiletHistory.length > 0) {
+    lastToilet -= toiletHistory[toiletHistory.length - 1]?.time;
+  }
 
   const updateHistory = React.useCallback(
     (
@@ -58,7 +73,7 @@ const ReminderBox = ({
         <Reminder
           label="Water"
           timeLimit={waterTime}
-          timeSince={elapsedTime}
+          timeSince={generateTime(lastWater)}
           contractionLimit={4}
           contractionsSince={0}
           updateValue={() => {
@@ -73,7 +88,7 @@ const ReminderBox = ({
         <Reminder
           label="Food"
           timeLimit={foodTime}
-          timeSince={elapsedTime}
+          timeSince={generateTime(lastFood)}
           contractionLimit={50}
           contractionsSince={0}
           updateValue={() => {
@@ -88,7 +103,7 @@ const ReminderBox = ({
         <Reminder
           label="Toilet"
           timeLimit={toiletTime}
-          timeSince={elapsedTime}
+          timeSince={generateTime(lastToilet)}
           contractionLimit={35}
           contractionsSince={0}
           updateValue={() => {

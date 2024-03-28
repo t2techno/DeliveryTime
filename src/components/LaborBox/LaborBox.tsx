@@ -4,7 +4,7 @@ import { INIT_TIME } from "../../hooks/use-timer";
 
 interface LaborBoxProps {
   className?: string;
-  elapsedTime: number;
+  elapsedTime: string;
   toggleTimer: () => void;
   startTime: Date;
 }
@@ -45,7 +45,7 @@ const Started = ({
   elapsedTime,
   startTime,
 }: {
-  elapsedTime: number;
+  elapsedTime: string;
   startTime: Date;
 }) => {
   return (
@@ -53,7 +53,7 @@ const Started = ({
       <LaborSection>
         <InfoLabel>Labor</InfoLabel>
         <Info>Began: {startTime.toLocaleTimeString()}</Info>
-        <Info>Length: {new Date(elapsedTime).toLocaleTimeString()}</Info>
+        <Info>Length: {elapsedTime}</Info>
       </LaborSection>
       <ContractionSection>
         <ContractWrapper>
