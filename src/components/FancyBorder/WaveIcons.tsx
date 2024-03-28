@@ -56,7 +56,7 @@ const legPath = `m 64, 12
 
 const Body: React.FC<ColorProp> = ({ color }) => {
   return (
-    <svg viewBox="0 0 100 20">
+    <svg viewBox="0 0 100 15">
       <BodyPath d={bodyPath} fill={color} stroke={color} />
       <HighlightPath d={legPath} stroke="var(--text-color)" />
     </svg>

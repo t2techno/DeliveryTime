@@ -34,27 +34,12 @@ const Header: React.FC<{ className?: string }> = ({ className }) => {
 };
 
 const Wrapper = styled.header`
-  background-image: conic-gradient(
-    from 270deg at 50% -20%,
-    var(--background-color) 50%,
-    hsl(120deg 40% 10%),
-    hsl(120deg 30% 15%),
-    hsl(120deg 40% 10%),
-    var(--background-color)
-  );
-  /* background-image: linear-gradient(90deg,
+  background-image: linear-gradient(
+    90deg,
     var(--background-color) 0%,
     var(--gray-one) 50%,
     var(--background-color) 98%
-  ); 
-   background-image: conic-gradient(
-    from 270deg at 50% -20%,
-    hsl(240deg 40% 5%) 50%,
-    hsl(250deg 40% 20%),
-    hsl(250deg 30% 25%),
-    hsl(250deg 40% 20%),
-    hsl(240deg 40% 5%)
-  ); */
+  );
 `;
 
 const FlexWrapper = styled.div`
@@ -82,3 +67,21 @@ const ColorChangeButton = styled.button`
 `;
 
 export default React.memo(Header);
+
+/* background-image: conic-gradient(
+    from 270deg at 50% -20%,
+    var(--background-color) 50%,
+    hsl(120deg 40% 10%),
+    hsl(120deg 30% 15%),
+    hsl(120deg 40% 10%),
+    var(--background-color)
+  );
+
+   background-image: conic-gradient(
+    from 270deg at 50% -20%,
+    hsl(240deg 40% 5%) 50%,
+    hsl(250deg 40% 20%),
+    hsl(250deg 30% 25%),
+    hsl(250deg 40% 20%),
+    hsl(240deg 40% 5%)
+  ); */
