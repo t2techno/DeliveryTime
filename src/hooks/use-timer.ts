@@ -34,6 +34,7 @@ const useTimer = (startImmediately = false): TimerReturn => {
 
   // ToDo: Add labor history to state before wiping
   const resetTimer = React.useCallback(() => {
+    console.log("resetting timer");
     setTime(0);
     setStartTime(INIT_TIME);
     setIsRunning(false);
