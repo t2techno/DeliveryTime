@@ -5,6 +5,23 @@ import useTimer from "../../hooks/use-timer";
 
 type CircleType = "round" | "flower";
 
+const getBreathDirection = (time: number, isBox: boolean) => {
+  if (isBox) {
+    const state = time % 16;
+    if (state < 4) {
+      return "In";
+    } else if (state < 8) {
+      return "Hold";
+    } else if (state < 12) {
+      return "Out";
+    } else {
+      return "Hold";
+    }
+  } else {
+    return time % 8 < 4 ? "In" : "Out";
+  }
+};
+
 const Breath = () => {
   const [isBoxBreath, setIsBoxBreath] = useState(true);
   const [circleType, setCircleType] = useState<CircleType>("round");
@@ -22,23 +39,11 @@ const Breath = () => {
   // ToDo: animation gets out of sync with display
   // Switch to spring-physics, run animation with javascript
   // keeps them in sync
-  let breathDirection = time % 8 < 4 ? "In" : "Out";
-  if (isBoxBreath) {
-    const state = time % 16;
-    if (state < 4) {
-      breathDirection = "In";
-    } else if (state < 8) {
-      breathDirection = "Hold";
-    } else if (state < 12) {
-      breathDirection = "Out";
-    } else {
-      breathDirection = "Hold";
-    }
-  }
+  const breathDirection = getBreathDirection(time, isBoxBreath);
 
   return (
     <Modal
-      title="Breath"
+      title={isBoxBreath ? "Box Breath" : "Even Breath"}
       description="For helping you keep calm"
       handleOpen={handleOpen}
       handleClose={handleClose}
