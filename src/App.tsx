@@ -6,8 +6,6 @@ import ReminderBox from "./components/ReminderBox";
 import useTimer from "./hooks/use-timer";
 import { generateTime } from "./utilities/time-stuff";
 
-// Large ToDo: Hospital bag/ToDo-ToGrab list
-// 5 starred thing - show up whe you leave to the hospital
 function App() {
   const [time, toggleTimer, resetTimer, startTime] = useTimer();
   const hasStarted = time > 0;

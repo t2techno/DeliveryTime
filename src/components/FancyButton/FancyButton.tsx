@@ -1,9 +1,14 @@
 import styled from "styled-components";
 import React, { ComponentProps } from "react";
 
-type FancyButtonProps = React.PropsWithChildren<{className?: string}> & ComponentProps<'button'>;
+type FancyButtonProps = React.PropsWithChildren<{ className?: string }> &
+  ComponentProps<"button">;
 
-const FancyButton: React.FC<FancyButtonProps> = ({ children, className, ...delegated }) => {
+const FancyButton: React.FC<FancyButtonProps> = ({
+  children,
+  className,
+  ...delegated
+}) => {
   return (
     <Wrapper className={className}>
       <PushableButton {...delegated}>
@@ -15,8 +20,7 @@ const FancyButton: React.FC<FancyButtonProps> = ({ children, className, ...deleg
   );
 };
 
-const Wrapper = styled.div`
-`;
+const Wrapper = styled.div``;
 
 const PushableButton = styled.button`
   width: 100%;
