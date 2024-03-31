@@ -1,30 +1,14 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { useCallback, useState } from "react";
 import Modal from "../Modal";
 import useTimer from "../../hooks/use-timer";
-
-type CircleType = "round" | "flower";
-
-const getBreathDirection = (time: number, isBox: boolean) => {
-  if (isBox) {
-    const state = time % 16;
-    if (state < 4) {
-      return "In";
-    } else if (state < 8) {
-      return "Hold";
-    } else if (state < 12) {
-      return "Out";
-    } else {
-      return "Hold";
-    }
-  } else {
-    return time % 8 < 4 ? "In" : "Out";
-  }
-};
+import ToggleGroup from "../ToggleGroup";
+import RoundBreath from "./RoundBreath";
+import { getBreathDirection } from "./breath.helper";
 
 const Breath = () => {
   const [isBoxBreath, setIsBoxBreath] = useState(true);
-  const [circleType, setCircleType] = useState<CircleType>("round");
+  const [isFlower, setIsFlower] = useState(false);
 
   const [time, toggleTimer, resetTimer, _] = useTimer();
 
@@ -41,6 +25,18 @@ const Breath = () => {
   // keeps them in sync
   const breathDirection = getBreathDirection(time, isBoxBreath);
 
+  const onBreathChange = (val: string) => {
+    setIsBoxBreath(val === "Box")
+    resetTimer();
+    toggleTimer();
+  }
+
+  const onCircleChange = (val: string) => {
+    setIsFlower(val === "Flower")
+    resetTimer();
+    toggleTimer();
+  }
+
   return (
     <Modal
       title={isBoxBreath ? "Box Breath" : "Even Breath"}
@@ -48,98 +44,38 @@ const Breath = () => {
       handleOpen={handleOpen}
       handleClose={handleClose}
     >
-      <RoundBreath isBox={isBoxBreath} />
+      <RoundBreath $isbox={isBoxBreath} />
       <Count>
         {time}
         <br />
         {breathDirection}
       </Count>
+      <BreathToggle label="Breath type" options={["Box","Even"]} selected={isBoxBreath ? 0:1} onToggleChange={onBreathChange}/>
+
+      {/* Can probably do icons for these */}
+      <CircleToggle label="Circle type" options={["Flower","Round"]} selected={isFlower ? 0:1} onToggleChange={onCircleChange}/>
     </Modal>
   );
 };
 
-const Count = styled.p`
+const Count = styled.div`
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
-  display: block;
-`;
-
-export default Breath;
-
-const RoundBreath: React.FC<{ isBox: boolean }> = ({ isBox }) => {
-  return (
-    <SvgWrapper
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      isBox={isBox}
-    >
-      <BreathCircle
-        cx={12}
-        cy={12}
-        r={12}
-        fill="var(--background-color)"
-        fillOpacity={0.5}
-      />
-    </SvgWrapper>
-  );
-};
-
-const evenBreath = keyframes`    
-  from {
-    transform: scale(0.3);
-  }
-
-  to {
-    transform: scale(1.25);
-  }
-`;
-
-const boxBreath = keyframes`
-  // in
-  0% {
-    transform: scale(0.3);
-  }
-
-  25% {
-    transform: scale(1.05);
-  }
-
-  // hold
-  40% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05)
-  }
-
-  // out
-  75% {
-    transform: scale(0.3);
-  }
-  // hold
-  90% {
-    transform: scale(0.35);
-  }
-`;
-
-const SvgWrapper = styled.svg<{ isBox: boolean }>`
-  height: 100%;
-  width: 100%;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transform: scale(0.3);
-  animation: ${(p) => (p.isBox ? boxBreath : evenBreath)}
-    ${(p) => (p.isBox ? 4000 * 4 : 4000) + "ms"}
-    ${(p) => (p.isBox ? "" : "alternate")} infinite ease-in-out;
+  top: 35%;
+  left: 41%;
+  width: 5rem;
 `;
 
-const BreathCircle = styled.circle`
-  height: 100%;
-  width: 100%;
+const BreathToggle = styled(ToggleGroup)`
+  position: absolute;
+  top: 5%;
+  left: 5%;
 `;
+const CircleToggle = styled(ToggleGroup)`
+  position: absolute;
+  top: 5%;
+  right: 5%;
+`;
+export default Breath;
