@@ -4,11 +4,12 @@ import Modal from "../Modal";
 import useTimer from "../../hooks/use-timer";
 import ToggleGroup from "../ToggleGroup";
 import RoundBreath from "./RoundBreath";
+import FlowerBreath from "./FlowerBreath";
 import { getBreathDirection } from "./breath.helper";
 
 const Breath = () => {
-  const [isBoxBreath, setIsBoxBreath] = useState(true);
-  const [isFlower, setIsFlower] = useState(false);
+  const [isBoxBreath, setIsBoxBreath] = useState(false);
+  const [isFlower, setIsFlower] = useState(true);
 
   const [time, toggleTimer, resetTimer, _] = useTimer();
 
@@ -26,16 +27,16 @@ const Breath = () => {
   const breathDirection = getBreathDirection(time, isBoxBreath);
 
   const onBreathChange = (val: string) => {
-    setIsBoxBreath(val === "Box")
+    setIsBoxBreath(val === "Box");
     resetTimer();
     toggleTimer();
-  }
+  };
 
   const onCircleChange = (val: string) => {
-    setIsFlower(val === "Flower")
+    setIsFlower(val === "Flower");
     resetTimer();
     toggleTimer();
-  }
+  };
 
   return (
     <Modal
@@ -44,16 +45,26 @@ const Breath = () => {
       handleOpen={handleOpen}
       handleClose={handleClose}
     >
-      <RoundBreath $isbox={isBoxBreath} />
+      {isFlower ? <FlowerBreath /> : <RoundBreath $isbox={isBoxBreath} />}
       <Count>
         {time}
         <br />
         {breathDirection}
       </Count>
-      <BreathToggle label="Breath type" options={["Box","Even"]} selected={isBoxBreath ? 0:1} onToggleChange={onBreathChange}/>
+      <BreathToggle
+        label="Breath type"
+        options={["Box", "Even"]}
+        selected={isBoxBreath ? 0 : 1}
+        onToggleChange={onBreathChange}
+      />
 
       {/* Can probably do icons for these */}
-      <CircleToggle label="Circle type" options={["Flower","Round"]} selected={isFlower ? 0:1} onToggleChange={onCircleChange}/>
+      <CircleToggle
+        label="Circle type"
+        options={["Flower", "Round"]}
+        selected={isFlower ? 0 : 1}
+        onToggleChange={onCircleChange}
+      />
     </Modal>
   );
 };
