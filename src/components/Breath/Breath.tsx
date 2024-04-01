@@ -45,7 +45,11 @@ const Breath = () => {
       handleOpen={handleOpen}
       handleClose={handleClose}
     >
-      {isFlower ? <FlowerBreath /> : <RoundBreath $isbox={isBoxBreath} />}
+      {isFlower ? (
+        <FlowerBreath $isbox={isBoxBreath} />
+      ) : (
+        <RoundBreath $isbox={isBoxBreath} />
+      )}
       <Count>
         {time}
         <br />

@@ -44,26 +44,32 @@ export const boxBreath = keyframes`
   // in
   0% {
     transform: scale(0.3);
+    rotate: 0deg;
   }
 
   25% {
     transform: scale(1.05);
+    rotate: 270deg;
   }
 
   // hold
   40% {
     transform: scale(1);
+    rotate: 255deg;
   }
   50% {
-    transform: scale(1.05)
+    transform: scale(1.05);
+    rotate: 270deg;
   }
 
   // out
   75% {
     transform: scale(0.3);
+    rotate: 0deg;
   }
   // hold
   90% {
     transform: scale(0.35);
+    rotate: 15deg;
   }
 `;
