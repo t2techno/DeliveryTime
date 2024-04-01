@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { evenBreath, boxBreath, } from "./breath.helper";
+import { evenBreath, boxBreath } from "./breath.helpers";
 
 const RoundBreath: React.FC<{ $isbox: boolean }> = ({ $isbox }) => {
   return (

@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import { evenBreath, expand } from "./breath.helpers";
 
-const NUMBER_OF_CIRCLES = 8;
+const NUMBER_OF_CIRCLES = 6;
 const circleArray = new Array(NUMBER_OF_CIRCLES).fill(0);
 const FlowerBreath = () => {
   return (
@@ -11,7 +12,7 @@ const FlowerBreath = () => {
       strokeLinejoin="round"
     >
       {circleArray.map((_, idx) => {
-        return <Petal key={idx} cx={12} cy={12} r={3} fillOpacity={0.25} />;
+        return <Petal key={idx} cx={12} cy={12} r={6} fillOpacity={0.25} />;
       })}
     </SVGWrapper>
   );
@@ -25,41 +26,43 @@ const SVGWrapper = styled.svg`
   left: 0;
   right: 0;
   bottom: 0;
+  isolation: isolate;
+  animation: ${evenBreath} ${"4000ms"} ${"alternate"} infinite ease-in-out;
 `;
 
 const Petal = styled.circle`
+  mix-blend-mode: screen;
+  fill: var(--background-color);
+
   &:nth-of-type(1) {
-    fill: red;
-    transform: translate(-3px, -3px);
+    /* fill: red; */
+    animation: ${expand("0px, 0px", "0px, -4px")} 4000ms alternate infinite
+      ease-in-out;
   }
   &:nth-of-type(2) {
-    fill: green;
-    transform: translate(-5px, 0px);
+    /* fill: orange; */
+    animation: ${expand("0px, 0px", "4px, -2px")} 4000ms alternate infinite
+      ease-in-out;
   }
   &:nth-of-type(3) {
-    fill: blue;
-    transform: translate(-3px, 3px);
+    /* fill: yellow; */
+    animation: ${expand("0px, 0px", "4px, 2px")} 4000ms alternate infinite
+      ease-in-out;
   }
   &:nth-of-type(4) {
-    fill: purple;
-    transform: translate(0px, 6px);
+    /* fill: green; */
+    animation: ${expand("0px, 0px", "0px, 4px")} 4000ms alternate infinite
+      ease-in-out;
   }
   &:nth-of-type(5) {
-    fill: yellow;
-    transform: translate(3px, -3px);
+    /* fill: blue; */
+    animation: ${expand("0px, 0px", "-4px, 2px")} 4000ms alternate infinite
+      ease-in-out;
   }
   &:nth-of-type(6) {
-    fill: tan;
-    transform: translate(5px, 0px);
-  }
-  &:nth-of-type(7) {
-    fill: teal;
-    transform: translate(3px, 3px);
-  }
-
-  &:nth-of-type(8) {
-    fill: black;
-    transform: translate(0px, -6px);
+    /* fill: indigo; */
+    animation: ${expand("0px, 0px", "-4px, -2px")} 4000ms alternate infinite
+      ease-in-out;
   }
 `;
 

@@ -5,7 +5,7 @@ import useTimer from "../../hooks/use-timer";
 import ToggleGroup from "../ToggleGroup";
 import RoundBreath from "./RoundBreath";
 import FlowerBreath from "./FlowerBreath";
-import { getBreathDirection } from "./breath.helper";
+import { getBreathDirection } from "./breath.helpers";
 
 const Breath = () => {
   const [isBoxBreath, setIsBoxBreath] = useState(false);
