@@ -37,6 +37,7 @@ const SVGWrapper = styled.svg<{ $isbox: boolean }>`
   right: 0;
   bottom: 0;
   isolation: isolate;
+  transform: scale(0.3);
   animation: ${(p) => (p.$isbox ? boxBreath : evenBreath)}
     ${(p) => (p.$isbox ? 4000 * 4 : 4000) + "ms"}
     ${(p) => (p.$isbox ? "" : "alternate")} infinite ease-in-out;
@@ -47,37 +48,31 @@ const Petal = styled.circle<{ $isbox: boolean }>`
   fill: var(--background-color);
 
   &:nth-of-type(1) {
-    /* fill: red; */
     animation: ${expand("0px, 0px", "0px, -4px")}
       ${(p) => (p.$isbox ? 4000 * 2 : 4000) + "ms"} alternate infinite
       ease-in-out;
   }
   &:nth-of-type(2) {
-    /* fill: orange; */
     animation: ${expand("0px, 0px", "4px, -2px")}
       ${(p) => (p.$isbox ? 4000 * 2 : 4000) + "ms"} alternate infinite
       ease-in-out;
   }
   &:nth-of-type(3) {
-    /* fill: yellow; */
     animation: ${expand("0px, 0px", "4px, 2px")}
       ${(p) => (p.$isbox ? 4000 * 2 : 4000) + "ms"} alternate infinite
       ease-in-out;
   }
   &:nth-of-type(4) {
-    /* fill: green; */
     animation: ${expand("0px, 0px", "0px, 4px")}
       ${(p) => (p.$isbox ? 4000 * 2 : 4000) + "ms"} alternate infinite
       ease-in-out;
   }
   &:nth-of-type(5) {
-    /* fill: blue; */
     animation: ${expand("0px, 0px", "-4px, 2px")}
       ${(p) => (p.$isbox ? 4000 * 2 : 4000) + "ms"} alternate infinite
       ease-in-out;
   }
   &:nth-of-type(6) {
-    /* fill: indigo; */
     animation: ${expand("0px, 0px", "-4px, -2px")}
       ${(p) => (p.$isbox ? 4000 * 2 : 4000) + "ms"} alternate infinite
       ease-in-out;
