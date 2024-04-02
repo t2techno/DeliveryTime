@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
-import { generateTime } from "../../utilities/time-stuff";
 
 interface HistoryItem {
   time: number;
@@ -17,7 +16,7 @@ const ReminderBox = ({
   elapsedContractions: number;
 }) => {
   const { waterTime, foodTime, toiletTime } = React.useMemo(() => {
-    const minute = 1000 * 60;
+    const minute = 60;
     const hour = minute * 60;
 
     return {
@@ -72,8 +71,9 @@ const ReminderBox = ({
       <FlexWrapper>
         <Reminder
           label="Water"
+          warningColor="blue"
           timeLimit={waterTime}
-          timeSince={generateTime(lastWater)}
+          timeSince={lastWater}
           contractionLimit={4}
           contractionsSince={0}
           updateValue={() => {
@@ -87,8 +87,9 @@ const ReminderBox = ({
         />
         <Reminder
           label="Food"
+          warningColor="red"
           timeLimit={foodTime}
-          timeSince={generateTime(lastFood)}
+          timeSince={lastFood}
           contractionLimit={50}
           contractionsSince={0}
           updateValue={() => {
@@ -102,8 +103,9 @@ const ReminderBox = ({
         />
         <Reminder
           label="Toilet"
+          warningColor="gold"
           timeLimit={toiletTime}
-          timeSince={generateTime(lastToilet)}
+          timeSince={lastToilet}
           contractionLimit={35}
           contractionsSince={0}
           updateValue={() => {
