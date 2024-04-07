@@ -71,13 +71,7 @@ const EdgeSpan = styled.span`
   width: 100%;
   height: 100%;
   border-radius: 16px;
-  background: linear-gradient(
-    to left,
-    hsl(var(--base-hue) 50% 5%) 0%,
-    hsl(var(--base-hue) 50% 32%) 8%,
-    hsl(var(--base-hue) 50% 32%) 92%,
-    hsl(var(--base-hue) 50% 5%) 100%
-  );
+  background: linear-gradient(to left, var(--fancy-button-edge));
 `;
 
 const FrontSpan = styled.span`
@@ -89,7 +83,7 @@ const FrontSpan = styled.span`
   border-radius: 16px;
   font-size: 1.25rem;
   color: var(--text-color);
-  background: hsl(var(--base-hue) 50% 15%);
+  background: var(--fancy-button-face);
   will-change: transform;
   transform: translateY(-4px);
   transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);

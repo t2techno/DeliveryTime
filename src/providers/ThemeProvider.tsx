@@ -48,14 +48,27 @@ export const GlobalStyles = createGlobalStyle<{
 
     --base-hue: ${(p) => p.baseHue};
     --dark-mode-background: hsl(var(--base-hue) 40% 10%);
-    --light-mode-background: hsl(var(--base-hue) 40% 75%);
+    --light-mode-background: hsl(var(--base-hue) 40% 70%);
 
     --dark-mode-text-color: hsl(var(--base-hue), 6%, 84%);
     --light-mode-text-color: hsl(var(--base-hue), 6%, 5%);
 
-    --gray-one: hsl(${(p) => p.baseHue}, 18%, 20%);
-    --dark-button-norm: hsl(${(p) => p.baseHue + 130},50%,10%);
-    --light-button-norm:hsl(${(p) => p.baseHue + 90},50%,60%);
+    --dark-gray: hsl(${(p) => p.baseHue}, 18%, 20%);
+    --light-gray: hsl(${(p) => p.baseHue}, 18%, 90%);
+
+    --dark-button-edge: hsl(var(--base-hue) 50% 5%) 0%,
+      hsl(var(--base-hue) 50% 32%) 8%,
+      hsl(var(--base-hue) 50% 32%) 92%,
+      hsl(var(--base-hue) 50% 5%) 100%;
+
+    --light-button-edge: hsl(var(--base-hue) 50% 5%) 0%,
+      hsl(var(--base-hue) 50% 12%) 8%,
+      hsl(var(--base-hue) 50% 12%) 92%,
+      hsl(var(--base-hue) 50% 5%) 100%;
+    
+
+    --dark-button-face: hsl(var(--base-hue) 50% 15%);
+    --light-button-face: hsl(var(--base-hue) 50% 75%);
 
     --background-color: ${(p) =>
       p.isDark
@@ -65,6 +78,14 @@ export const GlobalStyles = createGlobalStyle<{
       p.isDark
         ? "var(--dark-mode-text-color)"
         : "var(--light-mode-text-color)"};
+
+    --background-gray: ${(p) =>
+      p.isDark ? "var(--dark-gray)" : "var(--light-gray)"};
+
+    --fancy-button-edge: ${(p) =>
+      p.isDark ? "var(--dark-button-edge)" : "var(--light-button-edge)"}; 
+    --fancy-button-face: ${(p) =>
+      p.isDark ? "var(--dark-button-face)" : "var(--light-button-face)"}; 
 
     --blue: ${(p) => (p.isDark ? "var(--dark-blue)" : "var(--light-blue)")};
 

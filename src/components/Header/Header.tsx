@@ -39,7 +39,7 @@ const Wrapper = styled.header`
   background-image: linear-gradient(
     90deg,
     var(--background-color) 0%,
-    var(--gray-one) 50%,
+    var(--background-gray) 50%,
     var(--background-color) 98%
   );
 `;
