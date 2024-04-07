@@ -68,7 +68,7 @@ const ReminderBox = ({
   return (
     <Wrapper>
       <SectionHeader>How long since...</SectionHeader>
-      <FlexWrapper>
+      <GridWrapper>
         <Reminder
           label="Water"
           warningColor="blue"
@@ -117,7 +117,7 @@ const ReminderBox = ({
             );
           }}
         />
-      </FlexWrapper>
+      </GridWrapper>
     </Wrapper>
   );
 };
@@ -129,11 +129,12 @@ const SectionHeader = styled.h3`
   margin-bottom: 16px;
 `;
 
-const FlexWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+const GridWrapper = styled.div`
+  display: grid;
   justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
 `;
 
 export default ReminderBox;

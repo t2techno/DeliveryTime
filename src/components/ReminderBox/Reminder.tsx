@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import FancyButton from "../FancyButton";
-import Icon from "../Icon";
+import BaseFancyButton from "../FancyButton";
+import { ChangingIcon } from "../Icon";
 import { generateTime } from "../../utilities/time-stuff";
 
 interface ReminderProps {
@@ -40,20 +40,38 @@ const Reminder: React.FC<ReminderProps> = ({
           }}
         />
         <InfoDisplay>
-          <IconWrapper>
-            <LabelIcon type={label} />
-            <WarnIcon
-              type={label}
-              $warncolor={warningColor}
-              $warnlevel={warnLevel}
-            />
-          </IconWrapper>
+          <ChangingIcon
+            type={label}
+            $warncolor={warningColor}
+            $warnlevel={warnLevel}
+          />
           <p>Time: {generateTime(timeSince)}</p>
           <p>Contractions: {contractionsSince}</p>
         </InfoDisplay>
       </InfoWrapper>
 
-      {/* <FancyButton>+1</FancyButton> */}
+      <ButtonRow>
+        <FancyButton>
+          <ButtonContent>
+            Skip{" "}
+            <ChangingIcon
+              type={label}
+              $warncolor={warningColor}
+              $warnlevel={warnLevel}
+            />
+          </ButtonContent>
+        </FancyButton>
+        <FancyButton>
+          <ButtonContent>
+            <p>+ 1</p>
+            <ChangingIcon
+              type={label}
+              $warncolor={warningColor}
+              $warnlevel={warnLevel}
+            />
+          </ButtonContent>
+        </FancyButton>
+      </ButtonRow>
     </Wrapper>
   );
 };
@@ -61,11 +79,10 @@ const Reminder: React.FC<ReminderProps> = ({
 const Wrapper = styled.div`
   background-color: var(--background-color);
   height: 100%;
-  width: 25%;
+  width: 100%;
 `;
 
 const InfoWrapper = styled.div`
-  width: 11.5rem;
   height: 140px;
   position: relative;
 `;
@@ -91,21 +108,23 @@ const WarningBackground = styled.div`
   scale: 1.1;
 `;
 
-const IconWrapper = styled.div`
-  position: relative;
-  height: 3rem;
-  width: 3rem;
-`;
-
-const LabelIcon = styled(Icon)`
-  position: absolute;
+const ButtonRow = styled.div`
   width: 100%;
-  height: 100%;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-around;
 `;
 
-const WarnIcon = styled(LabelIcon)<{ $warncolor: string; $warnlevel: number }>`
-  stroke: ${(p) => p.$warncolor};
-  opacity: ${(p) => p.$warnlevel};
+const FancyButton = styled(BaseFancyButton)`
+  margin-top: 16px;
+  width: 40%;
+`;
+
+const ButtonContent = styled.span`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default Reminder;
