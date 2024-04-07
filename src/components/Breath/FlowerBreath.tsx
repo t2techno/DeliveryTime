@@ -36,7 +36,6 @@ const SVGWrapper = styled.svg<{ $isbox: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  isolation: isolate;
   transform: scale(0.3);
   animation: ${(p) => (p.$isbox ? boxBreath : evenBreath)}
     ${(p) => (p.$isbox ? 4000 * 4 : 4000) + "ms"}
@@ -45,7 +44,13 @@ const SVGWrapper = styled.svg<{ $isbox: boolean }>`
 
 const Petal = styled.circle<{ $isbox: boolean }>`
   mix-blend-mode: screen;
-  fill: var(--background-color);
+  &:nth-of-type(even) {
+    fill: hsl(var(--base-hue) 100% 50% / 0.75);
+  }
+
+  &:nth-of-type(odd) {
+    fill: hsl(var(--opposite-hue) 100% 50% / 0.75);
+  }
 
   &:nth-of-type(1) {
     animation: ${expand("0px, 0px", "0px, -4px")}

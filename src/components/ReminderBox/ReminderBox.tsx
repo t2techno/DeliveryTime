@@ -73,7 +73,7 @@ const ReminderBox = ({
           label="Water"
           warningColor="blue"
           timeLimit={waterTime}
-          timeSince={lastWater}
+          timeSince={lastWater + waterTime}
           contractionLimit={4}
           contractionsSince={0}
           updateValue={() => {

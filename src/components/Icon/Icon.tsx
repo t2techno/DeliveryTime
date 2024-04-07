@@ -28,6 +28,10 @@ const Toilet = () => {
   );
 };
 
+const ChevronDown = () => {
+  return <polyline points="6 9 12 15 18 9"></polyline>;
+};
+
 interface IconProps {
   type: string;
   className?: string;
@@ -49,6 +53,10 @@ const Icon: React.FC<IconProps> = ({ type, className }) => {
       El = Toilet;
       break;
 
+    case "Open":
+      El = ChevronDown;
+      break;
+
     default:
       console.error("invalid icon");
   }
@@ -61,7 +69,7 @@ const Icon: React.FC<IconProps> = ({ type, className }) => {
       height="100%"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke="var(--text-color)"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -73,6 +81,7 @@ const Icon: React.FC<IconProps> = ({ type, className }) => {
 
 const Wrapper = styled.svg`
   height: 100%;
+  min-width: 42px;
 `;
 
 export default memo(Icon);

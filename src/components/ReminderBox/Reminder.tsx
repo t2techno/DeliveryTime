@@ -2,6 +2,7 @@ import styled from "styled-components";
 import BaseFancyButton from "../FancyButton";
 import { ChangingIcon } from "../Icon";
 import { generateTime } from "../../utilities/time-stuff";
+import { useState } from "react";
 
 interface ReminderProps {
   label: string;
@@ -24,6 +25,7 @@ const Reminder: React.FC<ReminderProps> = ({
   contractionsSince,
   updateValue,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   // timeLimit / contractionLimit for color
   const timeLevel = Math.min(timeSince / timeLimit, 1.0);
   console.log(`${label} time-level: ${timeLevel}`);
@@ -45,8 +47,24 @@ const Reminder: React.FC<ReminderProps> = ({
             $warncolor={warningColor}
             $warnlevel={warnLevel}
           />
-          <p>Time: {generateTime(timeSince)}</p>
-          <p>Contractions: {contractionsSince}</p>
+          {isOpen ? (
+            <InfoText>
+              <p>Time: {generateTime(timeSince)}</p>
+              <p>Contractions: {contractionsSince}</p>
+            </InfoText>
+          ) : undefined}
+          <OpenCloseButton
+            $isOpen={isOpen}
+            onClick={() => {
+              setIsOpen((s) => !s);
+            }}
+          >
+            <ChangingIcon
+              type={"Open"}
+              $warncolor={warningColor}
+              $warnlevel={warnLevel}
+            />
+          </OpenCloseButton>
         </InfoDisplay>
       </InfoWrapper>
 
@@ -63,7 +81,7 @@ const Reminder: React.FC<ReminderProps> = ({
         </FancyButton>
         <FancyButton>
           <ButtonContent>
-            <p>+ 1</p>
+            <p>+&nbsp;1</p>
             <ChangingIcon
               type={label}
               $warncolor={warningColor}
@@ -83,7 +101,7 @@ const Wrapper = styled.div`
 `;
 
 const InfoWrapper = styled.div`
-  height: 140px;
+  height: 100px;
   position: relative;
 `;
 
@@ -95,6 +113,17 @@ const InfoDisplay = styled.div`
   position: absolute;
   height: 100%;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+`;
+
+const OpenCloseButton = styled.button<{ $isOpen: boolean }>`
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  rotate: ${(p) => (p.$isOpen ? "0deg" : "180deg")};
+  transition: rotate 250ms;
 `;
 
 const WarningBackground = styled.div`
@@ -108,6 +137,8 @@ const WarningBackground = styled.div`
   scale: 1.1;
 `;
 
+const InfoText = styled.div``;
+
 const ButtonRow = styled.div`
   width: 100%;
   display: flex;
@@ -117,7 +148,7 @@ const ButtonRow = styled.div`
 
 const FancyButton = styled(BaseFancyButton)`
   margin-top: 16px;
-  width: 40%;
+  width: min(50%, 150px);
 `;
 
 const ButtonContent = styled.span`

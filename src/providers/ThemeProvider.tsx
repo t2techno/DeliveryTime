@@ -46,7 +46,8 @@ export const GlobalStyles = createGlobalStyle<{
 }>`
   :root {
 
-    --base-hue: ${(p) => p.baseHue};
+    --base-hue: ${(p) => p.baseHue}deg;
+    --opposite-hue: ${(p) => p.baseHue - 270};
     --dark-mode-background: hsl(var(--base-hue) 40% 10%);
     --light-mode-background: hsl(var(--base-hue) 40% 70%);
 
@@ -54,7 +55,7 @@ export const GlobalStyles = createGlobalStyle<{
     --light-mode-text-color: hsl(var(--base-hue), 6%, 5%);
 
     --dark-gray: hsl(${(p) => p.baseHue}, 18%, 20%);
-    --light-gray: hsl(${(p) => p.baseHue}, 18%, 90%);
+    --light-gray: hsl(${(p) => p.baseHue}, 28%, 80%);
 
     --dark-button-edge: hsl(var(--base-hue) 50% 5%) 0%,
       hsl(var(--base-hue) 50% 32%) 8%,
