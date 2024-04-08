@@ -2,7 +2,7 @@ import styled from "styled-components";
 import BaseFancyButton from "../FancyButton";
 import { ChangingIcon } from "../Icon";
 import { generateTime } from "../../utilities/time-stuff";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface ReminderProps {
   label: string;
@@ -26,11 +26,18 @@ const Reminder: React.FC<ReminderProps> = ({
   updateValue,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const limitRoll = useRef(0);
+
+  const ignoreReminder = () => {
+    console.log("ignoring " + label);
+    limitRoll.current += timeSince;
+  };
+
   // timeLimit / contractionLimit for color
-  const timeLevel = Math.min(timeSince / timeLimit, 1.0);
-  console.log(`${label} time-level: ${timeLevel}`);
+  const timeLevel = Math.min((timeSince + limitRoll.current) / timeLimit, 1.0);
   const contractionLevel = Math.min(contractionsSince / contractionLimit, 1.0);
   const warnLevel = Math.max(timeLevel, contractionLevel);
+
   return (
     <Wrapper className={className}>
       <InfoWrapper>
@@ -69,7 +76,7 @@ const Reminder: React.FC<ReminderProps> = ({
       </InfoWrapper>
 
       <ButtonRow>
-        <FancyButton>
+        <FancyButton onClick={() => ignoreReminder()}>
           <ButtonContent>
             Skip{" "}
             <ChangingIcon
@@ -79,7 +86,11 @@ const Reminder: React.FC<ReminderProps> = ({
             />
           </ButtonContent>
         </FancyButton>
-        <FancyButton>
+        <FancyButton
+          onClick={() => {
+            updateValue();
+          }}
+        >
           <ButtonContent>
             <p>+&nbsp;1</p>
             <ChangingIcon
