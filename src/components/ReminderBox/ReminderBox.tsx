@@ -1,11 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
-
-interface HistoryItem {
-  time: number;
-  contraction: number;
-}
+import { ReminderContext } from "../../providers/ReminderProvider";
 
 // ToDo: option medicine box with more specific options
 const ReminderBox = ({
@@ -25,42 +21,17 @@ const ReminderBox = ({
       toiletTime: 1.5 * hour,
     };
   }, []); // in ms
+  const { lastWater, lastFood, lastToilet, addReminderItem } =
+    useContext(ReminderContext);
 
-  const [waterHistory, setWaterHistory] = useState<Array<HistoryItem>>([]);
-  let lastWater = elapsedTime;
-  if (waterHistory.length > 0) {
-    lastWater -= waterHistory[waterHistory.length - 1]?.time;
-  }
-
-  const [foodHistory, setFoodHistory] = useState<Array<HistoryItem>>([]);
-  let lastFood = elapsedTime;
-  if (foodHistory.length > 0) {
-    lastFood -= foodHistory[foodHistory.length - 1]?.time;
-  }
-
-  const [toiletHistory, setToiletHistory] = useState<Array<HistoryItem>>([]);
-
-  let lastToilet = elapsedTime;
-  if (toiletHistory.length > 0) {
-    lastToilet -= toiletHistory[toiletHistory.length - 1]?.time;
-  }
+  const lastWaterTime = elapsedTime - lastWater.elapsedTime;
+  const lastFoodTime = elapsedTime - lastFood.elapsedTime;
+  const lastToiletTime = elapsedTime - lastToilet.elapsedTime;
 
   const updateHistory = React.useCallback(
-    (
-      label: string,
-      time: number,
-      contraction: number,
-      setter: React.Dispatch<React.SetStateAction<HistoryItem[]>>
-    ) => {
+    (label: string, time: number, contraction: number) => {
       console.log(`timer ${time} - contraction ${contraction}`);
-      setter((state) => {
-        if (state.length > 0) {
-          console.log(
-            `updating ${label} - ${state[state.length - 1]?.time + 1}`
-          );
-        }
-        return [...state, { time, contraction }];
-      });
+      addReminderItem(label, time, contraction);
     },
     []
   );
@@ -73,48 +44,33 @@ const ReminderBox = ({
           label="Water"
           warningColor="var(--blue)"
           timeLimit={waterTime}
-          timeSince={lastWater + waterTime}
+          timeSince={lastWaterTime}
           contractionLimit={4}
           contractionsSince={0}
           updateValue={() => {
-            updateHistory(
-              "Water",
-              elapsedTime,
-              elapsedContractions,
-              setWaterHistory
-            );
+            updateHistory("Water", elapsedTime, elapsedContractions);
           }}
         />
         <Reminder
           label="Food"
           warningColor="var(--red)"
           timeLimit={foodTime}
-          timeSince={lastFood + foodTime}
+          timeSince={lastFoodTime}
           contractionLimit={50}
           contractionsSince={0}
           updateValue={() => {
-            updateHistory(
-              "Food",
-              elapsedTime,
-              elapsedContractions,
-              setFoodHistory
-            );
+            updateHistory("Food", elapsedTime, elapsedContractions);
           }}
         />
         <Reminder
           label="Toilet"
           warningColor="var(--gold)"
           timeLimit={toiletTime}
-          timeSince={lastToilet + toiletTime}
+          timeSince={lastToiletTime}
           contractionLimit={35}
           contractionsSince={0}
           updateValue={() => {
-            updateHistory(
-              "Toilet",
-              elapsedTime,
-              elapsedContractions,
-              setToiletHistory
-            );
+            updateHistory("Toilet", elapsedTime, elapsedContractions);
           }}
         />
       </GridWrapper>
