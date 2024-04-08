@@ -22,7 +22,7 @@ interface ContractionItem {
 const INIT_CONTEXT_VAL: ContractionOut = {
   hasStarted: false,
   isContracting: false,
-  toggleContractions: () => console.log("empty Contraction toggle"),
+  toggleContractions: () => console.log("empty contraction toggle"),
   numContractions: 0,
   contractionStartTime: -1,
 };
@@ -56,7 +56,7 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
     });
   }, []);
 
-  const valueOut = useMemo(() => {
+  const value = useMemo(() => {
     return {
       hasStarted,
       isContracting,
@@ -67,7 +67,7 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   }, [hasStarted, isContracting, numContractions, contractionStartTime]);
 
   return (
-    <ContractionContext.Provider value={valueOut}>
+    <ContractionContext.Provider value={value}>
       {children}
     </ContractionContext.Provider>
   );
