@@ -44,9 +44,9 @@ const ToggleGroup: React.FC<PropsWithChildren<ToggleGroupProps>> = ({
 
 const ToggleGroupWrapper = styled(BaseToggleGroup.Root)`
   display: inline-flex;
-  background-color: var(--mauve-6);
+  background-color: white;
   border-radius: 4px;
-  box-shadow: 0 2px 10px var(--black-a7);
+  box-shadow: 0 2px 10px var(--background-gray);
 `;
 
 const ToggleItem = styled(BaseToggleGroup.Item)`

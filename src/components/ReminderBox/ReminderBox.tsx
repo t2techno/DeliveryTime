@@ -71,7 +71,7 @@ const ReminderBox = ({
       <GridWrapper>
         <Reminder
           label="Water"
-          warningColor="blue"
+          warningColor="var(--blue)"
           timeLimit={waterTime}
           timeSince={lastWater + waterTime}
           contractionLimit={4}
@@ -87,9 +87,9 @@ const ReminderBox = ({
         />
         <Reminder
           label="Food"
-          warningColor="red"
+          warningColor="var(--red)"
           timeLimit={foodTime}
-          timeSince={lastFood}
+          timeSince={lastFood + foodTime}
           contractionLimit={50}
           contractionsSince={0}
           updateValue={() => {
@@ -103,9 +103,9 @@ const ReminderBox = ({
         />
         <Reminder
           label="Toilet"
-          warningColor="gold"
+          warningColor="var(--gold)"
           timeLimit={toiletTime}
-          timeSince={lastToilet}
+          timeSince={lastToilet + toiletTime}
           contractionLimit={35}
           contractionsSince={0}
           updateValue={() => {

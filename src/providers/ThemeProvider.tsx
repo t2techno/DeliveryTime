@@ -57,6 +57,15 @@ export const GlobalStyles = createGlobalStyle<{
     --dark-gray: hsl(${(p) => p.baseHue}, 18%, 20%);
     --light-gray: hsl(${(p) => p.baseHue}, 28%, 80%);
 
+    --dark-blue: hsl(195 70% 30%);
+    --light-blue: hsl(195 70% 80%);
+
+    --dark-red: hsl(350, 80%, 30%);
+    --light-red: hsl(350, 70%, 55%);
+
+    --dark-gold: hsl(50, 100%, 40%);
+    --light-gold: hsl(50, 70%, 80%);
+
     --dark-button-edge: hsl(var(--base-hue) 50% 5%) 0%,
       hsl(var(--base-hue) 50% 32%) 8%,
       hsl(var(--base-hue) 50% 32%) 92%,
@@ -88,7 +97,9 @@ export const GlobalStyles = createGlobalStyle<{
     --fancy-button-face: ${(p) =>
       p.isDark ? "var(--dark-button-face)" : "var(--light-button-face)"}; 
 
-    --blue: ${(p) => (p.isDark ? "var(--dark-blue)" : "var(--light-blue)")};
+    --blue: ${(p) => (p.isDark ? "var(--light-blue)" : "var(--dark-blue)")};
+    --red: ${(p) => (p.isDark ? "var(--light-red)" : "var(--dark-red)")};
+    --gold: ${(p) => (p.isDark ? "var(--light-gold)" : "var(--dark-gold)")};
 
   }
 `;
