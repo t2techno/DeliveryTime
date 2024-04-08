@@ -58,7 +58,7 @@ const Body: React.FC<ColorProp> = ({ color }) => {
   return (
     <svg viewBox="0 0 100 15">
       <BodyPath d={bodyPath} fill={color} stroke={color} />
-      <HighlightPath d={legPath} stroke="var(--text-color)" />
+      <HighlightPath d={legPath} stroke={color} />
     </svg>
   );
 };
@@ -75,6 +75,6 @@ const HighlightPath = styled.path`
   fill: none;
   stroke-width: 1;
   opacity: 0.05;
-  filter: blur(0.5px);
+  filter: blur(0.25px);
 `;
 export { Body };

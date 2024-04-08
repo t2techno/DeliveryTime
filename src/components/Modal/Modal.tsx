@@ -6,7 +6,7 @@ import { XCircle } from "react-feather";
 
 interface ModalProps {
   title: string;
-  description: string;
+  description?: string;
   handleOpen: () => void;
   handleClose: () => void;
 }
@@ -103,7 +103,6 @@ const Content = styled(Dialog.Content)`
 
 const Title = styled(Dialog.Title)`
   text-align: center;
-  margin-top: -8px;
   margin-bottom: 16px;
 `;
 

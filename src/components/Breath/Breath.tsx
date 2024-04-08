@@ -41,7 +41,6 @@ const Breath = () => {
   return (
     <Modal
       title={isBoxBreath ? "Box Breath" : "Even Breath"}
-      description="For helping you keep calm"
       handleOpen={handleOpen}
       handleClose={handleClose}
     >
@@ -85,12 +84,12 @@ const Count = styled.div`
 
 const BreathToggle = styled(ToggleGroup)`
   position: absolute;
-  top: 5%;
+  bottom: 10%;
   left: 5%;
 `;
 const CircleToggle = styled(ToggleGroup)`
   position: absolute;
-  top: 5%;
+  bottom: 10%;
   right: 5%;
 `;
 export default Breath;
