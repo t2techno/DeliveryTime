@@ -26,6 +26,7 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const addHistoryItem = useCallback((label: string, time: number) => {
+    console.log(`${label} - ${time} - ${new Date().toLocaleString()}`);
     setHistory((h) => [...h, { label, time }]);
   }, []);
 

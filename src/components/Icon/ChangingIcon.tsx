@@ -18,7 +18,7 @@ export const ChangingIcon: React.FC<ChangingIconProps> = ({
   return (
     <IconWrapper className={className}>
       <LabelIcon type={type} />
-      <WarnIcon type={type} $warncolor={$warncolor} $warnlevel={$warnlevel} />
+      <LabelIcon type={type} stroke={$warncolor} opacity={$warnlevel} />
     </IconWrapper>
   );
 };
@@ -33,11 +33,6 @@ const LabelIcon = styled(Icon)`
   position: absolute;
   width: 100%;
   height: 100%;
-`;
-
-const WarnIcon = styled(LabelIcon)<{ $warncolor: string; $warnlevel: number }>`
-  stroke:  ${(p) => p.$warncolor};
-  opacity: ${(p) => p.$warnlevel};
 `;
 
 export default ChangingIcon;

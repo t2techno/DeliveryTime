@@ -32,12 +32,14 @@ const ChevronDown = () => {
   return <polyline points="6 9 12 15 18 9"></polyline>;
 };
 
-interface IconProps {
+interface Props {
   type: string;
   className?: string;
 }
 
-const Icon: React.FC<IconProps> = ({ type, className }) => {
+type IconProps = React.ComponentProps<"svg"> & Props;
+
+const Icon: React.FC<IconProps> = ({ type, className, ...deferred }) => {
   let El = () => <p>{type}</p>;
 
   switch (type) {
@@ -73,6 +75,7 @@ const Icon: React.FC<IconProps> = ({ type, className }) => {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      {...deferred}
     >
       <El />
     </Wrapper>
