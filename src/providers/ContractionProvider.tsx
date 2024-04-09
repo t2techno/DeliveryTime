@@ -2,11 +2,12 @@ import {
   PropsWithChildren,
   createContext,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 
-type ContractionOut = {
+type ValueOut = {
   hasStarted: boolean;
   isContracting: boolean;
   toggleContractions: (time: number) => void;
@@ -19,7 +20,7 @@ interface ContractionItem {
   endTime: number;
 }
 
-const INIT_CONTEXT_VAL: ContractionOut = {
+const INIT_VALUE: ValueOut = {
   hasStarted: false,
   isContracting: false,
   toggleContractions: () => console.log("empty contraction toggle"),
@@ -27,7 +28,7 @@ const INIT_CONTEXT_VAL: ContractionOut = {
   contractionStartTime: -1,
 };
 
-const ContractionContext = createContext<ContractionOut>(INIT_CONTEXT_VAL);
+const ContractionContext = createContext<ValueOut>(INIT_VALUE);
 
 const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [hasStarted, setHasStarted] = useState(false);
@@ -37,6 +38,18 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [contractionHistory, setContractionHistory] = useState<
     ContractionItem[]
   >([]);
+
+  // load/save on open
+  useEffect(() => {
+    const KEY = "contractions";
+    const savedState = window.localStorage.getItem(KEY);
+    if (savedState != null) {
+      setContractionHistory(JSON.parse(savedState));
+    }
+    return () => {
+      window.localStorage.setItem(KEY, JSON.stringify(contractionHistory));
+    };
+  }, []);
 
   const toggleContractions = useCallback((time: number) => {
     setHasStarted(true);

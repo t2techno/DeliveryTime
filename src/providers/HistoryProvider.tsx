@@ -2,6 +2,7 @@ import React, {
   PropsWithChildren,
   createContext,
   useCallback,
+  useEffect,
   useState,
 } from "react";
 import ContractionProvider from "./ContractionProvider";
@@ -23,7 +24,16 @@ const INIT_VALUE: ValueOut = {
 export const HistoryContext = createContext<ValueOut>(INIT_VALUE);
 
 const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const KEY = "history";
+  const [history, setHistory] = useState<HistoryItem[]>(() => {
+    const savedHistory = window.localStorage.getItem(KEY);
+    return savedHistory != null ? JSON.parse(savedHistory) : [];
+  });
+
+  // save history to local storage
+  useEffect(() => {
+    window.localStorage.setItem(KEY, JSON.stringify(history));
+  }, [history]);
 
   const addHistoryItem = useCallback((label: string, time: number) => {
     console.log(`${label} - ${time} - ${new Date().toLocaleString()}`);

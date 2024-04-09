@@ -4,9 +4,15 @@ type TimerReturn = [number, () => void, () => void, Date];
 
 export const INIT_TIME = new Date(0);
 
-const useTimer = (startImmediately = false): TimerReturn => {
-  const [time, setTime] = React.useState(0);
-  const [isRunning, setIsRunning] = React.useState(startImmediately);
+const useTimer = (): TimerReturn => {
+  const KEY = "main-timer";
+  const [time, setTime] = React.useState(() => {
+    const savedTime = window.localStorage.getItem(KEY);
+    return savedTime != null
+      ? Math.round(new Date().getTime() - new Date(savedTime).getTime() / 1000)
+      : 0;
+  });
+  const [isRunning, setIsRunning] = React.useState(time != 0);
   const [startTime, setStartTime] = React.useState<Date>(INIT_TIME);
 
   React.useEffect(() => {
@@ -17,9 +23,11 @@ const useTimer = (startImmediately = false): TimerReturn => {
     const timerId = window.setInterval(() => {
       setTime((state) => state + 1);
     }, 1000);
+    window.localStorage.setItem(KEY, new Date().getTime().toString());
 
     return () => {
       window.clearInterval(timerId);
+      window.localStorage.removeItem(KEY);
     };
   }, [isRunning]);
 

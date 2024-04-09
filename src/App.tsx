@@ -1,4 +1,3 @@
-import "./App.css";
 import styled from "styled-components";
 import BaseHeader from "./components/Header";
 import BaseLaborBox from "./components/LaborBox";

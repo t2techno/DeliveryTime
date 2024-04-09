@@ -3,6 +3,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -38,10 +39,39 @@ export const ReminderContext = createContext<ValueOut>(INIT_VALUE);
 const ReminderProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { addHistoryItem } = useContext(HistoryContext);
 
-  const [water, setWater] = useState<ReminderItem[]>([]);
-  const [food, setFood] = useState<ReminderItem[]>([]);
-  const [toilet, setToilet] = useState<ReminderItem[]>([]);
+  const wKEY = "water";
+  const [water, setWater] = useState<ReminderItem[]>(() => {
+    const savedWater = window.localStorage.getItem(wKEY);
+    return savedWater != null ? JSON.parse(savedWater) : [];
+  });
 
+  const fKEY = "food";
+  const [food, setFood] = useState<ReminderItem[]>(() => {
+    const savedFood = window.localStorage.getItem(fKEY);
+    return savedFood != null ? JSON.parse(savedFood) : [];
+  });
+
+  const tKEY = "toilet";
+  const [toilet, setToilet] = useState<ReminderItem[]>(() => {
+    const savedToilet = window.localStorage.getItem(tKEY);
+    return savedToilet != null ? JSON.parse(savedToilet) : [];
+  });
+
+  // save water
+  useEffect(() => {
+    window.localStorage.setItem(wKEY, JSON.stringify(water));
+  }, [water]);
+
+  // save food
+  useEffect(() => {
+    window.localStorage.setItem(fKEY, JSON.stringify(food));
+  }, [food]);
+
+  // save toilet
+  useEffect(() => {
+    window.localStorage.setItem(tKEY, JSON.stringify(toilet));
+  }, [toilet]);
+  
   const addReminderItem = useCallback(
     (label: string, time: number, contraction: number) => {
       // history log
