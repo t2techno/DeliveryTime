@@ -6,20 +6,14 @@ import useTimer from "./hooks/use-timer";
 import { generateTime } from "./utilities/time-stuff";
 
 function App() {
-  const [time, toggleTimer, resetTimer, startTime] = useTimer();
-  const hasStarted = time > 0;
+  const { time, startTime } = useTimer();
   const timeString = generateTime(time);
   return (
     <Wrapper>
       <MaxWidthWrapper>
         <Header />
-        {hasStarted && <button onClick={resetTimer}>restart</button>}
-        <LaborBox
-          elapsedTime={timeString}
-          toggleTimer={toggleTimer}
-          startTime={startTime}
-        />
-        <ReminderBox elapsedTime={time} elapsedContractions={0} />
+        <LaborBox elapsedTime={timeString} startTime={startTime} />
+        <ReminderBox elapsedTime={time} />
       </MaxWidthWrapper>
     </Wrapper>
   );

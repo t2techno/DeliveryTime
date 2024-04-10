@@ -1,10 +1,9 @@
 import React from "react";
 
-type TimerReturn = [number, () => void, () => void, Date];
+interface ValueOut {time: number, toggleTimer: () => void, resetTimer: () => void, startTime: Date};
 
 export const INIT_TIME = new Date(0);
-
-const useTimer = (): TimerReturn => {
+const useTimer = (): ValueOut => {
   const KEY = "main-timer";
   const [time, setTime] = React.useState(() => {
     const savedTime = window.localStorage.getItem(KEY);
@@ -48,7 +47,7 @@ const useTimer = (): TimerReturn => {
     setIsRunning(false);
   }, []);
 
-  return [time, toggleTimer, resetTimer, startTime];
+  return {time, toggleTimer, resetTimer, startTime};
 };
 
 export default useTimer;
