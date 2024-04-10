@@ -2,15 +2,10 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
 import { ReminderContext } from "../../providers/ReminderProvider";
+import { ContractionContext } from "../../providers/ContractionProvider";
 
 // ToDo: option medicine box with more specific options
-const ReminderBox = ({
-  elapsedTime,
-  elapsedContractions,
-}: {
-  elapsedTime: number;
-  elapsedContractions: number;
-}) => {
+const ReminderBox = ({ elapsedTime }: { elapsedTime: number }) => {
   const { waterTime, foodTime, toiletTime } = React.useMemo(() => {
     const minute = 60;
     const hour = minute * 60;
@@ -21,12 +16,19 @@ const ReminderBox = ({
       toiletTime: 1.5 * hour,
     };
   }, []); // in ms
+
+  const { numContractions } = useContext(ContractionContext);
   const { lastWater, lastFood, lastToilet, addReminderItem } =
     useContext(ReminderContext);
 
-  const lastWaterTime = elapsedTime - lastWater.elapsedTime;
-  const lastFoodTime = elapsedTime - lastFood.elapsedTime;
-  const lastToiletTime = elapsedTime - lastToilet.elapsedTime;
+  const lastWaterTime = Math.max(elapsedTime - lastWater.elapsedTime, 0);
+  const lastWaterContract = numContractions - lastWater.contraction;
+
+  const lastFoodTime = Math.max(elapsedTime - lastFood.elapsedTime, 0);
+  const lastFoodContract = numContractions - lastFood.contraction;
+
+  const lastToiletTime = Math.max(elapsedTime - lastToilet.elapsedTime, 0);
+  const lastToiletContract = numContractions - lastToilet.contraction;
 
   const updateHistory = React.useCallback(
     (label: string, time: number, contraction: number) => {
@@ -46,9 +48,9 @@ const ReminderBox = ({
           timeLimit={waterTime}
           timeSince={lastWaterTime}
           contractionLimit={4}
-          contractionsSince={0}
+          contractionsSince={lastWaterContract}
           updateValue={() => {
-            updateHistory("Water", elapsedTime, elapsedContractions);
+            updateHistory("Water", elapsedTime, numContractions);
           }}
         />
         <Reminder
@@ -57,9 +59,9 @@ const ReminderBox = ({
           timeLimit={foodTime}
           timeSince={lastFoodTime}
           contractionLimit={50}
-          contractionsSince={0}
+          contractionsSince={lastFoodContract}
           updateValue={() => {
-            updateHistory("Food", elapsedTime, elapsedContractions);
+            updateHistory("Food", elapsedTime, numContractions);
           }}
         />
         <Reminder
@@ -68,9 +70,9 @@ const ReminderBox = ({
           timeLimit={toiletTime}
           timeSince={lastToiletTime}
           contractionLimit={35}
-          contractionsSince={0}
+          contractionsSince={lastToiletContract}
           updateValue={() => {
-            updateHistory("Toilet", elapsedTime, elapsedContractions);
+            updateHistory("Toilet", elapsedTime, numContractions);
           }}
         />
       </GridWrapper>

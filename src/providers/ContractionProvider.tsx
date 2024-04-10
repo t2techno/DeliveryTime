@@ -28,7 +28,7 @@ const INIT_VALUE: ValueOut = {
   contractionStartTime: -1,
 };
 
-const ContractionContext = createContext<ValueOut>(INIT_VALUE);
+export const ContractionContext = createContext<ValueOut>(INIT_VALUE);
 
 const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [hasStarted, setHasStarted] = useState(false);

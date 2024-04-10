@@ -1,28 +1,49 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import styled from "styled-components";
-import { INIT_TIME } from "../../hooks/use-timer";
 import FancyButton from "../FancyButton";
+import { ContractionContext } from "../../providers/ContractionProvider";
 
 interface LaborBoxProps {
   className?: string;
   elapsedTime: string;
-  toggleTimer: () => void;
   startTime: Date;
 }
 
 const LaborBox: React.FC<LaborBoxProps> = ({
   className,
   elapsedTime,
-  toggleTimer,
   startTime,
 }) => {
+  const {
+    hasStarted,
+    isContracting,
+    toggleContractions,
+    numContractions,
+    contractionStartTime,
+  } = useContext(ContractionContext);
+
+  let buttonText = "Start First Contraction";
+  if (hasStarted) {
+    buttonText = isContracting ? "Stop Contraction" : "Start Contraction";
+  }
   return (
     <Wrapper className={className}>
-      {startTime.getTime() == INIT_TIME.getTime() ? (
-        <NotStarted toggleTimer={toggleTimer} />
-      ) : (
-        <Started elapsedTime={elapsedTime} startTime={startTime} />
-      )}
+      <FlexWrapper>
+        <LeftWrapper>
+          <InfoLabel>Labor</InfoLabel>
+          <Info>Began: {startTime.toLocaleTimeString()}</Info>
+          <Info>Length: {elapsedTime}</Info>
+        </LeftWrapper>
+        <MainButton>{buttonText}</MainButton>
+        <RightWrapper>
+          <ContractionWrapper>
+            <InfoLabel>Contractions</InfoLabel>
+            <Info>Number of: {numContractions}</Info>
+            <Info>Time Between: {0}</Info>
+            <Info>Length of: {0}</Info>
+          </ContractionWrapper>
+        </RightWrapper>
+      </FlexWrapper>
     </Wrapper>
   );
 };
@@ -33,43 +54,7 @@ const Wrapper = styled.div`
   padding: 16px 32px;
 `;
 
-const NotStarted = ({ toggleTimer }: { toggleTimer: () => void }) => {
-  return (
-    <>
-      <p>Labor has not yet begun...</p>
-      <button onClick={toggleTimer}>Start Contraction</button>
-    </>
-  );
-};
-
-const Started = ({
-  elapsedTime,
-  startTime,
-}: {
-  elapsedTime: string;
-  startTime: Date;
-}) => {
-  return (
-    <RunningWrapper>
-      <LaborSection>
-        <InfoLabel>Labor</InfoLabel>
-        <Info>Began: {startTime.toLocaleTimeString()}</Info>
-        <Info>Length: {elapsedTime}</Info>
-      </LaborSection>
-      <ContractionButton>{"Start Contraction"}</ContractionButton>
-      <ContractionSection>
-        <ContractWrapper>
-          <InfoLabel>Contractions</InfoLabel>
-          <Info>Number of: {0}</Info>
-          <Info>Time Between: {0}</Info>
-          <Info>Length of: {0}</Info>
-        </ContractWrapper>
-      </ContractionSection>
-    </RunningWrapper>
-  );
-};
-
-const RunningWrapper = styled.div`
+const FlexWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -81,11 +66,16 @@ const RunningWrapper = styled.div`
   }
 `;
 
-const RunningInfoSection = styled.div`
+const LeftWrapper = styled.div`
   align-self: baseline;
   padding: 16px 32px;
   flex: 1;
   height: 100%;
+`;
+
+const RightWrapper = styled(LeftWrapper)`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 const InfoLabel = styled.h3`
@@ -97,17 +87,10 @@ const Info = styled.p`
   white-space: nowrap;
 `;
 
-const LaborSection = styled(RunningInfoSection)``;
-
-const ContractionButton = styled(FancyButton)`
+const MainButton = styled(FancyButton)`
   flex: 1;
 `;
 
-const ContractionSection = styled(RunningInfoSection)`
-  display: flex;
-  justify-content: flex-end;
-`;
-
-const ContractWrapper = styled.div``;
+const ContractionWrapper = styled.div``;
 
 export default LaborBox;
