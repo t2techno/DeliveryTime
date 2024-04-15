@@ -1,39 +1,39 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
-import { ReminderContext } from "../../providers/ReminderProvider";
+import { HistoryContext, HistoryType } from "../../providers/HistoryProvider";
 import { ContractionContext } from "../../providers/ContractionProvider";
 
 // ToDo: option medicine box with more specific options
 const ReminderBox = ({ elapsedTime }: { elapsedTime: number }) => {
-  const { waterTime, foodTime, toiletTime } = React.useMemo(() => {
+  const { drinkTime, foodTime, toiletTime } = React.useMemo(() => {
     const minute = 60;
     const hour = minute * 60;
 
     return {
-      waterTime: 15 * minute,
+      drinkTime: 15 * minute,
       foodTime: 2 * hour,
       toiletTime: 1.5 * hour,
     };
   }, []); // in ms
 
   const { numContractions } = useContext(ContractionContext);
-  const { lastWater, lastFood, lastToilet, addReminderItem } =
-    useContext(ReminderContext);
+  const { addHistoryItem, lastDrink, lastFood, lastToilet } =
+    useContext(HistoryContext);
 
-  const lastWaterTime = Math.max(elapsedTime - lastWater.elapsedTime, 0);
-  const lastWaterContract = numContractions - lastWater.contraction;
+  const lastDrinkTime = Math.max(elapsedTime - lastDrink.time, 0);
+  const lastDrinkContract = numContractions - lastDrink.contraction;
 
-  const lastFoodTime = Math.max(elapsedTime - lastFood.elapsedTime, 0);
+  const lastFoodTime = Math.max(elapsedTime - lastFood.time, 0);
   const lastFoodContract = numContractions - lastFood.contraction;
 
-  const lastToiletTime = Math.max(elapsedTime - lastToilet.elapsedTime, 0);
+  const lastToiletTime = Math.max(elapsedTime - lastToilet.time, 0);
   const lastToiletContract = numContractions - lastToilet.contraction;
 
   const updateHistory = React.useCallback(
     (label: string, time: number, contraction: number) => {
       console.log(`timer ${time} - contraction ${contraction}`);
-      addReminderItem(label, time, contraction);
+      addHistoryItem(label as HistoryType, time, contraction);
     },
     []
   );
@@ -43,14 +43,14 @@ const ReminderBox = ({ elapsedTime }: { elapsedTime: number }) => {
       <SectionHeader>How long since...</SectionHeader>
       <GridWrapper>
         <Reminder
-          label="Water"
+          label="Drink"
           warningColor="var(--blue)"
-          timeLimit={waterTime}
-          timeSince={lastWaterTime}
+          timeLimit={drinkTime}
+          timeSince={lastDrinkTime}
           contractionLimit={4}
-          contractionsSince={lastWaterContract}
+          contractionsSince={lastDrinkContract}
           updateValue={() => {
-            updateHistory("Water", elapsedTime, numContractions);
+            updateHistory("Drink", elapsedTime, numContractions);
           }}
         />
         <Reminder
