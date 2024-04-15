@@ -1,6 +1,11 @@
 import React from "react";
 
-interface ValueOut {time: number, toggleTimer: () => void, resetTimer: () => void, startTime: Date};
+interface ValueOut {
+  time: number;
+  toggleTimer: () => void;
+  resetTimer: () => void;
+  startTime: Date;
+}
 
 export const INIT_TIME = new Date(0);
 const useTimer = (): ValueOut => {
@@ -15,13 +20,17 @@ const useTimer = (): ValueOut => {
   const [startTime, setStartTime] = React.useState<Date>(INIT_TIME);
 
   React.useEffect(() => {
-    if (!isRunning) {
+    if (!isRunning && time != 0) {
+      // very first run, pulling start time from local storage
+      setIsRunning(true);
+    } else if (!isRunning) {
       return;
     }
 
     const timerId = window.setInterval(() => {
       setTime((state) => state + 1);
     }, 1000);
+    console.log("setting " + KEY + new Date().getTime().toString());
     window.localStorage.setItem(KEY, new Date().getTime().toString());
 
     return () => {
@@ -47,7 +56,7 @@ const useTimer = (): ValueOut => {
     setIsRunning(false);
   }, []);
 
-  return {time, toggleTimer, resetTimer, startTime};
+  return { time, toggleTimer, resetTimer, startTime };
 };
 
 export default useTimer;

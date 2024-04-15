@@ -1,18 +1,21 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import FancyButton from "../FancyButton";
 import { ContractionContext } from "../../providers/ContractionProvider";
+import { generateTime } from "../../utilities/time-stuff";
 
 interface LaborBoxProps {
   className?: string;
-  elapsedTime: string;
+  elapsedTime: number;
   startTime: Date;
+  startTimer: () => void;
 }
 
 const LaborBox: React.FC<LaborBoxProps> = ({
   className,
   elapsedTime,
   startTime,
+  startTimer
 }) => {
   const {
     hasStarted,
@@ -29,20 +32,33 @@ const LaborBox: React.FC<LaborBoxProps> = ({
   return (
     <Wrapper className={className}>
       <FlexWrapper>
-        <LeftWrapper>
-          <InfoLabel>Labor</InfoLabel>
-          <Info>Began: {startTime.toLocaleTimeString()}</Info>
-          <Info>Length: {elapsedTime}</Info>
-        </LeftWrapper>
-        <MainButton>{buttonText}</MainButton>
-        <RightWrapper>
-          <ContractionWrapper>
-            <InfoLabel>Contractions</InfoLabel>
-            <Info>Number of: {numContractions}</Info>
-            <Info>Time Between: {0}</Info>
-            <Info>Length of: {0}</Info>
-          </ContractionWrapper>
-        </RightWrapper>
+        {hasStarted && (
+          <LeftWrapper>
+            <InfoLabel>Labor</InfoLabel>
+            <Info>Began: {startTime.toLocaleTimeString()}</Info>
+            <Info>Length: {generateTime(elapsedTime)}</Info>
+          </LeftWrapper>
+        )}
+        <MainButton
+          onClick={() => {
+            if(!hasStarted){
+              startTimer();
+            }
+            toggleContractions(elapsedTime);
+          }}
+        >
+          {buttonText}
+        </MainButton>
+        {hasStarted && (
+          <RightWrapper>
+            <ContractionWrapper>
+              <InfoLabel>Contractions</InfoLabel>
+              <Info>Number of: {numContractions}</Info>
+              <Info>Time Between: {0}</Info>
+              <Info>Length of: {0}</Info>
+            </ContractionWrapper>
+          </RightWrapper>
+        )}
       </FlexWrapper>
     </Wrapper>
   );
@@ -51,7 +67,7 @@ const LaborBox: React.FC<LaborBoxProps> = ({
 const Wrapper = styled.div`
   border: solid var(--text-color) 2px;
   border-radius: 8px;
-  padding: 16px 32px;
+  padding-top: 32px;
 `;
 
 const FlexWrapper = styled.div`
@@ -89,6 +105,7 @@ const Info = styled.p`
 
 const MainButton = styled(FancyButton)`
   flex: 1;
+  max-width: 250px;
 `;
 
 const ContractionWrapper = styled.div``;

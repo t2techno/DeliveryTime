@@ -11,7 +11,7 @@ const Breath = () => {
   const [isBoxBreath, setIsBoxBreath] = useState(false);
   const [isFlower, setIsFlower] = useState(true);
 
-  const [time, toggleTimer, resetTimer, _] = useTimer();
+  const {time, toggleTimer, resetTimer} = useTimer();
 
   const handleOpen = useCallback(() => {
     toggleTimer();

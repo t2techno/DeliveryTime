@@ -3,16 +3,14 @@ import BaseHeader from "./components/Header";
 import BaseLaborBox from "./components/LaborBox";
 import ReminderBox from "./components/ReminderBox";
 import useTimer from "./hooks/use-timer";
-import { generateTime } from "./utilities/time-stuff";
 
 function App() {
-  const { time, startTime } = useTimer();
-  const timeString = generateTime(time);
+  const { time, toggleTimer, resetTimer, startTime } = useTimer();
   return (
     <Wrapper>
       <MaxWidthWrapper>
         <Header />
-        <LaborBox elapsedTime={timeString} startTime={startTime} />
+        <LaborBox elapsedTime={time} startTime={startTime} startTimer={toggleTimer}/>
         <ReminderBox elapsedTime={time} />
       </MaxWidthWrapper>
     </Wrapper>
