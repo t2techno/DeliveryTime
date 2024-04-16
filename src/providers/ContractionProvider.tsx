@@ -2,82 +2,79 @@ import {
   PropsWithChildren,
   createContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
+import { HistoryContext } from "./HistoryProvider";
 
-type ValueOut = {
-  hasStarted: boolean;
-  isContracting: boolean;
-  toggleContractions: (time: number) => void;
+interface ValueOut {
+  toggleContraction: (time: number) => void;
   numContractions: number;
-  contractionStartTime: number;
-};
-
-interface ContractionItem {
-  startTime: number;
-  endTime: number;
+  avgContractionLen: number;
+  avgTimeBetween: number;
 }
 
 const INIT_VALUE: ValueOut = {
-  hasStarted: false,
-  isContracting: false,
-  toggleContractions: () => console.log("empty contraction toggle"),
+  toggleContraction: () => console.log("empty contraction toggle"),
   numContractions: 0,
-  contractionStartTime: -1,
+  avgContractionLen: 0,
+  avgTimeBetween: 0,
 };
 
 export const ContractionContext = createContext<ValueOut>(INIT_VALUE);
 
 const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [hasStarted, setHasStarted] = useState(false);
-  const [isContracting, setIsContracting] = useState(false);
-  const [contractionStartTime, setContractionStartTime] = useState(-1);
+  const {
+    addHistoryItem,
+    lastContraction,
+    currentContraction /*, initWithSavedHistory*/,
+  } = useContext(HistoryContext);
   const [numContractions, setNumContractions] = useState(0);
-  const [contractionHistory, setContractionHistory] = useState<
-    ContractionItem[]
-  >([]);
+  const [avgContractionLen, setAvgContractionLen] = useState(0);
+  const [avgTimeBetween, setAvgTimeBetween] = useState(0);
 
   // load/save on open
-  useEffect(() => {
-    const KEY = "contractions";
-    const savedState = window.localStorage.getItem(KEY);
-    if (savedState != null) {
-      setContractionHistory(JSON.parse(savedState));
-    }
-    return () => {
-      window.localStorage.setItem(KEY, JSON.stringify(contractionHistory));
-    };
-  }, []);
+  useEffect(() => {}, []);
 
-  const toggleContractions = useCallback((time: number) => {
-    setHasStarted(true);
-    setIsContracting((val) => {
-      // starting new contraction
-      if (!val) {
-        setNumContractions((num) => num + 1);
-        setContractionStartTime(time);
-      } else {
-        setContractionHistory((history) => [
-          ...history,
-          { startTime: contractionStartTime, endTime: time },
-        ]);
-        setContractionStartTime(-1);
-      }
-      return !val;
-    });
-  }, []);
+  const toggleContraction = (time: number) => {
+    // starting contraction
+    if (currentContraction.startTime < 0) {
+      addHistoryItem("C_Start", time);
+      const timeBetween =
+        lastContraction.startTime < 0 ? 0 : time - lastContraction.startTime;
+
+      // first time - both are 0
+      // second time - just s is 0
+      // third onward - average current with new
+      setAvgTimeBetween((s) =>
+        timeBetween == 0 || s == 0 ? timeBetween : (s + timeBetween) / 2
+      );
+
+      setNumContractions((s) => s + 1);
+    }
+
+    // ending contraction
+    else {
+      addHistoryItem("C_Stop", time);
+      const contractionLength = time - currentContraction.startTime;
+
+      // might need to change this moving average
+      setAvgContractionLen((state) =>
+        state == 0 ? contractionLength : (state + contractionLength) / 2
+      );
+    }
+  };
 
   const value = useMemo(() => {
     return {
-      hasStarted,
-      isContracting,
-      toggleContractions,
+      toggleContraction,
       numContractions,
-      contractionStartTime,
+      avgContractionLen,
+      avgTimeBetween,
     };
-  }, [hasStarted, isContracting, numContractions, contractionStartTime]);
+  }, [numContractions, avgContractionLen, avgTimeBetween]);
 
   return (
     <ContractionContext.Provider value={value}>
