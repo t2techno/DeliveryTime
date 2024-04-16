@@ -1,33 +1,38 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import FancyButton from "../FancyButton";
+import { HistoryContext } from "../../providers/HistoryProvider";
 import { ContractionContext } from "../../providers/ContractionProvider";
 import { generateTime } from "../../utilities/time-stuff";
 
 interface LaborBoxProps {
   className?: string;
-  elapsedTime: number;
+  time: number;
   startTime: Date;
   startTimer: () => void;
 }
 
 const LaborBox: React.FC<LaborBoxProps> = ({
   className,
-  elapsedTime,
+  time,
   startTime,
-  startTimer
+  startTimer,
 }) => {
+  const { currentContraction } = useContext(HistoryContext);
   const {
-    hasStarted,
-    isContracting,
-    toggleContractions,
+    toggleContraction,
     numContractions,
-    contractionStartTime,
+    avgContractionLen,
+    avgTimeBetween,
   } = useContext(ContractionContext);
+  const hasStarted = numContractions > 0;
 
   let buttonText = "Start First Contraction";
   if (hasStarted) {
-    buttonText = isContracting ? "Stop Contraction" : "Start Contraction";
+    buttonText =
+      currentContraction.startTime < currentContraction.endTime
+        ? "Stop Contraction"
+        : "Start Contraction";
   }
   return (
     <Wrapper className={className}>
@@ -36,15 +41,15 @@ const LaborBox: React.FC<LaborBoxProps> = ({
           <LeftWrapper>
             <InfoLabel>Labor</InfoLabel>
             <Info>Began: {startTime.toLocaleTimeString()}</Info>
-            <Info>Length: {generateTime(elapsedTime)}</Info>
+            <Info>Length: {generateTime(time)}</Info>
           </LeftWrapper>
         )}
         <MainButton
           onClick={() => {
-            if(!hasStarted){
+            if (!hasStarted) {
               startTimer();
             }
-            toggleContractions(elapsedTime);
+            toggleContraction(time);
           }}
         >
           {buttonText}
@@ -53,9 +58,15 @@ const LaborBox: React.FC<LaborBoxProps> = ({
           <RightWrapper>
             <ContractionWrapper>
               <InfoLabel>Contractions</InfoLabel>
-              <Info>Number of: {numContractions}</Info>
-              <Info>Time Between: {0}</Info>
-              <Info>Length of: {0}</Info>
+              <Info>
+                Number of: <InfoNumber>{numContractions}</InfoNumber>
+              </Info>
+              <Info>
+                Time Between: <InfoNumber>{avgTimeBetween}</InfoNumber>
+              </Info>
+              <Info>
+                Length of: <InfoNumber>{avgContractionLen}</InfoNumber>
+              </Info>
             </ContractionWrapper>
           </RightWrapper>
         )}
@@ -101,6 +112,10 @@ const InfoLabel = styled.h3`
 
 const Info = styled.p`
   white-space: nowrap;
+`;
+
+const InfoNumber = styled.span`
+  /* float: right; */
 `;
 
 const MainButton = styled(FancyButton)`

@@ -29,7 +29,16 @@ const Toilet = () => {
 };
 
 const ChevronDown = () => {
-  return <polyline points="6 9 12 15 18 9"></polyline>;
+  return <polyline points="6 9 12 15 18 9" />;
+};
+
+const ZigUp = () => {
+  return (
+    <>
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+      <polyline points="17 6 23 6 23 12" />
+    </>
+  );
 };
 
 interface Props {
@@ -43,7 +52,7 @@ const Icon: React.FC<IconProps> = ({ type, className, ...deferred }) => {
   let El = () => <p>{type}</p>;
 
   switch (type) {
-    case "Water":
+    case "Drink":
       El = Water;
       break;
 
@@ -59,8 +68,12 @@ const Icon: React.FC<IconProps> = ({ type, className, ...deferred }) => {
       El = ChevronDown;
       break;
 
+    case "C_Start":
+      El = ZigUp;
+      break;
+
     default:
-      console.error("invalid icon");
+      console.error("invalid icon " + type);
   }
 
   return (
