@@ -26,8 +26,8 @@ interface ContractionItem {
 
 const EMPTY_CONTRACTION: ContractionItem = {
   id: 0,
-  startTime: -1,
-  endTime: -2,
+  startTime: -2,
+  endTime: -1,
 };
 
 interface ReminderItem {
@@ -53,6 +53,7 @@ interface ValueOut {
   lastToilet: ReminderItem;
   lastContraction: ContractionItem;
   currentContraction: ContractionItem;
+  numContractions: number;
 }
 const INIT_VALUE: ValueOut = {
   addHistoryItem: () => {
@@ -64,6 +65,7 @@ const INIT_VALUE: ValueOut = {
   lastToilet: EMPTY_REMINDER,
   lastContraction: EMPTY_CONTRACTION,
   currentContraction: EMPTY_CONTRACTION,
+  numContractions: 0,
 };
 
 export const HistoryContext = createContext<ValueOut>(INIT_VALUE);
@@ -96,13 +98,13 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
   }, [history]);
 
   const addHistoryItem = useCallback(
-    (label: HistoryType, time: number, contraction = 0) => {
+    (label: HistoryType, time: number) => {
       const id = Math.random();
       const newHistoryItem: HistoryItem = {
         id,
         label,
         time,
-        contraction,
+        contraction: contractionLog.length,
         note: "",
       };
       setHistory((h) => [...h, newHistoryItem]);
@@ -110,9 +112,13 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
       // update type specific log
       let newLogItem;
       if (label in ["Drink", "Food", "Toilet"]) {
-        newLogItem = { id, time, contraction } as ReminderItem;
+        newLogItem = {
+          id,
+          time,
+          contraction: contractionLog.length,
+        } as ReminderItem;
       } else if (label === "C_Start") {
-        newLogItem = { id, startTime: time, endTime: 0 } as ContractionItem;
+        newLogItem = { id, startTime: time, endTime: -1 } as ContractionItem;
       } else {
         // C_Stop
         newLogItem = {
@@ -151,7 +157,7 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
           console.error("received - " + label + " - does not exist");
       }
     },
-    []
+    [currentContraction]
   );
 
   const value: ValueOut = useMemo(() => {
@@ -162,8 +168,17 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
       lastToilet,
       lastContraction,
       currentContraction,
+      numContractions: contractionLog.length,
     };
-  }, [lastDrink, lastFood, lastToilet, lastContraction, currentContraction]);
+  }, [
+    addHistoryItem,
+    lastDrink,
+    lastFood,
+    lastToilet,
+    lastContraction,
+    currentContraction,
+    contractionLog,
+  ]);
 
   return (
     <HistoryContext.Provider value={value}>

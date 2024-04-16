@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
 import { HistoryContext, HistoryType } from "../../providers/HistoryProvider";
-import { ContractionContext } from "../../providers/ContractionProvider";
 
 const ReminderBox = ({ time }: { time: number }) => {
   const { drinkTime, foodTime, toiletTime } = React.useMemo(() => {
@@ -16,8 +15,7 @@ const ReminderBox = ({ time }: { time: number }) => {
     };
   }, []);
 
-  const { numContractions } = useContext(ContractionContext);
-  const { addHistoryItem, lastDrink, lastFood, lastToilet } =
+  const { addHistoryItem, lastDrink, lastFood, lastToilet, numContractions } =
     useContext(HistoryContext);
 
   const lastDrinkTime = Math.max(time - lastDrink.time, 0);

@@ -18,22 +18,25 @@ const LaborBox: React.FC<LaborBoxProps> = ({
   startTime,
   startTimer,
 }) => {
-  const { currentContraction } = useContext(HistoryContext);
-  const {
-    toggleContraction,
-    numContractions,
-    avgContractionLen,
-    avgTimeBetween,
-  } = useContext(ContractionContext);
+  const { currentContraction, lastContraction, numContractions } =
+    useContext(HistoryContext);
+  const { toggleContraction, avgContractionLen, avgTimeBetween } =
+    useContext(ContractionContext);
   const hasStarted = numContractions > 0;
+  const isContracting =
+    currentContraction.startTime >= currentContraction.endTime;
 
   let buttonText = "Start First Contraction";
   if (hasStarted) {
-    buttonText =
-      currentContraction.startTime < currentContraction.endTime
-        ? "Stop Contraction"
-        : "Start Contraction";
+    buttonText = isContracting ? "Stop Contraction" : "Start Contraction";
   }
+  const contractLength = isContracting
+    ? generateTime(time - currentContraction.startTime)
+    : "--";
+
+  const betweenTime = isContracting
+    ? "--"
+    : generateTime(time - lastContraction.startTime);
   return (
     <Wrapper className={className}>
       <FlexWrapper>
@@ -41,7 +44,8 @@ const LaborBox: React.FC<LaborBoxProps> = ({
           <LeftWrapper>
             <InfoLabel>Labor</InfoLabel>
             <Info>Began: {startTime.toLocaleTimeString()}</Info>
-            <Info>Length: {generateTime(time)}</Info>
+            <Info>Length: {contractLength}</Info>
+            <Info>Since: {betweenTime}</Info>
           </LeftWrapper>
         )}
         <MainButton
@@ -62,10 +66,10 @@ const LaborBox: React.FC<LaborBoxProps> = ({
                 Number of: <InfoNumber>{numContractions}</InfoNumber>
               </Info>
               <Info>
-                Time Between: <InfoNumber>{avgTimeBetween}</InfoNumber>
+                Length of: <InfoNumber>{avgContractionLen}</InfoNumber>
               </Info>
               <Info>
-                Length of: <InfoNumber>{avgContractionLen}</InfoNumber>
+                Time Between: <InfoNumber>{avgTimeBetween}</InfoNumber>
               </Info>
             </ContractionWrapper>
           </RightWrapper>
