@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
 import { HistoryContext, HistoryType } from "../../providers/HistoryProvider";
+import * as Accordion from "@radix-ui/react-accordion";
 
 const ReminderBox = ({ time }: { time: number }) => {
   const { drinkTime, foodTime, toiletTime } = React.useMemo(() => {
@@ -38,10 +39,10 @@ const ReminderBox = ({ time }: { time: number }) => {
   return (
     <Wrapper>
       <SectionHeader>How long since...</SectionHeader>
-      <GridWrapper>
+      <Root type="single" orientation="horizontal" collapsible>
         <Reminder
           label="Drink"
-          warningColor="var(--blue)"
+          highLightColor="var(--blue)"
           timeLimit={drinkTime}
           timeSince={lastDrinkTime}
           contractionLimit={4}
@@ -52,7 +53,7 @@ const ReminderBox = ({ time }: { time: number }) => {
         />
         <Reminder
           label="Food"
-          warningColor="var(--red)"
+          highLightColor="var(--red)"
           timeLimit={foodTime}
           timeSince={lastFoodTime}
           contractionLimit={50}
@@ -63,7 +64,7 @@ const ReminderBox = ({ time }: { time: number }) => {
         />
         <Reminder
           label="Toilet"
-          warningColor="var(--gold)"
+          highLightColor="var(--gold)"
           timeLimit={toiletTime}
           timeSince={lastToiletTime}
           contractionLimit={35}
@@ -72,24 +73,26 @@ const ReminderBox = ({ time }: { time: number }) => {
             updateHistory("Toilet", time, numContractions);
           }}
         />
-      </GridWrapper>
+      </Root>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: grid;
+  place-content: center;
+`;
+
+const Root = styled(Accordion.Root)`
+  border-radius: 6px;
+  width: 300px;
+  /* background-color: var(); */
+  box-shadow: 0 2px 10px var(--background-gray);
+`;
 
 const SectionHeader = styled.h3`
   font-size: 3rem;
   margin-bottom: 16px;
-`;
-
-const GridWrapper = styled.div`
-  display: grid;
-  justify-content: space-between;
-  align-items: center;
-  gap: 32px;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
 `;
 
 export default ReminderBox;

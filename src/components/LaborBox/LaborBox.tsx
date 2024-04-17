@@ -66,10 +66,10 @@ const LaborBox: React.FC<LaborBoxProps> = ({
                 Number of: <InfoNumber>{numContractions}</InfoNumber>
               </Info>
               <Info>
-                Length of: <InfoNumber>{avgContractionLen}</InfoNumber>
+                Length of: <InfoNumber>{generateTime(avgContractionLen)}</InfoNumber>
               </Info>
               <Info>
-                Time Between: <InfoNumber>{avgTimeBetween}</InfoNumber>
+                Time Between: <InfoNumber>{generateTime(avgTimeBetween)}</InfoNumber>
               </Info>
             </ContractionWrapper>
           </RightWrapper>
@@ -119,7 +119,7 @@ const Info = styled.p`
 `;
 
 const InfoNumber = styled.span`
-  /* float: right; */
+  float: right;
 `;
 
 const MainButton = styled(FancyButton)`

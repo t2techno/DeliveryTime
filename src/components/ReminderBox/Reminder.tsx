@@ -1,12 +1,13 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+import * as Accordion from "@radix-ui/react-accordion";
 import BaseFancyButton from "../FancyButton";
-import { ChangingIcon } from "../Icon";
+import { ChangingIcon, IconTypes } from "../Icon";
 import { generateTime } from "../../utilities/time-stuff";
 import { useRef, useState } from "react";
 
 interface ReminderProps {
-  label: string;
-  warningColor: string;
+  label: IconTypes;
+  highLightColor: string;
   timeLimit: number; // ms
   timeSince: number; // ms
   contractionLimit: number;
@@ -17,7 +18,7 @@ interface ReminderProps {
 
 const Reminder: React.FC<ReminderProps> = ({
   label,
-  warningColor,
+  highLightColor,
   className,
   timeLimit,
   timeSince,
@@ -39,122 +40,143 @@ const Reminder: React.FC<ReminderProps> = ({
   const warnLevel = Math.max(timeLevel, contractionLevel);
 
   return (
-    <Wrapper className={className}>
-      <InfoWrapper>
-        <WarningBackground
-          style={{
-            backgroundColor: warningColor,
-            borderColor: warningColor,
-            opacity: `${warnLevel}`,
-          }}
-        />
-        <InfoDisplay>
-          <ChangingIcon
-            type={label}
-            $warncolor={warningColor}
-            $warnlevel={warnLevel}
-          />
-          {isOpen ? (
-            <InfoText>
-              <p>Time: {generateTime(timeSince)}</p>
-              <p>Contractions: {contractionsSince}</p>
-            </InfoText>
-          ) : undefined}
-          <OpenCloseButton
-            $isOpen={isOpen}
+    <Item className={className} value={label} $highlightColor={highLightColor}>
+      <ItemHeader>
+        <ButtonRow>
+          <FancyButton onClick={() => ignoreReminder()}>
+            <ButtonContent>
+              Skip{" "}
+              <ChangingIcon
+                type={label}
+                $highlightColor={highLightColor}
+                $warnlevel={warnLevel}
+              />
+            </ButtonContent>
+          </FancyButton>
+          <FancyButton
             onClick={() => {
-              setIsOpen((s) => !s);
+              updateValue();
             }}
           >
-            <ChangingIcon
-              type={"Open"}
-              $warncolor={warningColor}
-              $warnlevel={warnLevel}
-            />
-          </OpenCloseButton>
-        </InfoDisplay>
-      </InfoWrapper>
-
-      <ButtonRow>
-        <FancyButton onClick={() => ignoreReminder()}>
-          <ButtonContent>
-            Skip{" "}
-            <ChangingIcon
-              type={label}
-              $warncolor={warningColor}
-              $warnlevel={warnLevel}
-            />
-          </ButtonContent>
-        </FancyButton>
-        <FancyButton
-          onClick={() => {
-            updateValue();
-          }}
-        >
-          <ButtonContent>
-            <p>+&nbsp;1</p>
-            <ChangingIcon
-              type={label}
-              $warncolor={warningColor}
-              $warnlevel={warnLevel}
-            />
-          </ButtonContent>
-        </FancyButton>
-      </ButtonRow>
-    </Wrapper>
+            <ButtonContent>
+              <p>+&nbsp;1</p>
+              <ChangingIcon
+                type={label}
+                $highlightColor={highLightColor}
+                $warnlevel={warnLevel}
+              />
+            </ButtonContent>
+          </FancyButton>
+        </ButtonRow>
+        <TriggerIcon $highlightColor={highLightColor}>
+          <TriggerChevron
+            type={"Open"}
+            $highlightColor={highLightColor}
+            $warnlevel={warnLevel}
+          />
+        </TriggerIcon>
+      </ItemHeader>
+      <Content>
+        <ContentText>
+          <p>Time: {generateTime(timeSince)}</p>
+          <p>Contractions: {contractionsSince}</p>
+        </ContentText>
+      </Content>
+    </Item>
   );
 };
 
-const Wrapper = styled.div`
-  background-color: var(--background-color);
-  height: 100%;
-  width: 100%;
-`;
-
-const InfoWrapper = styled.div`
-  height: 100px;
-  position: relative;
-`;
-
-const InfoDisplay = styled.div`
-  background-color: var(--background-color);
+const Item = styled(Accordion.Item)<{ $highlightColor: string }>`
+  margin-top: 1px;
   padding: 8px;
-  border: solid var(--text-color) 2px;
-  border-radius: 8px;
-  position: absolute;
-  height: 100%;
-  width: 100%;
+
+  &:first-child {
+    margin-top: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  &:focus-within {
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 0 2px ${(p) => p.$highlightColor};
+  }
+`;
+
+const ItemHeader = styled(Accordion.Header)`
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
 `;
 
-const OpenCloseButton = styled.button<{ $isOpen: boolean }>`
-  padding: 0;
-  border: none;
+const TriggerChevron = styled(ChangingIcon)`
+  transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
+`;
+
+const TriggerIcon = styled(Accordion.Trigger)<{ $highlightColor: string }>`
+  font-family: inherit;
   background-color: transparent;
-  rotate: ${(p) => (p.$isOpen ? "0deg" : "180deg")};
-  transition: rotate 250ms;
+  border: none;
+  padding: 0 10px;
+  height: 45px;
+  font-size: 15px;
+  margin-left: 1rem;
+  box-shadow: 0 1px 0 ${(p) => p.$highlightColor};
+  color: var(--text-color);
+
+  &:hover {
+    color: ${(p) => p.$highlightColor};
+  }
+
+  &[data-state="open"] > ${TriggerChevron} {
+    transform: rotate(180deg);
+  }
 `;
 
-const WarningBackground = styled.div`
-  border: solid 10px;
-  border-radius: 12px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  scale: 1.1;
+const slideDown = keyframes`
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+`;
+const slideUp = keyframes`    
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
 `;
 
-const InfoText = styled.div``;
+const Content = styled(Accordion.Content)`
+  overflow: hidden;
+  font-size: 15px;
+  color: inherit;
+  background-color: var(--background-gray);
+
+  &[data-state="open"] {
+    animation: ${slideDown} 300ms cubic-bezier(0.87, 0, 0.13, 1);
+  }
+  &[data-state="closed"] {
+    animation: ${slideUp} 300ms cubic-bezier(0.87, 0, 0.13, 1);
+  }
+`;
+
+const ContentText = styled.div`
+  padding: 15px 20px;
+`;
 
 const ButtonRow = styled.div`
   width: 100%;
   display: flex;
   gap: 0.5rem;
   justify-content: space-around;
+  margin-bottom: 12px;
 `;
 
 const FancyButton = styled(BaseFancyButton)`

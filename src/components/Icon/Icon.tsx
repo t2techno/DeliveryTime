@@ -41,8 +41,10 @@ const ZigUp = () => {
   );
 };
 
+export type IconTypes = "Drink" | "Food" | "Toilet" | "Open" | "C_Start";
+
 interface Props {
-  type: string;
+  type: IconTypes;
   className?: string;
 }
 

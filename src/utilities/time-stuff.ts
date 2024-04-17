@@ -36,7 +36,7 @@ export const generateTime = (seconds: number) => {
   const min = Math.floor(seconds / 60)
     .toString()
     .padStart(2, "0");
-  const sec = (seconds % 60).toString().padStart(2, "0");
+  const sec = (Math.round(seconds) % 60).toString().padStart(2, "0");
 
   if (hour == "00" && min == "00") {
     return sec;

@@ -1,24 +1,24 @@
 import React from "react";
 import styled from "styled-components";
-import Icon from ".";
+import Icon, { IconTypes } from ".";
 
 interface ChangingIconProps {
-  type: string;
-  $warncolor: string;
+  type: IconTypes;
+  $highlightColor: string;
   $warnlevel: number;
   className?: string;
 }
 
 export const ChangingIcon: React.FC<ChangingIconProps> = ({
   type,
-  $warncolor,
+  $highlightColor,
   $warnlevel,
   className,
 }) => {
   return (
     <IconWrapper className={className}>
       <LabelIcon type={type} />
-      <LabelIcon type={type} stroke={$warncolor} opacity={$warnlevel} />
+      <LabelIcon type={type} stroke={$highlightColor} opacity={$warnlevel} />
     </IconWrapper>
   );
 };
