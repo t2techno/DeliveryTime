@@ -18,7 +18,11 @@ export const ChangingIcon: React.FC<ChangingIconProps> = ({
   return (
     <IconWrapper className={className}>
       <LabelIcon type={type} />
-      <LabelIcon type={type} stroke={$highlightColor} opacity={$warnlevel} />
+      <LabelIcon
+        type={type}
+        stroke={$highlightColor}
+        opacity={$warnlevel ? $warnlevel : 0}
+      />
     </IconWrapper>
   );
 };

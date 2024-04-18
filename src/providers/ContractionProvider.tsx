@@ -27,11 +27,10 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const {
     addHistoryItem,
     lastContraction,
-    currentContraction /*, initWithSavedHistory*/,
+    newContraction /*, initWithSavedHistory*/,
   } = useContext(HistoryContext);
   const [avgContractionLen, setAvgContractionLen] = useState(0);
   const [avgTimeBetween, setAvgTimeBetween] = useState(0);
-  console.log(currentContraction);
 
   // load/save on open
   useEffect(() => {}, []);
@@ -39,7 +38,7 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const toggleContraction = useCallback(
     (time: number) => {
       // starting contraction
-      if (currentContraction.startTime < 0) {
+      if (newContraction.startTime < 0) {
         addHistoryItem("C_Start", time);
         const timeBetween =
           lastContraction.startTime < 0 ? 0 : time - lastContraction.startTime;
@@ -56,7 +55,7 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
       // ending contraction
       else {
         addHistoryItem("C_Stop", time);
-        const contractionLength = time - currentContraction.startTime;
+        const contractionLength = time - newContraction.startTime;
 
         // might need to change this moving average
         setAvgContractionLen((state) =>
@@ -64,7 +63,7 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
         );
       }
     },
-    [lastContraction, currentContraction, addHistoryItem]
+    [lastContraction, newContraction, addHistoryItem]
   );
 
   const value = useMemo(() => {

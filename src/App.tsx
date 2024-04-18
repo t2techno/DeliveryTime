@@ -5,12 +5,12 @@ import ReminderBox from "./components/ReminderBox";
 import useTimer from "./hooks/use-timer";
 
 function App() {
-  const { time, toggleTimer, startTime } = useTimer();
+  const { time, toggleTimer } = useTimer();
   return (
     <Wrapper>
       <MaxWidthWrapper>
         <Header />
-        <LaborBox time={time} startTime={startTime} startTimer={toggleTimer} />
+        <LaborBox time={time} startTimer={toggleTimer} />
         <ReminderBox time={time} />
       </MaxWidthWrapper>
     </Wrapper>

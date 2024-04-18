@@ -8,30 +8,23 @@ import { generateTime } from "../../utilities/time-stuff";
 interface LaborBoxProps {
   className?: string;
   time: number;
-  startTime: Date;
   startTimer: () => void;
 }
 
-const LaborBox: React.FC<LaborBoxProps> = ({
-  className,
-  time,
-  startTime,
-  startTimer,
-}) => {
-  const { currentContraction, lastContraction, numContractions } =
+const LaborBox: React.FC<LaborBoxProps> = ({ className, time, startTimer }) => {
+  const { newContraction, lastContraction, numContractions } =
     useContext(HistoryContext);
   const { toggleContraction, avgContractionLen, avgTimeBetween } =
     useContext(ContractionContext);
   const hasStarted = numContractions > 0;
-  const isContracting =
-    currentContraction.startTime >= currentContraction.endTime;
+  const isContracting = newContraction.startTime >= newContraction.endTime;
 
   let buttonText = "Start First Contraction";
   if (hasStarted) {
     buttonText = isContracting ? "Stop Contraction" : "Start Contraction";
   }
   const contractLength = isContracting
-    ? generateTime(time - currentContraction.startTime)
+    ? generateTime(time - newContraction.startTime)
     : "--";
 
   const betweenTime = isContracting
@@ -43,7 +36,7 @@ const LaborBox: React.FC<LaborBoxProps> = ({
         {hasStarted && (
           <LeftWrapper>
             <InfoLabel>Labor</InfoLabel>
-            <Info>Began: {startTime.toLocaleTimeString()}</Info>
+            <Info>Began: *get from historyContext* </Info>
             <Info>Length: {contractLength}</Info>
             <Info>Since: {betweenTime}</Info>
           </LeftWrapper>
@@ -66,10 +59,12 @@ const LaborBox: React.FC<LaborBoxProps> = ({
                 Number of: <InfoNumber>{numContractions}</InfoNumber>
               </Info>
               <Info>
-                Length of: <InfoNumber>{generateTime(avgContractionLen)}</InfoNumber>
+                Length of:{" "}
+                <InfoNumber>{generateTime(avgContractionLen)}</InfoNumber>
               </Info>
               <Info>
-                Time Between: <InfoNumber>{generateTime(avgTimeBetween)}</InfoNumber>
+                Time Between:{" "}
+                <InfoNumber>{generateTime(avgTimeBetween)}</InfoNumber>
               </Info>
             </ContractionWrapper>
           </RightWrapper>

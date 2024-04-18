@@ -19,14 +19,16 @@ interface HistoryItem {
 }
 
 interface ContractionItem {
-  id: number;
+  startId: number;
   startTime: number;
+  endId: number;
   endTime: number;
 }
 
 const EMPTY_CONTRACTION: ContractionItem = {
-  id: 0,
+  startId: 0,
   startTime: -2,
+  endId: -10,
   endTime: -1,
 };
 
@@ -52,8 +54,9 @@ interface ValueOut {
   lastFood: ReminderItem;
   lastToilet: ReminderItem;
   lastContraction: ContractionItem;
-  currentContraction: ContractionItem;
+  newContraction: ContractionItem;
   numContractions: number;
+  startTime: string;
 }
 const INIT_VALUE: ValueOut = {
   addHistoryItem: () => {
@@ -64,15 +67,17 @@ const INIT_VALUE: ValueOut = {
   lastFood: EMPTY_REMINDER,
   lastToilet: EMPTY_REMINDER,
   lastContraction: EMPTY_CONTRACTION,
-  currentContraction: EMPTY_CONTRACTION,
+  newContraction: EMPTY_CONTRACTION,
   numContractions: 0,
+  startTime: "",
 };
 
 export const HistoryContext = createContext<ValueOut>(INIT_VALUE);
 const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const KEY = "history";
+  const HIST_KEY = "history_key";
+  const TIME_KEY = "time_key";
   const [history, setHistory] = useState<Array<HistoryItem>>(() => {
-    const savedHistory = window.localStorage.getItem(KEY);
+    const savedHistory = window.localStorage.getItem(HIST_KEY);
     return savedHistory != null ? JSON.parse(savedHistory) : [];
   });
 
@@ -86,17 +91,62 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [toiletLog, setToiletLog] = useState<Array<number>>([]);
   const [lastToilet, setLastToilet] = useState<ReminderItem>(EMPTY_REMINDER);
 
-  const [contractionLog, setContractionLog] = useState<Array<number>>([]);
-  const [currentContraction, setCurrentContraction] =
+  const [contractionLog, setContractionLog] = useState<Array<[number, number]>>(
+    []
+  );
+  const [newContraction, setNewContraction] =
     useState<ContractionItem>(EMPTY_CONTRACTION);
   const [lastContraction, setLastContraction] =
     useState<ContractionItem>(EMPTY_CONTRACTION);
 
+  // init from saved history
+  useEffect(() => {
+    if (history.length > 0) {
+      setDrinkLog(history.filter((h) => h.label === "Drink").map((h) => h.id));
+      setFoodLog(history.filter((h) => h.label === "Food").map((h) => h.id));
+      setToiletLog(
+        history.filter((h) => h.label === "Toilet").map((h) => h.id)
+      );
+
+      let idList: Array<[number, number]> = [];
+      let lastContraction = EMPTY_CONTRACTION;
+      let newContraction = EMPTY_CONTRACTION;
+      history
+        .filter((h) => h.label.includes("C_"))
+        .forEach((c) => {
+          if (c.label === "C_Start") {
+            newContraction = {
+              ...newContraction,
+              startId: c.id,
+              startTime: c.time,
+            };
+          } else {
+            lastContraction = {
+              ...newContraction,
+              endId: c.id,
+              endTime: c.time,
+            };
+            idList.push([lastContraction.startId, lastContraction.endId]);
+            newContraction = EMPTY_CONTRACTION;
+          }
+        });
+      setLastContraction(lastContraction);
+
+      // we were in the middle of a contraction last time
+      if (newContraction != EMPTY_CONTRACTION) {
+        idList.push([newContraction.startId, -1]);
+        setNewContraction(newContraction);
+      }
+      setContractionLog(idList);
+    }
+  }, []);
+
   // save history to local storage
   useEffect(() => {
-    window.localStorage.setItem(KEY, JSON.stringify(history));
+    window.localStorage.setItem(HIST_KEY, JSON.stringify(history));
   }, [history]);
 
+  // need to check this still works
   const addHistoryItem = useCallback(
     (label: HistoryType, time: number) => {
       const id = Math.random();
@@ -118,11 +168,16 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
           contraction: contractionLog.length,
         } as ReminderItem;
       } else if (label === "C_Start") {
-        newLogItem = { id, startTime: time, endTime: -1 } as ContractionItem;
+        newLogItem = {
+          startId: id,
+          startTime: time,
+          endTime: -1,
+        } as ContractionItem;
       } else {
         // C_Stop
         newLogItem = {
-          ...currentContraction,
+          ...newContraction,
+          endId: id,
           endTime: time,
         } as ContractionItem;
       }
@@ -144,20 +199,21 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
           break;
 
         case "C_Start":
-          setContractionLog((l) => [...l, id]);
-          setCurrentContraction(newLogItem as ContractionItem);
+          // ToDo: This v--v
+          // setContractionLog((l) => [...l, [id]]);
+          setNewContraction(newLogItem as ContractionItem);
           break;
 
         case "C_Stop":
           setLastContraction(newLogItem as ContractionItem);
-          setCurrentContraction(EMPTY_CONTRACTION);
+          setNewContraction(EMPTY_CONTRACTION);
           break;
 
         default:
           console.error("received - " + label + " - does not exist");
       }
     },
-    [currentContraction]
+    [newContraction]
   );
 
   const value: ValueOut = useMemo(() => {
@@ -167,8 +223,9 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
       lastFood,
       lastToilet,
       lastContraction,
-      currentContraction,
+      newContraction,
       numContractions: contractionLog.length,
+      startTime: "",
     };
   }, [
     addHistoryItem,
@@ -176,8 +233,9 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
     lastFood,
     lastToilet,
     lastContraction,
-    currentContraction,
+    newContraction,
     contractionLog,
+    /* start time */
   ]);
 
   return (
