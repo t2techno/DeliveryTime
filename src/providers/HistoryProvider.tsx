@@ -8,45 +8,45 @@ import React, {
 } from "react";
 import ContractionProvider from "./ContractionProvider";
 
-export type HistoryType = "Drink" | "Food" | "Toilet" | "C_Start" | "C_Stop";
+export type HistoryType = "Drink" | "Food" | "Toilet" | "Contraction";
+export type DispatchType = "Drink" | "Food" | "Toilet" | "C_Start" | "C_Stop";
 
 interface HistoryItem {
   id: number;
   label: HistoryType;
-  time: number;
+  startTime: number;
+  endTime: number;
   contraction: number;
   note: string;
 }
 
 interface ContractionItem {
-  startId: number;
+  id: number;
   startTime: number;
-  endId: number;
   endTime: number;
 }
 
 const EMPTY_CONTRACTION: ContractionItem = {
-  startId: 0,
+  id: 0,
   startTime: -2,
-  endId: -10,
   endTime: -1,
 };
 
 interface ReminderItem {
   id: number;
-  time: number;
+  startTime: number;
   contraction: number;
 }
 
 export const EMPTY_REMINDER: ReminderItem = {
   id: -1,
-  time: 0,
+  startTime: 0,
   contraction: 0,
 };
 
 interface ValueOut {
   addHistoryItem: (
-    label: HistoryType,
+    label: DispatchType,
     time: number,
     contraction?: number
   ) => void;
@@ -58,6 +58,7 @@ interface ValueOut {
   numContractions: number;
   startTime: string;
 }
+
 const INIT_VALUE: ValueOut = {
   addHistoryItem: () => {
     console.log("Empty History add method");
@@ -83,21 +84,12 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   // list of relevant ids
   const [drinkLog, setDrinkLog] = useState<Array<number>>([]);
-  const [lastDrink, setLastDrink] = useState<ReminderItem>(EMPTY_REMINDER);
 
   const [foodLog, setFoodLog] = useState<Array<number>>([]);
-  const [lastFood, setLastFood] = useState<ReminderItem>(EMPTY_REMINDER);
 
   const [toiletLog, setToiletLog] = useState<Array<number>>([]);
-  const [lastToilet, setLastToilet] = useState<ReminderItem>(EMPTY_REMINDER);
 
-  const [contractionLog, setContractionLog] = useState<Array<[number, number]>>(
-    []
-  );
-  const [newContraction, setNewContraction] =
-    useState<ContractionItem>(EMPTY_CONTRACTION);
-  const [lastContraction, setLastContraction] =
-    useState<ContractionItem>(EMPTY_CONTRACTION);
+  const [contractionLog, setContractionLog] = useState<Array<number>>([]);
 
   // init from saved history
   useEffect(() => {
@@ -108,36 +100,11 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
         history.filter((h) => h.label === "Toilet").map((h) => h.id)
       );
 
-      let idList: Array<[number, number]> = [];
-      let lastContraction = EMPTY_CONTRACTION;
-      let newContraction = EMPTY_CONTRACTION;
-      history
-        .filter((h) => h.label.includes("C_"))
-        .forEach((c) => {
-          if (c.label === "C_Start") {
-            newContraction = {
-              ...newContraction,
-              startId: c.id,
-              startTime: c.time,
-            };
-          } else {
-            lastContraction = {
-              ...newContraction,
-              endId: c.id,
-              endTime: c.time,
-            };
-            idList.push([lastContraction.startId, lastContraction.endId]);
-            newContraction = EMPTY_CONTRACTION;
-          }
-        });
-      setLastContraction(lastContraction);
-
-      // we were in the middle of a contraction last time
-      if (newContraction != EMPTY_CONTRACTION) {
-        idList.push([newContraction.startId, -1]);
-        setNewContraction(newContraction);
+      const contractions = history.filter((h) => h.label === "Contraction");
+      if (contractions.length == 0) {
+        return;
       }
-      setContractionLog(idList);
+      setContractionLog(contractions.map((c) => c.id));
     }
   }, []);
 
@@ -148,75 +115,128 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   // need to check this still works
   const addHistoryItem = useCallback(
-    (label: HistoryType, time: number) => {
+    (type: DispatchType, time: number) => {
       const id = Math.random();
-      const newHistoryItem: HistoryItem = {
-        id,
-        label,
-        time,
-        contraction: contractionLog.length,
-        note: "",
-      };
-      setHistory((h) => [...h, newHistoryItem]);
 
       // update type specific log
-      let newLogItem;
-      if (label in ["Drink", "Food", "Toilet"]) {
-        newLogItem = {
+      let newHistoryItem: HistoryItem;
+      if (type in ["Drink", "Food", "Toilet"]) {
+        newHistoryItem = {
           id,
-          time,
+          label: type as HistoryType,
+          startTime: time,
+          endTime: time,
           contraction: contractionLog.length,
-        } as ReminderItem;
-      } else if (label === "C_Start") {
-        newLogItem = {
-          startId: id,
+          note: "",
+        };
+      } else if (type === "C_Start") {
+        newHistoryItem = {
+          id,
+          label: "Contraction",
           startTime: time,
           endTime: -1,
-        } as ContractionItem;
-      } else {
-        // C_Stop
-        newLogItem = {
-          ...newContraction,
-          endId: id,
-          endTime: time,
-        } as ContractionItem;
+          contraction: contractionLog.length + 1,
+          note: "",
+        };
       }
 
-      switch (label) {
+      switch (type) {
         case "Drink":
           setDrinkLog((l) => [...l, id]);
-          setLastDrink(newLogItem as ReminderItem);
+          setHistory((h) => [...h, newHistoryItem]);
           break;
 
         case "Food":
           setFoodLog((l) => [...l, id]);
-          setLastFood(newLogItem as ReminderItem);
+          setHistory((h) => [...h, newHistoryItem]);
           break;
 
         case "Toilet":
           setToiletLog((l) => [...l, id]);
-          setLastToilet(newLogItem as ReminderItem);
+          setHistory((h) => [...h, newHistoryItem]);
           break;
 
         case "C_Start":
-          // ToDo: This v--v
-          // setContractionLog((l) => [...l, [id]]);
-          setNewContraction(newLogItem as ContractionItem);
+          setHistory((h) => [...h, newHistoryItem]);
+          setContractionLog((l) => [...l, id]);
           break;
 
         case "C_Stop":
-          setLastContraction(newLogItem as ContractionItem);
-          setNewContraction(EMPTY_CONTRACTION);
+          setHistory((h) => {
+            const newHistory = [...h];
+            const lastContraction = h
+              .filter((h) => h.label === "Contraction")
+              .pop();
+            if (!lastContraction) {
+              throw "trying to stop a contraction when nothing has started yet";
+            }
+
+            if (lastContraction?.startTime < 0) {
+              throw "trying to stop a contraction that is still empty";
+            }
+            lastContraction.endTime = time;
+            const changeIndex = newHistory.findIndex(
+              (h) => h.id === lastContraction.id
+            );
+            newHistory[changeIndex] = lastContraction;
+            return newHistory;
+          });
           break;
 
         default:
-          console.error("received - " + label + " - does not exist");
+          console.error("received - " + type + " - does not exist");
       }
     },
-    [newContraction]
+    [contractionLog]
   );
 
+  const numContractions = contractionLog.length;
+  const lastContraction: ContractionItem = useMemo(() => {
+    return numContractions > 1
+      ? (history.find(
+          (h) => h.id === contractionLog[numContractions - 2]
+        ) as ContractionItem)
+      : EMPTY_CONTRACTION;
+  }, [contractionLog]);
+
+  const newContraction: ContractionItem = useMemo(() => {
+    if (numContractions == 0) {
+      console.log("no contractions");
+      return EMPTY_CONTRACTION;
+    }
+
+    const latestContraction = history.find(
+      (h) => h.id === contractionLog[numContractions - 1]
+    );
+    if (!latestContraction) {
+      console.log("couldnt find contraction");
+      return EMPTY_CONTRACTION;
+    }
+
+    return latestContraction?.startTime < 0
+      ? EMPTY_CONTRACTION
+      : (latestContraction as ContractionItem);
+  }, [contractionLog]);
+
   const value: ValueOut = useMemo(() => {
+    const drinkHistory =
+      drinkLog.length > 0
+        ? history.find((h) => h.id === drinkLog[drinkLog.length - 1])
+        : EMPTY_REMINDER;
+    const lastDrink = drinkHistory ? drinkHistory : EMPTY_REMINDER;
+
+    const foodHistory =
+      foodLog.length > 0
+        ? history.find((h) => h.id === foodLog[foodLog.length - 1])
+        : EMPTY_REMINDER;
+    const lastFood = foodHistory ? foodHistory : EMPTY_REMINDER;
+
+    const toiletHistory =
+      toiletLog.length > 0
+        ? history.find((h) => h.id === toiletLog[toiletLog.length - 1])
+        : EMPTY_REMINDER;
+    const lastToilet = toiletHistory ? toiletHistory : EMPTY_REMINDER;
+
     return {
       addHistoryItem,
       lastDrink,
@@ -224,14 +244,14 @@ const HistoryProvider: React.FC<PropsWithChildren> = ({ children }) => {
       lastToilet,
       lastContraction,
       newContraction,
-      numContractions: contractionLog.length,
+      numContractions,
       startTime: "",
     };
   }, [
     addHistoryItem,
-    lastDrink,
-    lastFood,
-    lastToilet,
+    drinkLog,
+    foodLog,
+    toiletLog,
     lastContraction,
     newContraction,
     contractionLog,

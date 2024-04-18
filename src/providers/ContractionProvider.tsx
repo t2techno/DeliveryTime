@@ -35,36 +35,33 @@ const ContractionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // load/save on open
   useEffect(() => {}, []);
 
-  const toggleContraction = useCallback(
-    (time: number) => {
-      // starting contraction
-      if (newContraction.startTime < 0) {
-        addHistoryItem("C_Start", time);
-        const timeBetween =
-          lastContraction.startTime < 0 ? 0 : time - lastContraction.startTime;
-        console.log("time between - " + timeBetween);
+  const toggleContraction = (time: number) => {
+    // starting contraction
+    if (newContraction.startTime < 0) {
+      addHistoryItem("C_Start", time);
+      const timeBetween =
+        lastContraction.startTime < 0 ? 0 : time - lastContraction.startTime;
+      console.log("time between - " + timeBetween);
 
-        // first time - both are 0
-        // second time - just s is 0
-        // third onward - average current with new
-        setAvgTimeBetween((s) =>
-          timeBetween == 0 || s == 0 ? timeBetween : (s + timeBetween) / 2
-        );
-      }
+      // first time - both are 0
+      // second time - just s is 0
+      // third onward - average current with new
+      setAvgTimeBetween((s) =>
+        timeBetween == 0 || s == 0 ? timeBetween : (s + timeBetween) / 2
+      );
+    }
 
-      // ending contraction
-      else {
-        addHistoryItem("C_Stop", time);
-        const contractionLength = time - newContraction.startTime;
+    // ending contraction
+    else {
+      addHistoryItem("C_Stop", time);
+      const contractionLength = time - newContraction.startTime;
 
-        // might need to change this moving average
-        setAvgContractionLen((state) =>
-          state == 0 ? contractionLength : (state + contractionLength) / 2
-        );
-      }
-    },
-    [lastContraction, newContraction, addHistoryItem]
-  );
+      // might need to change this moving average
+      setAvgContractionLen((state) =>
+        state == 0 ? contractionLength : (state + contractionLength) / 2
+      );
+    }
+  };
 
   const value = useMemo(() => {
     return {

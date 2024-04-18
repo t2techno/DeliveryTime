@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
-import { HistoryContext, HistoryType } from "../../providers/HistoryProvider";
+import { HistoryContext, DispatchType } from "../../providers/HistoryProvider";
 import * as Accordion from "@radix-ui/react-accordion";
 
 const ReminderBox = ({ time }: { time: number }) => {
@@ -31,7 +31,7 @@ const ReminderBox = ({ time }: { time: number }) => {
   const updateHistory = React.useCallback(
     (label: string, time: number, contraction: number) => {
       console.log(`timer ${time} - contraction ${contraction}`);
-      addHistoryItem(label as HistoryType, time, contraction);
+      addHistoryItem(label as DispatchType, time, contraction);
     },
     []
   );
