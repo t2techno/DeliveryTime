@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import FancyButton from "../FancyButton";
-import { HistoryContext } from "../../providers/HistoryProvider";
-import { ContractionContext } from "../../providers/ContractionProvider";
+import {
+  HistoryContext,
+  ContractionContext,
+} from "../../providers/HistoryProvider";
 import { generateTime } from "../../utilities/time-stuff";
 
 interface LaborBoxProps {
@@ -12,10 +14,14 @@ interface LaborBoxProps {
 }
 
 const LaborBox: React.FC<LaborBoxProps> = ({ className, time, startTimer }) => {
-  const { newContraction, lastContraction, numContractions } =
-    useContext(HistoryContext);
-  const { toggleContraction, avgContractionLen, avgTimeBetween } =
-    useContext(ContractionContext);
+  const {
+    lastContraction,
+    newContraction,
+    numContractions,
+    avgContractionLen,
+    avgBetweenTime,
+  } = useContext(ContractionContext);
+  const { addHistoryItem } = useContext(HistoryContext);
   const hasStarted = numContractions > 0;
   const isContracting = newContraction.startTime >= newContraction.endTime;
 
@@ -46,7 +52,11 @@ const LaborBox: React.FC<LaborBoxProps> = ({ className, time, startTimer }) => {
             if (!hasStarted) {
               startTimer();
             }
-            toggleContraction(time);
+            addHistoryItem(
+              isContracting ? "C_Stop" : "C_Start",
+              time,
+              Math.random()
+            );
           }}
         >
           {buttonText}
@@ -64,7 +74,7 @@ const LaborBox: React.FC<LaborBoxProps> = ({ className, time, startTimer }) => {
               </Info>
               <Info>
                 Time Between:{" "}
-                <InfoNumber>{generateTime(avgTimeBetween)}</InfoNumber>
+                <InfoNumber>{generateTime(avgBetweenTime)}</InfoNumber>
               </Info>
             </ContractionWrapper>
           </RightWrapper>

@@ -26,7 +26,6 @@ const Reminder: React.FC<ReminderProps> = ({
   contractionsSince,
   updateValue,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const limitRoll = useRef(0);
 
   const ignoreReminder = () => {

@@ -1,7 +1,12 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
-import { HistoryContext, DispatchType } from "../../providers/HistoryProvider";
+import {
+  HistoryContext,
+  DispatchType,
+  ReminderContext,
+  ContractionContext,
+} from "../../providers/HistoryProvider";
 import * as Accordion from "@radix-ui/react-accordion";
 
 const ReminderBox = ({ time }: { time: number }) => {
@@ -16,25 +21,25 @@ const ReminderBox = ({ time }: { time: number }) => {
     };
   }, []);
 
-  const { addHistoryItem, lastDrink, lastFood, lastToilet, numContractions } =
-    useContext(HistoryContext);
+  const { lastDrink, lastFood, lastToilet } = useContext(ReminderContext);
+  const { numContractions } = useContext(ContractionContext);
+  const { addHistoryItem } = useContext(HistoryContext);
 
-  const lastDrinkTime = Math.max(time - lastDrink.time, 0);
+  const lastDrinkTime = Math.max(time - lastDrink.startTime, 0);
   const lastDrinkContract = numContractions - lastDrink.contraction;
 
-  const lastFoodTime = Math.max(time - lastFood.time, 0);
+  const lastFoodTime = Math.max(time - lastFood.startTime, 0);
   const lastFoodContract = numContractions - lastFood.contraction;
 
-  const lastToiletTime = Math.max(time - lastToilet.time, 0);
+  const lastToiletTime = Math.max(time - lastToilet.startTime, 0);
   const lastToiletContract = numContractions - lastToilet.contraction;
 
-  const updateHistory = React.useCallback(
-    (label: string, time: number, contraction: number) => {
-      console.log(`timer ${time} - contraction ${contraction}`);
-      addHistoryItem(label as DispatchType, time, contraction);
-    },
-    []
-  );
+  const updateHistory = React.useCallback((label: string, time: number) => {
+    const id = Math.random();
+    console.log(`timer ${time}`);
+    console.log(`${id} - ${label} - t:${time}`);
+    addHistoryItem(label as DispatchType, time, id);
+  }, []);
 
   return (
     <Wrapper>
@@ -48,7 +53,7 @@ const ReminderBox = ({ time }: { time: number }) => {
           contractionLimit={4}
           contractionsSince={lastDrinkContract}
           updateValue={() => {
-            updateHistory("Drink", time, numContractions);
+            updateHistory("Drink", time);
           }}
         />
         <Reminder
@@ -59,7 +64,7 @@ const ReminderBox = ({ time }: { time: number }) => {
           contractionLimit={50}
           contractionsSince={lastFoodContract}
           updateValue={() => {
-            updateHistory("Food", time, numContractions);
+            updateHistory("Food", time);
           }}
         />
         <Reminder
@@ -70,7 +75,7 @@ const ReminderBox = ({ time }: { time: number }) => {
           contractionLimit={35}
           contractionsSince={lastToiletContract}
           updateValue={() => {
-            updateHistory("Toilet", time, numContractions);
+            updateHistory("Toilet", time);
           }}
         />
       </Root>
