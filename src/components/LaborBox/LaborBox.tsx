@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import FancyButton from "../FancyButton";
 import {
+  DispatchType,
   HistoryContext,
   ContractionContext,
 } from "../../providers/HistoryProvider";
@@ -10,10 +11,10 @@ import { generateTime } from "../../utilities/time-stuff";
 interface LaborBoxProps {
   className?: string;
   time: number;
-  startTimer: () => void;
+  handleAction: (label: DispatchType, time: number) => void;
 }
 
-const LaborBox: React.FC<LaborBoxProps> = ({ className, time, startTimer }) => {
+const LaborBox: React.FC<LaborBoxProps> = ({ className, time, handleAction }) => {
   const {
     lastContraction,
     newContraction,
@@ -21,7 +22,7 @@ const LaborBox: React.FC<LaborBoxProps> = ({ className, time, startTimer }) => {
     avgContractionLen,
     avgBetweenTime,
   } = useContext(ContractionContext);
-  const { addHistoryItem } = useContext(HistoryContext);
+  const { startTime } = useContext(HistoryContext);
   const hasStarted = numContractions > 0;
   const isContracting = newContraction.startTime >= newContraction.endTime;
 
@@ -42,20 +43,16 @@ const LaborBox: React.FC<LaborBoxProps> = ({ className, time, startTimer }) => {
         {hasStarted && (
           <LeftWrapper>
             <InfoLabel>Labor</InfoLabel>
-            <Info>Began: *get from historyContext* </Info>
+            <Info>Began: {startTime} </Info>
             <Info>Length: {contractLength}</Info>
             <Info>Since: {betweenTime}</Info>
           </LeftWrapper>
         )}
         <MainButton
           onClick={() => {
-            if (!hasStarted) {
-              startTimer();
-            }
-            addHistoryItem(
+            handleAction(
               isContracting ? "C_Stop" : "C_Start",
-              time,
-              Math.random()
+              time
             );
           }}
         >

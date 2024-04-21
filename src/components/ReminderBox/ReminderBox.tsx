@@ -2,14 +2,18 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import Reminder from "./Reminder";
 import {
-  HistoryContext,
   DispatchType,
   ReminderContext,
   ContractionContext,
 } from "../../providers/HistoryProvider";
 import * as Accordion from "@radix-ui/react-accordion";
 
-const ReminderBox = ({ time }: { time: number }) => {
+interface ReminderBoxProps {
+  time: number;
+  handleAction: (label: DispatchType, time: number) => void;
+}
+
+const ReminderBox: React.FC<ReminderBoxProps> = ({ time, handleAction }) => {
   const { drinkTime, foodTime, toiletTime } = React.useMemo(() => {
     const minute = 60;
     const hour = minute * 60;
@@ -23,7 +27,6 @@ const ReminderBox = ({ time }: { time: number }) => {
 
   const { lastDrink, lastFood, lastToilet } = useContext(ReminderContext);
   const { numContractions } = useContext(ContractionContext);
-  const { addHistoryItem } = useContext(HistoryContext);
 
   const lastDrinkTime = Math.max(time - lastDrink.startTime, 0);
   const lastDrinkContract = numContractions - lastDrink.contraction;
@@ -33,13 +36,6 @@ const ReminderBox = ({ time }: { time: number }) => {
 
   const lastToiletTime = Math.max(time - lastToilet.startTime, 0);
   const lastToiletContract = numContractions - lastToilet.contraction;
-
-  const updateHistory = React.useCallback((label: string, time: number) => {
-    const id = Math.random();
-    console.log(`timer ${time}`);
-    console.log(`${id} - ${label} - t:${time}`);
-    addHistoryItem(label as DispatchType, time, id);
-  }, []);
 
   return (
     <Wrapper>
@@ -53,7 +49,7 @@ const ReminderBox = ({ time }: { time: number }) => {
           contractionLimit={4}
           contractionsSince={lastDrinkContract}
           updateValue={() => {
-            updateHistory("Drink", time);
+            handleAction("Drink", time);
           }}
         />
         <Reminder
@@ -64,7 +60,7 @@ const ReminderBox = ({ time }: { time: number }) => {
           contractionLimit={50}
           contractionsSince={lastFoodContract}
           updateValue={() => {
-            updateHistory("Food", time);
+            handleAction("Food", time);
           }}
         />
         <Reminder
@@ -75,7 +71,7 @@ const ReminderBox = ({ time }: { time: number }) => {
           contractionLimit={35}
           contractionsSince={lastToiletContract}
           updateValue={() => {
-            updateHistory("Toilet", time);
+            handleAction("Toilet", time);
           }}
         />
       </Root>
