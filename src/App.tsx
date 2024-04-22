@@ -18,11 +18,15 @@ function App() {
     }
     const timeDif = (new Date().getTime() - Number.parseInt(savedTime)) / 1000;
     console.log("previously saved time found: " + timeDif + " seconds ago");
+    const ogTime = new Date();
+    ogTime.setTime(Number.parseInt(savedTime));
+    setStartTime(ogTime.toLocaleString());
     startTimer(timeDif);
   }, []);
 
   const handleAction = (label: DispatchType, time: number) => {
     if (!isRunning) {
+      setStartTime(new Date().toLocaleString());
       startTimer();
     }
     const id = Math.random();
@@ -32,7 +36,7 @@ function App() {
     <Wrapper>
       <MaxWidthWrapper>
         <Header />
-        <LaborBox time={time} handleAction={handleAction} />
+        <LaborBox time={time} handleAction={handleAction} startTime={startTime}/>
         <ReminderBox time={time} handleAction={handleAction} />
       </MaxWidthWrapper>
     </Wrapper>
