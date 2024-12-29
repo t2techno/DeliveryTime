@@ -17,9 +17,9 @@
 /*
   3. Allow percentage-based heights in the application
 */
-html,
-body {
+html {
   height: 100%;
+  font-size: 16px;
 }
 
 /*
@@ -28,8 +28,16 @@ body {
   5. Improve text rendering
 */
 body {
+  height: 100%;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+main {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /*
@@ -73,5 +81,4 @@ h6 {
 #root,
 #__next {
   isolation: isolate;
-  height: 100%;
 }

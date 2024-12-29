@@ -1,12 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Delivery Time</title>
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="index.css" />
+    <script src="timer.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <main>
+      <div class="wrapper">
+        <div class="mainInfo dark">
+          <h2 class="label">Labor began:</h2>
+          <p id="start-time">--:--</p>
+        </div>
+        <h2 class="label">Contraction Info</h2>
+        <div class="infoWrapper">
+          <div class="infoWrapper lessDark">
+            <div class="infoContent">
+              <h3>Count: </h2>
+              <p id="num-contractions">0</p>
+            </div>
+          </div>
+          <div class="infoWrapper">
+            <div class="infoContent">
+              <h3>Length: </h2>
+              <p id="last-contract-length">--:--</p>
+            </div>
+          </div>
+          <div class="infoWrapper lessDark">
+            <div class="infoContent">
+              <h3>Time between: </h2>
+              <p id="time-between">--:--</p>
+            </div>
+          </div>
+        </div>
+        <div class="infoWrapper">
+          <div class="infoContent">
+            <h2 class="label">Active length: </h2>
+            <p id="current-contract-length">--:--</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          id="contract-button"
+          class="contractButton"
+          onclick="toggleContraction()"
+        >
+          Begin Labor
+        </button>
+      </div>
+    </main>
   </body>
 </html>

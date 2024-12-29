@@ -1,0 +1,64 @@
+.wrapper {
+  border: 1px solid black;
+  width: 240px;
+  height: 320px;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+
+.mainInfo {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding-block: 4px;
+}
+
+.infoWrapper {
+  width: 100%;
+  padding-block: 4px;
+}
+
+.infoContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: auto;
+  width: 70%;
+}
+
+.dark {
+  background-color: hsl(0, 0%, 85%);
+}
+
+.lessDark {
+  background-color: hsl(0, 0%, 92%);
+}
+
+.fw-seperator {
+  margin-block: 4px;
+}
+
+.mostly-seperator {
+  margin: auto;
+  width: 75%;
+  margin-block: 4px;
+}
+
+.info {
+  display: flex;
+  gap: 8px;
+}
+
+.contractButton {
+  margin-inline: auto;
+}
+
+.label {
+  font-size: 1.25rem;
+  text-align: center;
+}
