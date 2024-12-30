@@ -4,7 +4,7 @@
     <title>Delivery Time</title>
     <link rel="stylesheet" href="reset.css" />
     <link rel="stylesheet" href="index.css" />
-    <script src="timer.js"></script>
+    <script src="main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
@@ -14,7 +14,13 @@
           <h2 class="label">Labor began:</h2>
           <p id="start-time">--:--</p>
         </div>
-        <h2 class="label">Contraction Info</h2>
+        <div class="mainInfo">
+          <input type="checkbox" name="average" value="average" id="average"/>
+          <label class="avg-checkbox" for="average">
+            Avg
+          </label>
+          <h2 class="label">Contraction Info</h2>
+        </div>
         <div class="infoWrapper">
           <div class="infoWrapper lessDark">
             <div class="infoContent">
@@ -34,11 +40,11 @@
               <p id="time-between">--:--</p>
             </div>
           </div>
-        </div>
-        <div class="infoWrapper">
-          <div class="infoContent">
-            <h2 class="label">Active length: </h2>
-            <p id="current-contract-length">--:--</p>
+          <div class="infoWrapper">
+            <div class="infoContent">
+              <h2 class="label">Active length: </h2>
+              <p id="current-contract-length">--:--</p>
+            </div>
           </div>
         </div>
         <button

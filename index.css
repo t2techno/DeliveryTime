@@ -17,6 +17,23 @@
   padding-block: 4px;
 }
 
+.avg-checkbox {
+  border: 1px solid black;
+  display: inline-flex;
+  width: 35px;
+  height: 30px;
+  justify-content: center;
+  align-items: baseline;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+input[type="checkbox"]:checked + .avg-checkbox {
+  background-color: hsl(0, 0%, 92%);
+}
+
 .infoWrapper {
   width: 100%;
   padding-block: 4px;
