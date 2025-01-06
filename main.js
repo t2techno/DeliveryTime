@@ -17,12 +17,14 @@ const settingsSectionsId = "settings-wrapper";
 const sectionIds = [laborSectionId, energySectionId, settingsSectionsId];
 // state
 let isContracting = false;
-let startTime;
 let isAvg = false;
-let avgLength = 5;
+let avgWindow = 5;
+let avgLength = 0;
+let avgTimeBetween = 0;
 let lastFood = 0;
 let lastDrink = 0;
 
+// would come from browser cookie
 const testHistory = [
   [1736021681164, 1736021703852],
   [1736021734451, 1736021760883],
@@ -31,9 +33,24 @@ const testHistory = [
   [1736022422456, 1736022473224],
 ];
 
-const contractionHistory = testHistory; //[[startTime, endTime]]
+const contractionHistory = testHistory; // = []; //[[startTime, endTime]]
 
-// tab toggles
+// init from pre-saved data
+const initState = () => {
+  if (contractionHistory.length > 0) {
+    updateNode(
+      startTimeId,
+      new Date(contractionHistory[0][0]).toLocaleString()
+    );
+    initAvgs();
+    updateTimeSince(new Date().getTime());
+    updateLengthNode();
+    updateTimeBetweenNode();
+  }
+};
+window.onload = initState;
+
+// toggle display tabs
 const displaySection = (section) => {
   sectionIds.forEach((id) => {
     if (section != id) {
@@ -49,9 +66,8 @@ const toggleContraction = () => {
   const nowDate = new Date();
   const now = nowDate.getTime();
   // first contraction
-  if (startTime === undefined) {
+  if (contractionHistory.length == 0) {
     console.log("first time");
-    startTime = now;
     updateNode(startTimeId, nowDate.toLocaleString());
   }
 
@@ -76,13 +92,13 @@ const bumpContractionCount = () => {
   updateNode(numberOfId, contractionHistory.length);
 };
 
-// todo: need to account for isAvg
 const startContraction = (now) => {
-  const numContractions = contractionHistory.length;
-  contractionHistory.push([now]);
+  const numContractions = contractionHistory.push([now]);
   if (numContractions > 1) {
     const timeBetween = now - contractionHistory[numContractions - 2][0];
-    updateNode(timeBetweenId, msToHourStr(timeBetween));
+
+    updateTimeBetweenAvg();
+    updateTimeBetweenNode();
   }
 };
 
@@ -90,108 +106,99 @@ const endContraction = (now) => {
   const numContractions = contractionHistory.length;
   contractionHistory[numContractions - 1].push(now);
   const length = now - contractionHistory[numContractions - 1][0];
-  console.log(
-    `new contraction: [${contractionHistory[numContractions - 1][0]},${
-      contractionHistory[numContractions - 1][1]
-    }], length - ${length}`
-  );
-  updateNode(lengthId, msToMinuteStr(isAvg ? getAvgLength() : length));
+  updateLengthAvg();
+  updateLengthNode();
 };
 
-// todo: avg swap is buggy
-// display averages or not
-// avg length is way off
-// avg time-between doesn't change
 const toggleAvgInfo = () => {
-  // calculate
   console.log("toggle avg called");
-  const numContractions = numCompleteContractions();
+  isAvg = !isAvg;
+  updateLengthNode();
+  updateTimeBetweenNode();
+};
 
-  if (!isAvg) {
-    isAvg = true;
-    const startI =
-      numContractions > avgLength ? numContractions - avgLength : 0;
+const getLatestIdx = () => {
+  const numContractions = contractionHistory.length;
+  if (numContractions === 0 || contractionHistory[0].length === 1) {
+    return -1;
+  }
 
-    const numVals = Math.min(avgLength, numContractions);
-    console.log(`taking ${numVals} starting at ${startI}`);
-    let sumContractLn = 0;
-    let sumTimeBetween = 0;
-    contractionHistory
-      .slice(startI, startI + numVals)
-      .forEach((contraction, iter) => {
-        const idx = startI + iter;
-        sumContractLn += contraction[1] - contraction[0];
-        console.log(
-          `checking val ${idx}, new length ${
-            contraction[1] - contraction[0]
-          }, new sum ${sumContractLn}`
-        );
+  return contractionHistory[numContractions - 1].length > 1
+    ? numContractions - 1
+    : numContractions - 2;
+};
 
-        // todo: fix that we're getting numVals-1 for avg on contraction length
-        if (idx > 0) {
-          sumTimeBetween += contraction[0] - contractionHistory[idx - 1][0];
-          console.log(
-            `time between: ${
-              contraction[0] - contractionHistory[idx - 1][0]
-            }, sum ${sumTimeBetween}`
-          );
-        }
-      });
+const initAvgs = () => {
+  // init tb
+  const numContractions = contractionHistory.length;
+  if (numContractions > 1) {
+    const numVals = Math.min(numContractions - 1, avgWindow);
+    const startI = Math.max(numVals - avgWindow, 1);
+    avgTimeBetween =
+      contractionHistory.slice(startI).reduce((sum, c, idx) => {
+        sum += c[0] - contractionHistory[startI + idx - 1][0];
+      }, 0) / numVals;
+  }
 
-    if (numContractions > 0) {
-      updateNode(lengthId, msToMinuteStr(sumContractLn / numVals));
-    }
-    if (numContractions > 1) {
-      updateNode(timeBetweenId, msToHourStr(sumTimeBetween / numVals));
-    }
+  // init length
+  const numFullContractions =
+    contractionHistory[numContractions - 1].length > 1
+      ? numContractions
+      : numContractions - 1;
+
+  const numVals = Math.min(numFullContractions, avgWindow);
+  const startI = Math.max(numFullContractions - avgWindow - 1, 0);
+  avgLength =
+    contractionHistory.slice(startI, startI + numVals).reduce((sum, c) => {
+      sum += c[1] - c[0];
+    }, 0) / numVals;
+};
+
+const updateLengthAvg = () => {
+  const numContractions = contractionHistory.length;
+  // we just do a normal avg until we have more than our window's length
+  if (numContractions <= avgWindow) {
+    avgLength =
+      contractionHistory.reduce((sum, c) => {
+        sum += c[1] - c[0];
+      }, 0) / numContractions;
     return;
   }
 
-  isAvg = false;
-
-  // need at least one full contraction
-  if (numContractions > 0) {
-    updateNode(
-      lengthId,
-      msToMinuteStr(
-        contractionHistory[numContractions - 1][1] -
-          contractionHistory[numContractions - 1][0]
-      )
-    );
-  }
-  if (numContractions > 1) {
-    updateNode(
-      timeBetweenId,
-      msToHourStr(
-        contractionHistory[numContractions - 1][0] -
-          contractionHistory[numContractions - 2][0]
-      )
-    );
-  }
+  const newL = calcLength(contractionHistory[numContractions - 1]);
+  const oldL = calcLength(contractionHistory[numContractions - avgWindow - 1]);
+  avgLength += (newL - oldL) / avgWindow;
 };
 
-const getAvgLength = () => {
-  const numContractions = numCompleteContractions();
-  if (numContractions > 0) {
-    const startI =
-      numContractions > avgLength ? numContractions - avgLength : 0;
+const calcLength = (c) => {
+  return c[1] - c[0];
+};
 
-    const numVals = Math.min(avgLength, numContractions);
-    console.log(`taking ${numVals} starting at ${startI}`);
-    let sumContractLn = 0;
-    contractionHistory
-      .slice(startI, startI + numVals)
-      .forEach((contraction, iter) => {
-        const idx = startI + iter;
-        sumContractLn += contraction[1] - contraction[0];
-        console.log(
-          `checking val ${idx}, new length ${
-            contraction[1] - contraction[0]
-          }, new sum ${sumContractLn}`
-        );
-      });
-    return sumContractLn / numVals;
+const updateTimeBetweenAvg = (tb) => {
+  const numContractions = contractionHistory.length;
+  // one less time-between than number of contractions
+  if (numContractions - 1 <= avgWindow) {
+    avgTimeBetween =
+      contractionHistory.slice(1).reduce((sum, c, idx) => {
+        sum += c[0] - contractionHistory[idx - 1][0];
+      }, 0) /
+      (numContractions - 1);
+    return;
   }
+
+  const newTb =
+    contractionHistory[numContractions - 1][0] -
+    contractionHistory[numContractions - 2][0];
+
+  const oldTb =
+    contractionHistory[numContractions - avgWindow - 1][0] -
+    contractionHistory[numContractions - avgWindow - 2][0];
+  avgTimeBetween += (newTb - oldTb) / avgWindow;
+};
+
+// arr: number[]
+const simpleAvg = (arr) => {
+  return arr.reduce((sum, val) => sum + val, 0) / arr.length;
 };
 
 // energy methods
@@ -209,33 +216,7 @@ const addDrink = () => {
   updateTimeSince(now);
 };
 
-// now: number
-const updateTimeSince = (now) => {
-  if (lastFood > 0) {
-    updateNode(sinceLastFoodId, msToHourStr(now - lastFood) + " ago");
-  }
-  if (lastDrink > 0) {
-    updateNode(sinceLastDrinkId, msToMinuteStr(now - lastDrink) + " ago");
-  }
-};
-
 // utility methods
-
-const numCompleteContractions = () => {
-  const numContractions = contractionHistory.length;
-
-  // there are either no contractions or the first one is still incomplete
-  if (
-    numContractions == 0 ||
-    (numContractions == 1 && contractionHistory[0].length == 1)
-  ) {
-    return -1;
-  }
-
-  return contractionHistory[numContractions - 1].length > 1
-    ? numContractions
-    : numContractions - 1;
-};
 
 // ms: number
 const msToMinuteStr = (ms) => {
@@ -268,4 +249,39 @@ const padNumber = (n) => {
 
 const updateNode = (id, newText) => {
   document.getElementById(id).textContent = newText;
+};
+
+const updateLengthNode = () => {
+  // no lengths to display
+  if (lengthHistory.length < 0) return;
+
+  // display avg
+  if (isAvg) {
+    updateNode(lengthId, msToMinuteStr(avgLength));
+    return;
+  }
+
+  if (contractionHistory[contractionHistory.length - 1].length === 1) {
+  }
+  const latestIndex = contractionHistory.length - 1;
+};
+
+const updateTimeBetweenNode = () => {
+  if (timeBetweenHistory.length > 0) {
+    isAvg
+      ? updateNode(timeBetweenId, msToMinuteStr(avgTimeBetween))
+      : updateNode(
+          timeBetweenId,
+          msToMinuteStr(timeBetweenHistory[getLatestIdx()])
+        );
+  }
+};
+
+const updateTimeSince = (now) => {
+  if (lastFood > 0) {
+    updateNode(sinceLastFoodId, msToHourStr(now - lastFood) + " ago");
+  }
+  if (lastDrink > 0) {
+    updateNode(sinceLastDrinkId, msToMinuteStr(now - lastDrink) + " ago");
+  }
 };
