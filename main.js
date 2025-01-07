@@ -145,36 +145,23 @@ const getContractionCount = () => {
 const initAvgs = () => {
   // init tb
   const numContractions = contractionHistory.length;
-  console.log(`numContractions: ${numContractions}`);
   if (numContractions > 1) {
     const numVals = Math.min(numContractions - 1, avgWindow);
     const startI = Math.max(numContractions - avgWindow, 1);
-    console.log(`numTimeBetweens: ${numVals} - startI: ${startI}`);
     const avgSum = contractionHistory.slice(startI).reduce((sum, c, idx) => {
-      console.log(
-        `c[${startI + idx}]=${c[0]} - c[${startI + idx - 1}] = ${
-          contractionHistory[startI + idx - 1][0]
-        }`
-      );
       return sum + c[0] - contractionHistory[startI + idx - 1][0];
     }, 0);
     avgTimeBetween = avgSum / numVals;
-    console.log(`sum: ${avgSum} - avgTimeBetween: ${avgTimeBetween}`);
   }
   // init length
   const numFullContractions = getContractionCount();
-  console.log(`number of full contractions: ${numFullContractions}`);
 
   const numVals = Math.min(numFullContractions, avgWindow);
   const startI = Math.max(numFullContractions - avgWindow, 0);
-  console.log(`numContracts: ${numVals} - startI: ${startI}`);
   avgLength =
     contractionHistory.slice(startI, startI + numVals).reduce((sum, c) => {
-      console.log(`${c[1]} - ${c[0]}`);
       return sum + c[1] - c[0];
     }, 0) / numVals;
-
-  console.log("avg length " + avgLength);
 };
 
 const updateLengthAvg = () => {
