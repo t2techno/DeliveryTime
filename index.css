@@ -127,6 +127,9 @@ input[type="checkbox"]:checked + .checkboxLabel {
 
 .button {
   margin-inline: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .label {

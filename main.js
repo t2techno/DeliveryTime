@@ -33,7 +33,7 @@ const testHistory = [
   [1736022422456, 1736022473224],
 ];
 
-const contractionHistory = testHistory; // = []; //[[startTime, endTime]]
+const contractionHistory = []; //[[startTime, endTime]]
 
 // init from pre-saved data
 const initState = () => {
@@ -43,10 +43,10 @@ const initState = () => {
       new Date(contractionHistory[0][0]).toLocaleString()
     );
     if (contractionHistory[contractionHistory.length - 1].length === 1) {
-      updateNode(contractButtonId, "End Contraction");
+      updateNode(contractButtonId, "\u{25AF}\u{25AF} Contraction");
       isContracting = true;
     } else {
-      updateNode(contractButtonId, "Start Contraction");
+      updateNode(contractButtonId, "\u{25B6} Contraction");
     }
     updateNode(numberOfId, contractionHistory.length);
     initAvgs();
@@ -89,12 +89,12 @@ const toggleContraction = () => {
     isContracting = true;
     startContraction(now);
     updateNode(numberOfId, contractionHistory.length);
-    updateNode(contractButtonId, "End Contraction");
+    updateNode(contractButtonId, "\u{25AF}\u{25AF} Contraction");
   } else {
     console.log("stopping");
     isContracting = false;
     endContraction(now);
-    updateNode(contractButtonId, "Start Contraction");
+    updateNode(contractButtonId, "\u{25B6} Contraction");
   }
 };
 
