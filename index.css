@@ -130,6 +130,19 @@ input[type="checkbox"]:checked + .checkboxLabel {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 4px;
+}
+
+#food-button {
+  flex: 1;
+}
+
+#drink-button {
+  flex: 1;
+}
+
+#contract-button {
+  flex: 2;
 }
 
 .label {

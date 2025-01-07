@@ -4,7 +4,8 @@ const numberOfId = "num-contractions";
 const lengthId = "last-contract-length";
 const timeBetweenId = "time-between";
 const currentLengthId = "current-contract-length";
-const contractButtonId = "contract-button";
+const contractButtonTextId = "contract-button-text";
+const buttonSymbolId = "contract-button-symbol";
 const laborSectionId = "labor-info-wrapper";
 
 const lastDrinkId = "last-drink";
@@ -42,12 +43,9 @@ const initState = () => {
       startTimeId,
       new Date(contractionHistory[0][0]).toLocaleString()
     );
-    if (contractionHistory[contractionHistory.length - 1].length === 1) {
-      updateNode(contractButtonId, "\u{25AF}\u{25AF} Contraction");
-      isContracting = true;
-    } else {
-      updateNode(contractButtonId, "\u{25B6} Contraction");
-    }
+    isContracting =
+      contractionHistory[contractionHistory.length - 1].length === 1;
+    updateButtonNode();
     updateNode(numberOfId, contractionHistory.length);
     initAvgs();
     updateTimeSince(new Date().getTime());
@@ -59,7 +57,7 @@ window.onload = initState;
 
 // toggle display tabs
 const displaySection = (section) => {
-  if (id === energySectionId) {
+  if (section === energySectionId) {
     updateTimeSince(new Date().getTime());
   }
   sectionIds.forEach((id) => {
@@ -89,13 +87,12 @@ const toggleContraction = () => {
     isContracting = true;
     startContraction(now);
     updateNode(numberOfId, contractionHistory.length);
-    updateNode(contractButtonId, "\u{25AF}\u{25AF} Contraction");
   } else {
     console.log("stopping");
     isContracting = false;
     endContraction(now);
-    updateNode(contractButtonId, "\u{25B6} Contraction");
   }
+  updateButtonNode();
 };
 
 const startContraction = (now) => {
@@ -259,6 +256,15 @@ const padNumber = (n) => {
 
 const updateNode = (id, newText) => {
   document.getElementById(id).textContent = newText;
+};
+
+const pauseSymbol = "\u{23F8}";
+const playSymbol = "\u{25B6}";
+const updateButtonNode = () => {
+  if (contractionHistory.length == 1) {
+    updateNode(contractButtonTextId, "Contraction");
+  }
+  updateNode(buttonSymbolId, isContracting ? pauseSymbol : playSymbol);
 };
 
 const updateLengthNode = () => {
