@@ -25,42 +25,15 @@ let lastFood = 0;
 let lastDrink = 0;
 
 // would come from browser cookie
-// const testHistory = [
-//   [1736021681164, 1736021703852],
-//   [1736021734451, 1736021760883],
-//   [1736021808591, 1736021829778],
-//   [1736022137140, 1736022230180],
-//   [1736022422456, 1736022473224],
-// ];
-
-const testShort = [
-  [1, 2],
-  [3, 5],
-  // [6]
-];
-const testMedium = [
-  [1, 2],
-  [3, 5],
-  [6, 9],
-  [10, 14],
-  [15, 20],
-  [21, 27],
-  // [28]
-];
-const testLong = [
-  [1, 2],
-  [3, 5],
-  [6, 9],
-  [10, 14],
-  [15, 20],
-  [21, 27],
-  [28, 32],
-  [33, 40],
-  [41, 50],
-  [51, 60],
+const testHistory = [
+  [1736021681164, 1736021703852],
+  [1736021734451, 1736021760883],
+  [1736021808591, 1736021829778],
+  [1736022137140, 1736022230180],
+  [1736022422456, 1736022473224],
 ];
 
-const contractionHistory = testLong; // = []; //[[startTime, endTime]]
+const contractionHistory = testHistory; // = []; //[[startTime, endTime]]
 
 // init from pre-saved data
 const initState = () => {
@@ -69,9 +42,13 @@ const initState = () => {
       startTimeId,
       new Date(contractionHistory[0][0]).toLocaleString()
     );
+    if (contractionHistory[contractionHistory.length - 1].length === 1) {
+      updateNode(contractButtonId, "End Contraction");
+      isContracting = true;
+    } else {
+      updateNode(contractButtonId, "Start Contraction");
+    }
     updateNode(numberOfId, contractionHistory.length);
-    //debug
-    contractionHistory.forEach((c) => console.log(`[${c[0]},${c[1]}]`));
     initAvgs();
     updateTimeSince(new Date().getTime());
     updateLengthNode();
@@ -82,6 +59,9 @@ window.onload = initState;
 
 // toggle display tabs
 const displaySection = (section) => {
+  if (id === energySectionId) {
+    updateTimeSince(new Date().getTime());
+  }
   sectionIds.forEach((id) => {
     if (section != id) {
       document.getElementById(id).classList.add("hidden");
@@ -190,6 +170,7 @@ const initAvgs = () => {
   console.log(`numContracts: ${numVals} - startI: ${startI}`);
   avgLength =
     contractionHistory.slice(startI, startI + numVals).reduce((sum, c) => {
+      console.log(`${c[1]} - ${c[0]}`);
       return sum + c[1] - c[0];
     }, 0) / numVals;
 
