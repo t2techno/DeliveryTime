@@ -25,15 +25,42 @@ let lastFood = 0;
 let lastDrink = 0;
 
 // would come from browser cookie
-const testHistory = [
-  [1736021681164, 1736021703852],
-  [1736021734451, 1736021760883],
-  [1736021808591, 1736021829778],
-  [1736022137140, 1736022230180],
-  [1736022422456, 1736022473224],
+// const testHistory = [
+//   [1736021681164, 1736021703852],
+//   [1736021734451, 1736021760883],
+//   [1736021808591, 1736021829778],
+//   [1736022137140, 1736022230180],
+//   [1736022422456, 1736022473224],
+// ];
+
+const testShort = [
+  [1, 2],
+  [3, 5],
+  // [6]
+];
+const testMedium = [
+  [1, 2],
+  [3, 5],
+  [6, 9],
+  [10, 14],
+  [15, 20],
+  [21, 27],
+  // [28]
+];
+const testLong = [
+  [1, 2],
+  [3, 5],
+  [6, 9],
+  [10, 14],
+  [15, 20],
+  [21, 27],
+  [28, 32],
+  [33, 40],
+  [41, 50],
+  [51, 60],
 ];
 
-const contractionHistory = testHistory; // = []; //[[startTime, endTime]]
+const contractionHistory = testLong; // = []; //[[startTime, endTime]]
 
 // init from pre-saved data
 const initState = () => {
@@ -43,6 +70,8 @@ const initState = () => {
       new Date(contractionHistory[0][0]).toLocaleString()
     );
     updateNode(numberOfId, contractionHistory.length);
+    //debug
+    contractionHistory.forEach((c) => console.log(`[${c[0]},${c[1]}]`));
     initAvgs();
     updateTimeSince(new Date().getTime());
     updateLengthNode();
@@ -100,7 +129,6 @@ const startContraction = (now) => {
 const endContraction = (now) => {
   const numContractions = contractionHistory.length;
   contractionHistory[numContractions - 1].push(now);
-  const length = now - contractionHistory[numContractions - 1][0];
   updateLengthAvg();
   updateLengthNode();
 };
@@ -140,11 +168,14 @@ const initAvgs = () => {
   console.log(`numContractions: ${numContractions}`);
   if (numContractions > 1) {
     const numVals = Math.min(numContractions - 1, avgWindow);
-    const startI = Math.max(numVals - avgWindow, 1);
+    const startI = Math.max(numContractions - avgWindow, 1);
     console.log(`numTimeBetweens: ${numVals} - startI: ${startI}`);
     const avgSum = contractionHistory.slice(startI).reduce((sum, c, idx) => {
-      console.log(`[${idx + 1}] - [${startI + idx - 1}]`);
-      console.log(`[${c[0]}] - [${contractionHistory[startI + idx - 1][0]}]`);
+      console.log(
+        `c[${startI + idx}]=${c[0]} - c[${startI + idx - 1}] = ${
+          contractionHistory[startI + idx - 1][0]
+        }`
+      );
       return sum + c[0] - contractionHistory[startI + idx - 1][0];
     }, 0);
     avgTimeBetween = avgSum / numVals;
@@ -155,7 +186,7 @@ const initAvgs = () => {
   console.log(`number of full contractions: ${numFullContractions}`);
 
   const numVals = Math.min(numFullContractions, avgWindow);
-  const startI = Math.max(numFullContractions - avgWindow - 1, 0);
+  const startI = Math.max(numFullContractions - avgWindow, 0);
   console.log(`numContracts: ${numVals} - startI: ${startI}`);
   avgLength =
     contractionHistory.slice(startI, startI + numVals).reduce((sum, c) => {
