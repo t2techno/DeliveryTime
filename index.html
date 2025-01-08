@@ -46,14 +46,19 @@
               value="settings"
               id="settings-info"
             />
-            <label class="radioLabel" for="settings-info">Settings</label>
+            <label
+              class="radioLabel"
+              for="settings-info"
+              onclick="displaySection('settings-wrapper')"
+              >Settings</label
+            >
           </div>
         </div>
         <!-- Content -->
 
         <!-- Labor Info -->
         <div id="labor-info-wrapper">
-          <div class="infoWrapper">
+          <div class="rowWrapper">
             <div class="infoContent">
               <input
                 type="checkbox"
@@ -70,25 +75,25 @@
               <h2 class="label">Contraction Info</h2>
             </div>
           </div>
-          <div class="infoWrapper">
+          <div class="rowWrapper">
             <div class="infoContent">
               <h2 class="label">Labor began:</h2>
               <p id="start-time">--:--</p>
             </div>
           </div>
-          <div class="infoWrapper">
+          <div class="rowWrapper">
             <div class="infoContent">
               <h3>Count:</h3>
               <p id="num-contractions">0</p>
             </div>
           </div>
-          <div class="infoWrapper">
+          <div class="rowWrapper">
             <div class="infoContent">
               <h3>Length:</h3>
               <p id="contract-length">--:--</p>
             </div>
           </div>
-          <div class="infoWrapper">
+          <div class="rowWrapper">
             <div class="infoContent">
               <h3>Time between:</h3>
               <p id="time-between">--:--</p>
@@ -97,7 +102,7 @@
         </div>
 
         <div id="energy-info-wrapper" class="hidden">
-          <div class="infoWrapper">
+          <div class="rowWrapper">
             <div class="infoContent">
               <h2 class="label">Liquid:</h2>
               <p id="last-drink">--:--</p>
@@ -106,7 +111,7 @@
               <p id="since-last-drink"></p>
             </div>
           </div>
-          <div class="infoWrapper">
+          <div class="rowWrapper">
             <div class="infoContent">
               <h3>Food:</h3>
               <p id="last-food">--:--</p>
@@ -116,6 +121,24 @@
             </div>
           </div>
         </div>
+
+        <div id="settings-wrapper" class="hidden">
+          <div class="rowWrapper">
+            <div class="setting">
+              <h2 id="timer-setting-label">Timer Length</h2>
+              <input
+                id="timer-setting"
+                type="number"
+                min="0"
+                max="60"
+                value="1"
+                class="numberInput"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom -->
         <div class="activeContraction">
           <hr />
           <div class="infoContent">

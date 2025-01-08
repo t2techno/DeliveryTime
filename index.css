@@ -79,16 +79,16 @@ input[type="checkbox"]:checked + .checkboxLabel {
   padding-block: 2px;
 }
 
-.infoWrapper {
+.rowWrapper {
   width: 100%;
   padding-block: 2px;
 }
 
-.infoWrapper:nth-of-type(odd) {
+.rowWrapper:nth-of-type(odd) {
   background-color: white;
 }
 
-.infoWrapper:nth-of-type(even) {
+.rowWrapper:nth-of-type(even) {
   background-color: hsl(0, 0%, 92%);
 }
 .infoContent {
@@ -106,6 +106,25 @@ input[type="checkbox"]:checked + .checkboxLabel {
   justify-content: flex-end;
   margin: auto;
   width: 70%;
+}
+
+.setting {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: auto;
+  width: 90%;
+}
+
+.inactive {
+  text-decoration: line-through;
+  color: hsl(0, 0%, 39%);
+}
+
+.numberInput {
+  width: 2.5rem;
 }
 
 .dark {

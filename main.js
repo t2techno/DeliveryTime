@@ -12,11 +12,14 @@ const laborSectionId = "labor-info-wrapper";
 const lastDrinkId = "last-drink";
 const sinceLastDrinkId = "since-last-drink";
 const lastFoodId = "last-food";
+
+const timerSettingLabelId = "timer-setting-label";
+const timerSettingId = "timer-setting";
+
 const sinceLastFoodId = "since-last-food";
 const energySectionId = "energy-info-wrapper";
-
-const settingsSectionsId = "settings-wrapper";
-const sectionIds = [laborSectionId, energySectionId, settingsSectionsId];
+const settingsSectionId = "settings-wrapper";
+const sectionIds = [laborSectionId, energySectionId, settingsSectionId];
 // state
 let isContracting = false;
 let isAvg = false;
@@ -41,6 +44,9 @@ const contractionHistory = []; //[[startTime, endTime]]
 
 // init from pre-saved data
 const initState = () => {
+  const timerSetting = document
+    .getElementById(timerSettingId)
+    .addEventListener("change", timerSettingChange);
   if (contractionHistory.length > 0) {
     updateNode(
       startTimeId,
@@ -98,6 +104,26 @@ const toggleContraction = () => {
   updateButtonNode();
 };
 
+const timerSettingChange = (event) => {
+  const val = parseInt(event.target.value);
+  if (val == 0 && tickLength > 0) {
+    document.getElementById(timerSettingLabelId).classList.add("inactive");
+    if (isContracting) {
+      const startDateTime = new Date();
+      startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
+      updateNode(activeLengthId, startDateTime.toLocaleTimeString());
+    }
+  } else if (tickLength == 0 && val > 0) {
+    updateTimeSince(new Date().getTime());
+    document.getElementById(timerSettingLabelId).classList.remove("inactive");
+  }
+  tickLength = val;
+  if (intervalId != -1) {
+    window.clearInterval(intervalId);
+    intervalId = window.setInterval(timerTick, tickLength * 1000);
+  }
+};
+
 const timerTick = () => {
   updateTimeSince(new Date().getTime());
 };
@@ -139,28 +165,6 @@ const toggleAvgInfo = () => {
   updateTimeBetweenNode();
 };
 
-const getLatestIdx = () => {
-  const numContractions = contractionHistory.length;
-  if (numContractions === 0 || contractionHistory[0].length === 1) {
-    return -1;
-  }
-
-  return contractionHistory[numContractions - 1].length > 1
-    ? numContractions - 1
-    : numContractions - 2;
-};
-
-const getContractionCount = () => {
-  const numContractions = contractionHistory.length;
-  if (numContractions == 0) {
-    return 0;
-  }
-
-  return contractionHistory[numContractions - 1]?.length > 1
-    ? numContractions
-    : numContractions - 1;
-};
-
 const initAvgs = () => {
   // init tb
   const numContractions = contractionHistory.length;
@@ -197,10 +201,6 @@ const updateLengthAvg = () => {
   const newL = calcLength(contractionHistory[numContractions - 1]);
   const oldL = calcLength(contractionHistory[numContractions - avgWindow - 1]);
   avgLength += (newL - oldL) / avgWindow;
-};
-
-const calcLength = (c) => {
-  return c[1] - c[0];
 };
 
 const updateTimeBetweenAvg = (tb) => {
@@ -246,6 +246,31 @@ const addDrink = () => {
 };
 
 // utility methods
+const getLatestIdx = () => {
+  const numContractions = contractionHistory.length;
+  if (numContractions === 0 || contractionHistory[0].length === 1) {
+    return -1;
+  }
+
+  return contractionHistory[numContractions - 1].length > 1
+    ? numContractions - 1
+    : numContractions - 2;
+};
+
+const getContractionCount = () => {
+  const numContractions = contractionHistory.length;
+  if (numContractions == 0) {
+    return 0;
+  }
+
+  return contractionHistory[numContractions - 1]?.length > 1
+    ? numContractions
+    : numContractions - 1;
+};
+
+const calcLength = (c) => {
+  return c[1] - c[0];
+};
 
 // ms: number
 const msToMinuteStr = (ms) => {
