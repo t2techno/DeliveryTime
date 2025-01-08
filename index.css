@@ -116,9 +116,16 @@ input[type="checkbox"]:checked + .checkboxLabel {
   display: flex;
   gap: 8px;
 }
+
+.activeContraction {
+  position: absolute;
+  bottom: 12%;
+  width: 100%;
+}
+
 #buttonRow {
   position: absolute;
-  bottom: 5%;
+  bottom: 0%;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
@@ -135,14 +142,17 @@ input[type="checkbox"]:checked + .checkboxLabel {
 
 #food-button {
   flex: 1;
+  border-radius: 0 10px 0 0;
 }
 
 #drink-button {
   flex: 1;
+  border-radius: 10px 0 0 0;
 }
 
 #contract-button {
   flex: 2;
+  border-radius: 10px 10px 0 0;
 }
 
 .label {

@@ -1,9 +1,10 @@
 // element ids
 const startTimeId = "start-time";
 const numberOfId = "num-contractions";
-const lengthId = "last-contract-length";
+const lengthId = "contract-length";
 const timeBetweenId = "time-between";
-const currentLengthId = "current-contract-length";
+const activeLengthId = "active-length";
+const activeStartId = "active-start";
 const contractButtonTextId = "contract-button-text";
 const buttonSymbolId = "contract-button-symbol";
 const laborSectionId = "labor-info-wrapper";
@@ -19,6 +20,8 @@ const sectionIds = [laborSectionId, energySectionId, settingsSectionsId];
 // state
 let isContracting = false;
 let isAvg = false;
+let intervalId = -1;
+let tickLength = 1;
 let avgWindow = 5;
 let avgLength = 0;
 let avgTimeBetween = 0;
@@ -85,7 +88,7 @@ const toggleContraction = () => {
   if (!isContracting) {
     console.log("starting");
     isContracting = true;
-    startContraction(now);
+    startContraction(nowDate);
     updateNode(numberOfId, contractionHistory.length);
   } else {
     console.log("stopping");
@@ -95,19 +98,38 @@ const toggleContraction = () => {
   updateButtonNode();
 };
 
-const startContraction = (now) => {
-  const numContractions = contractionHistory.push([now]);
+const timerTick = () => {
+  updateTimeSince(new Date().getTime());
+};
+
+// add new contraction to contractionHistory
+// Update time between average and node
+// set active time string and start time if necessary
+const startContraction = (nowDate) => {
+  const numContractions = contractionHistory.push([nowDate.getTime()]);
   if (numContractions > 1) {
     updateTimeBetweenAvg();
     updateTimeBetweenNode();
   }
+  const activeLengthStr =
+    tickLength > 0 ? msToMinuteStr(0) : nowDate.toLocaleTimeString();
+  updateNode(activeLengthId, activeLengthStr);
+  intervalId = window.setInterval(timerTick, tickLength * 1000);
 };
 
+// push end time of contraction to contraction history
+// update length average and node
+// clear timer interval and active time node
 const endContraction = (now) => {
   const numContractions = contractionHistory.length;
   contractionHistory[numContractions - 1].push(now);
   updateLengthAvg();
   updateLengthNode();
+  updateNode(activeLengthId, "--:--");
+  if (tickLength > 0) {
+    window.clearInterval(intervalId);
+    intervalId = -1;
+  }
 };
 
 const toggleAvgInfo = () => {
@@ -305,5 +327,11 @@ const updateTimeSince = (now) => {
   }
   if (lastDrink > 0) {
     updateNode(sinceLastDrinkId, msToMinuteStr(now - lastDrink) + " ago");
+  }
+  if (isContracting && tickLength > 0) {
+    updateNode(
+      activeLengthId,
+      msToMinuteStr(now - contractionHistory[contractionHistory.length - 1][0])
+    );
   }
 };
