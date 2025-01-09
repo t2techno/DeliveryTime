@@ -44,13 +44,13 @@
               type="radio"
               name="infoDisplay"
               value="settings"
-              id="settings-info"
+              id="low-power-info"
             />
             <label
               class="radioLabel"
-              for="settings-info"
-              onclick="displaySection('settings-wrapper')"
-              >Settings</label
+              for="low-power-info"
+              onclick="displaySection('low-power-wrapper')"
+              >Low Power</label
             >
           </div>
         </div>
@@ -104,7 +104,7 @@
         <div id="energy-info-wrapper" class="hidden">
           <div class="rowWrapper">
             <div class="infoContent">
-              <h2 class="label">Liquid:</h2>
+              <h2 class="label">Drink:</h2>
               <p id="last-drink">--:--</p>
             </div>
             <div class="sinceEnergy">
@@ -122,10 +122,13 @@
           </div>
         </div>
 
-        <div id="settings-wrapper" class="hidden">
+        <div id="low-power-wrapper" class="hidden">
           <div class="rowWrapper">
-            <div class="setting">
-              <h2 id="timer-setting-label">Timer Length</h2>
+            <div class="settingLabel">
+              <h2 id="timer-setting-label">Timer Update</h2>
+            </div>
+            <div id="setting-input">
+              <p>Every &nbsp;</p>
               <input
                 id="timer-setting"
                 type="number"
@@ -134,7 +137,9 @@
                 value="1"
                 class="numberInput"
               />
+              <p id="timer-settings-seconds">&nbsp;Second</p>
             </div>
+            <p id="no-timer-label" class="hidden">Only display start time</p>
           </div>
         </div>
 

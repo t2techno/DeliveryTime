@@ -18,8 +18,8 @@ const timerSettingId = "timer-setting";
 
 const sinceLastFoodId = "since-last-food";
 const energySectionId = "energy-info-wrapper";
-const settingsSectionId = "settings-wrapper";
-const sectionIds = [laborSectionId, energySectionId, settingsSectionId];
+const lowPowerSectionId = "low-power-wrapper";
+const sectionIds = [laborSectionId, energySectionId, lowPowerSectionId];
 // state
 let isContracting = false;
 let isAvg = false;
@@ -71,9 +71,9 @@ const displaySection = (section) => {
   }
   sectionIds.forEach((id) => {
     if (section != id) {
-      document.getElementById(id).classList.add("hidden");
+      updateNodeClasslist(id, "hidden", true);
     } else {
-      document.getElementById(id).classList.remove("hidden");
+      updateNodeClasslist(id, "hidden", false);
     }
   });
 };
@@ -107,7 +107,7 @@ const toggleContraction = () => {
 const timerSettingChange = (event) => {
   const val = parseInt(event.target.value);
   if (val == 0 && tickLength > 0) {
-    document.getElementById(timerSettingLabelId).classList.add("inactive");
+    updateNodeClasslist(timerSettingLabelId, "inactive", true);
     if (isContracting) {
       const startDateTime = new Date();
       startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
@@ -115,8 +115,21 @@ const timerSettingChange = (event) => {
     }
   } else if (tickLength == 0 && val > 0) {
     updateTimeSince(new Date().getTime());
-    document.getElementById(timerSettingLabelId).classList.remove("inactive");
+    updateNodeClasslist(timerSettingLabelId, "inactive", false);
   }
+
+  if (val > 1 && tickLength <= 1) {
+    updateNode("timer-settings-seconds", "\xa0Seconds");
+  } else if (tickLength > 1 && val <= 1) {
+    updateNode("timer-settings-seconds", "\xa0Second");
+  }
+
+  if (val == 0 && tickLength > 0) {
+    updateNodeClasslist("no-timer-label", "hidden", false);
+  } else {
+    updateNodeClasslist("no-timer-label", "hidden", true);
+  }
+
   tickLength = val;
   if (intervalId != -1) {
     window.clearInterval(intervalId);
@@ -303,6 +316,14 @@ const padNumber = (n) => {
 
 const updateNode = (id, newText) => {
   document.getElementById(id).textContent = newText;
+};
+
+const updateNodeClasslist = (id, className, isAdd) => {
+  if (isAdd) {
+    document.getElementById(id).classList.add(className);
+  } else {
+    document.getElementById(id).classList.remove(className);
+  }
 };
 
 const pauseSymbol = "\u{23F8}";
