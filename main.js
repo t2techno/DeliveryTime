@@ -55,8 +55,9 @@ let avgTimeBetween = 0;
 
 // avg
 let isAvg = false;
+
 // num values to use for average
-let avgWindow = 5;
+const avgWindow = 5;
 
 // energy state
 let lastFood = 0;
@@ -117,10 +118,10 @@ const dbOnUpgrade = (event) => {
   };
 };
 
-const initDbStores = () => {
+const initDbStores = (isReset) => {
   // init settings store
-  initSettingsStore();
-  initEnergyStore();
+  initSettingsStore(isReset);
+  initEnergyStore(isReset);
   const clearTransaction = db
     .transaction(ContractionStore, "readwrite")
     .objectStore(ContractionStore)
@@ -131,26 +132,34 @@ const initDbStores = () => {
   };
 };
 
-const initSettingsStore = () => {
+const initSettingsStore = (isReset) => {
   console.log("initing Settings store");
   const settingObjectStore = db
     .transaction(SettingsStore, "readwrite")
     .objectStore(SettingsStore);
 
   dbSettingDefaults.forEach((setting) => {
-    settingObjectStore.add(setting);
+    if (isReset) {
+      settingObjectStore.put(setting);
+    } else {
+      settingObjectStore.add(setting);
+    }
   });
   console.log("setting object store initialized!");
 };
 
-const initEnergyStore = () => {
+const initEnergyStore = (isReset) => {
   console.log("initing Energy store");
   const energyObjectStore = db
     .transaction(EnergyStore, "readwrite")
     .objectStore(EnergyStore);
 
   dbEnergyDefaults.forEach((energy) => {
-    energyObjectStore.add(energy);
+    if (isReset) {
+      energyObjectStore.put(energy);
+    } else {
+      energyObjectStore.add(energy);
+    }
   });
   console.log("energy object store initialized!");
 };
@@ -198,6 +207,44 @@ const updateDb = (key, value) => {
   }
 };
 
+const resetApp = () => {
+  // reset state variables
+  intervalId = -1;
+
+  // contraction state
+  isContracting = false;
+  avgLength = 0;
+  avgTimeBetween = 0;
+
+  // avg
+  isAvg = false;
+
+  // energy state
+  lastFood = 0;
+  lastDrink = 0;
+
+  contractionHistory = [];
+
+  // reset database
+  initDbStores(true);
+
+  // reset text nodes
+  updateLengthNode();
+  updateTimeBetweenNode();
+  updateButtonNode();
+  updateTimeSinceNodes();
+  updateNode(lastFoodId, "--:--");
+  updateNode(lastDrinkId, "--:--");
+  document.getElementById("average-checkbox").checked = false;
+
+  updateNode(startTimeId, "--:--");
+  updateNode(numberOfId, 0);
+
+  // mimic expected event object structure to set my own value
+  document.getElementById("timer-setting").value = 1;
+  timerSettingChange({ target: { value: 1 } });
+};
+
 //open db
 const dbOpenRequest = window.indexedDB.open("ContractionTimerDatabase", 1);
 
@@ -220,13 +267,17 @@ const initState = (db) => {
   energyStore.get("lastFood").onsuccess = (event) => {
     console.log(`last food: ${event.target.result.value}`);
     lastFood = event.target.result.value;
-    updateNode(lastFoodId, new Date(lastFood).toLocaleTimeString());
+    if (lastFood > 0) {
+      updateNode(lastFoodId, new Date(lastFood).toLocaleTimeString());
+    }
   };
 
   energyStore.get("lastDrink").onsuccess = (event) => {
     console.log(`last drink: ${event.target.result.value}`);
     lastDrink = event.target.result.value;
-    updateNode(lastDrinkId, new Date(lastDrink).toLocaleTimeString());
+    if (lastDrink > 0) {
+      updateNode(lastDrinkId, new Date(lastDrink).toLocaleTimeString());
+    }
   };
 
   // settings store
@@ -234,14 +285,13 @@ const initState = (db) => {
   settingsStore.get("isAvg").onsuccess = (event) => {
     console.log(`isAvg: ${event.target.result.value}`);
     isAvg = event.target.result.value;
-    if (isAvg) {
-      document.getElementById("average-checkbox").checked = true;
-    }
+    document.getElementById("average-checkbox").checked = isAvg;
   };
 
   settingsStore.get("tickLength").onsuccess = (event) => {
     console.log(`tickLength: ${event.target.result.value}`);
-    tickLength = event.target.result.value;
+    document.getElementById("timer-setting").value = event.target.result.value;
+    timerSettingChange({ target: { value: event.target.result.value } });
   };
 
   // contractions
@@ -302,7 +352,7 @@ const initState = (db) => {
       console.log("no contraction history to derive from");
     }
     // if there's food or drink history, update time
-    updateTimeSince(new Date().getTime());
+    updateTimeSinceNodes(new Date().getTime());
   };
 };
 
@@ -321,12 +371,12 @@ const timerSettingChange = (event) => {
       updateNode(activeLengthId, startDateTime.toLocaleTimeString());
     }
   } else if (tickLength == 0 && val > 0) {
-    updateTimeSince(new Date().getTime());
+    updateTimeSinceNodes(new Date().getTime());
     updateNodeClasslist(timerSettingLabelId, "inactive", false);
   }
   if (val > 1 && tickLength <= 1) {
     updateNode("timer-settings-seconds", "\xa0Seconds");
-  } else if (tickLength > 1 && val <= 1) {
+  } else if (val === 1 && tickLength != 1) {
     updateNode("timer-settings-seconds", "\xa0Second");
   }
 
@@ -347,7 +397,7 @@ const timerSettingChange = (event) => {
 
 // runs every tickLength seconds
 const timerTick = () => {
-  updateTimeSince(new Date().getTime());
+  updateTimeSinceNodes(new Date().getTime());
 };
 
 const startTimer = () => {
@@ -366,7 +416,7 @@ const toggleContraction = () => {
     updateNode(startTimeId, nowDate.toLocaleString());
   }
 
-  updateTimeSince(now);
+  updateTimeSinceNodes(now);
 
   // start contraction
   if (!isContracting) {
@@ -493,7 +543,7 @@ const addFood = () => {
   const now = new Date();
   lastFood = now.getTime();
   updateNode(lastFoodId, now.toLocaleTimeString());
-  updateTimeSince(now);
+  updateTimeSinceNodes(now);
   updateDb("lastFood", lastFood);
 };
 
@@ -501,7 +551,7 @@ const addDrink = () => {
   const now = new Date();
   lastDrink = now.getTime();
   updateNode(lastDrinkId, now.toLocaleTimeString());
-  updateTimeSince(now);
+  updateTimeSinceNodes(now);
   updateDb("lastDrink", lastDrink);
 };
 
@@ -586,63 +636,70 @@ const updateNodeClasslist = (id, className, isAdd) => {
 const pauseSymbol = "\u{23F8}";
 const playSymbol = "\u{25B6}";
 const updateButtonNode = () => {
-  if (contractionHistory.length > 0) {
+  let newString;
+  if (!contractionHistory.length) {
+    newString = "Begin Labor";
+  } else {
     updateNode(contractButtonTextId, "Contraction");
+    updateNode(buttonSymbolId, isContracting ? pauseSymbol : playSymbol);
   }
-  updateNode(buttonSymbolId, isContracting ? pauseSymbol : playSymbol);
 };
 
 const updateLengthNode = () => {
   // no lengths to display
-  if (contractionHistory.length == 0 || contractionHistory[0].length === 1)
-    return;
-
-  const newString = isAvg
-    ? msToMinuteStr(avgLength)
-    : msToMinuteStr(calcLength(contractionHistory[getLatestIdx()]));
+  let newString;
+  if (!contractionHistory.length || contractionHistory[0].length === 1) {
+    newString = "--:--";
+  } else {
+    newString = isAvg
+      ? msToMinuteStr(avgLength)
+      : msToMinuteStr(calcLength(contractionHistory[getLatestIdx()]));
+  }
 
   updateNode(lengthId, newString);
 };
 
 const updateTimeBetweenNode = () => {
-  // nothing to display
-  if (contractionHistory.length < 2) {
-    return;
-  }
-
   let newString = "";
-  if (isAvg) {
-    newString = msToMinuteStr(avgTimeBetween);
+  if (contractionHistory.length < 2) {
+    newString = "--:--";
   } else {
-    const timeBetween =
-      contractionHistory[contractionHistory.length - 1][0] -
-      contractionHistory[contractionHistory.length - 2][0];
+    if (isAvg) {
+      newString = msToMinuteStr(avgTimeBetween);
+    } else {
+      const timeBetween =
+        contractionHistory[contractionHistory.length - 1][0] -
+        contractionHistory[contractionHistory.length - 2][0];
 
-    newString = msToHourStr(timeBetween);
+      newString = msToHourStr(timeBetween);
+      newString = msToHourStr(timeBetween);
+      newString = msToHourStr(timeBetween);
+    }
   }
-
   updateNode(timeBetweenId, newString);
 };
 
-const updateTimeSince = (now) => {
-  if (lastFood > 0) {
-    updateNode(sinceLastFoodId, msToHourStr(now - lastFood) + " ago");
-  }
-  if (lastDrink > 0) {
-    updateNode(sinceLastDrinkId, msToMinuteStr(now - lastDrink) + " ago");
-  }
-  if (isContracting && tickLength > 0) {
-    updateNode(
-      activeLengthId,
-      msToMinuteStr(now - contractionHistory[contractionHistory.length - 1][0])
-    );
-  }
+const updateTimeSinceNodes = (now) => {
+  let newString = "";
+  newString = lastFood > 0 ? msToHourStr(now - lastFood) + " ago" : "--:--";
+  updateNode(sinceLastFoodId, newString);
+
+  newString = lastDrink > 0 ? msToHourStr(now - lastDrink) + " ago" : "--:--";
+  updateNode(sinceLastDrinkId, newString);
+
+  newString =
+    isContracting && tickLength > 0
+      ? msToMinuteStr(
+          nowTime - contractionHistory[contractionHistory.length - 1][0]
+        )
+      : "--:--";
+  updateNode(activeLengthId, newString);
 };
 
 // toggle display tabs
 const displaySection = (section) => {
   if (section === energySectionId) {
-    updateTimeSince(new Date().getTime());
+    updateTimeSinceNodes(new Date().getTime());
   }
   sectionIds.forEach((id) => {
     if (section != id) {

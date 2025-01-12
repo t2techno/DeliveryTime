@@ -143,7 +143,6 @@ input[type="checkbox"]:checked + .checkboxLabel {
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
-  margin: auto;
   width: 90%;
   font-size: 1.1rem;
 }
