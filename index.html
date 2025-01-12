@@ -124,22 +124,32 @@
 
         <div id="settings-wrapper" class="hidden">
           <div class="rowWrapper">
-            <div class="settingLabel">
-              <h2 id="timer-setting-label">Timer Update</h2>
+            <div class="settingContent">
+              <div class="settingLabel">
+                <h2 id="timer-setting-label">Timer Update</h2>
+              </div>
+              <div id="setting-input">
+                <p>Every &nbsp;</p>
+                <input
+                  id="timer-setting"
+                  type="number"
+                  min="0"
+                  max="60"
+                  value="1"
+                  class="numberInput"
+                />
+                <p id="timer-settings-seconds">&nbsp;Second</p>
+              </div>
+              <p id="no-timer-label" class="hidden">Only display start time</p>
             </div>
-            <div id="setting-input">
-              <p>Every &nbsp;</p>
-              <input
-                id="timer-setting"
-                type="number"
-                min="0"
-                max="60"
-                value="1"
-                class="numberInput"
-              />
-              <p id="timer-settings-seconds">&nbsp;Second</p>
+          </div>
+          <div class="rowWrapper">
+            <div class="settingContent">
+              <h2 class="settingLabel" id="timer-setting-label">Reset App</h2>
+              <button type="button" id="clear-button" onclick="clearHistory()">
+                Reset
+              </button>
             </div>
-            <p id="no-timer-label" class="hidden">Only display start time</p>
           </div>
         </div>
 
