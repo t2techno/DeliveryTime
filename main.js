@@ -20,63 +20,326 @@ const sinceLastFoodId = "since-last-food";
 const energySectionId = "energy-info-wrapper";
 const settingsSectionId = "settings-wrapper";
 const sectionIds = [laborSectionId, energySectionId, settingsSectionId];
+
 // state
-let isContracting = false;
-let isAvg = false;
+// db state
+let dbVersion = 0;
+
+// General Energy and Settings, one point data
+const SettingsStore = "SettingsStore";
+const EnergyStore = "EnergyStore";
+const ContractionStore = "ContractionStore";
+
+// settings store
+const dbSettingDefaults = [
+  { key: "isAvg", value: false },
+  { key: "tickLength", value: 1 },
+];
+
+const dbEnergyDefaults = [
+  { key: "lastFood", value: 0 },
+  { key: "lastDrink", value: 0 },
+];
+
+// IDBDatabase
+let db;
+
+// timer state
 let intervalId = -1;
 let tickLength = 1;
-let avgWindow = 5;
+
+// contraction state
+let isContracting = false;
 let avgLength = 0;
 let avgTimeBetween = 0;
+
+// avg
+let isAvg = false;
+// num values to use for average
+let avgWindow = 5;
+
+// energy state
 let lastFood = 0;
 let lastDrink = 0;
 
-// would come from browser cookie
-const testHistory = [
-  [1736021681164, 1736021703852],
-  [1736021734451, 1736021760883],
-  [1736021808591, 1736021829778],
-  [1736022137140, 1736022230180],
-  [1736022422456, 1736022473224],
-];
+let contractionHistory = []; //[[startTime, endTime]]
 
-const contractionHistory = []; //[[startTime, endTime]]
+// db methods //
+// open success
+const dbOpenSuccess = (event) => {
+  if (!event.type == "success") {
+    console.error("success handler, but event type is not success", event);
+    return;
+  }
+
+  console.log("successfully opened db");
+  db = event.target.result;
+  initState(db);
+  db.onerror = dbOnError;
+};
+
+// open error
+const dbOpenError = (event) => {
+  // most likely b/c they didn't give permission
+  // pop up explanation alert if so
+  console.error("There was an error opening the database", event);
+
+  // could also be VER_ERR, verion stored on disk is greater than version in method
+};
+
+// generic error handler
+const dbOnError = (event) => {
+  console.error(`Database error: ${event.target.error?.message}`);
+};
+
+const dbOnUpgrade = (event) => {
+  // Save the IDBDatabase interface
+  db = event.target.result;
+
+  // ObjectStore for array of contraction times
+  const createDbTx = db.createObjectStore(ContractionStore, {
+    autoIncrement: true,
+  });
+
+  db.createObjectStore(SettingsStore, {
+    keyPath: "key",
+  });
+
+  // init energy store
+  db.createObjectStore(EnergyStore, {
+    keyPath: "key",
+  });
+
+  createDbTx.transaction.oncomplete = (event) => {
+    console.log("db and object stores created, init data");
+    initSettingsStore();
+    initEnergyStore();
+  };
+};
+
+const initDbStores = () => {
+  // init settings store
+  initSettingsStore();
+  initEnergyStore();
+  const clearTransaction = db
+    .transaction(ContractionStore, "readwrite")
+    .objectStore(ContractionStore)
+    .clear();
+
+  clearTransaction.onsuccess = () => {
+    console.log("contraction store cleared!");
+  };
+};
+
+const initSettingsStore = () => {
+  console.log("initing Settings store");
+  const settingObjectStore = db
+    .transaction(SettingsStore, "readwrite")
+    .objectStore(SettingsStore);
+
+  dbSettingDefaults.forEach((setting) => {
+    settingObjectStore.add(setting);
+  });
+  console.log("setting object store initialized!");
+};
+
+const initEnergyStore = () => {
+  console.log("initing Energy store");
+  const energyObjectStore = db
+    .transaction(EnergyStore, "readwrite")
+    .objectStore(EnergyStore);
+
+  dbEnergyDefaults.forEach((energy) => {
+    energyObjectStore.add(energy);
+  });
+  console.log("energy object store initialized!");
+};
+
+const updateDb = (key, value) => {
+  let tx;
+  switch (key) {
+    case "lastFood":
+    case "lastDrink": {
+      // update db
+      tx = db
+        .transaction(EnergyStore, "readwrite")
+        .objectStore(EnergyStore)
+        .put({ key: key, value: value });
+
+      break;
+    }
+
+    case "isAvg":
+    case "tickLength": {
+      tx = db
+        .transaction(SettingsStore, "readwrite")
+        .objectStore(SettingsStore)
+        .put({ key: key, value: value });
+      break;
+    }
+
+    case "contraction": {
+      tx = db
+        .transaction(ContractionStore, "readwrite")
+        .objectStore(ContractionStore)
+        .add(value);
+      break;
+    }
+
+    default: {
+      console.error("tried updating unknown db field");
+      return;
+    }
+  }
+  if (tx) {
+    tx.onsuccess = () => {
+      console.log(`${key} updated to  ${value}`);
+    };
+  }
+};
+
+//open db
+const dbOpenRequest = window.indexedDB.open("ContractionTimerDatabase", 1);
+
+// add event handlers
+dbOpenRequest.onsuccess = dbOpenSuccess;
+dbOpenRequest.onerror = dbOpenError;
+dbOpenRequest.onupgradeneeded = dbOnUpgrade;
 
 // init from pre-saved data
-const initState = () => {
-  const timerSetting = document
+const initState = (db) => {
+  // timer input change listener
+  document
     .getElementById(timerSettingId)
     .addEventListener("change", timerSettingChange);
-  if (contractionHistory.length > 0) {
-    updateNode(
-      startTimeId,
-      new Date(contractionHistory[0][0]).toLocaleString()
-    );
-    isContracting =
-      contractionHistory[contractionHistory.length - 1].length === 1;
-    updateButtonNode();
-    updateNode(numberOfId, contractionHistory.length);
-    initAvgs();
-    updateTimeSince(new Date().getTime());
-    updateLengthNode();
-    updateTimeBetweenNode();
-  }
-};
-window.onload = initState;
 
-// toggle display tabs
-const displaySection = (section) => {
-  if (section === energySectionId) {
-    updateTimeSince(new Date().getTime());
-  }
-  sectionIds.forEach((id) => {
-    if (section != id) {
-      document.getElementById(id).classList.add("hidden");
+  const tx = db.transaction([ContractionStore, SettingsStore, EnergyStore]);
+
+  // energy store
+  const energyStore = tx.objectStore(EnergyStore);
+  energyStore.get("lastFood").onsuccess = (event) => {
+    console.log(`last food: ${event.target.result.value}`);
+    lastFood = event.target.result.value;
+    updateNode(lastFoodId, new Date(lastFood).toLocaleTimeString());
+  };
+
+  energyStore.get("lastDrink").onsuccess = (event) => {
+    console.log(`last drink: ${event.target.result.value}`);
+    lastDrink = event.target.result.value;
+    updateNode(lastDrinkId, new Date(lastDrink).toLocaleTimeString());
+  };
+
+  // settings store
+  const settingsStore = tx.objectStore(SettingsStore);
+  settingsStore.get("isAvg").onsuccess = (event) => {
+    console.log(`isAvg: ${event.target.result.value}`);
+    isAvg = event.target.result.value;
+  };
+
+  settingsStore.get("tickLength").onsuccess = (event) => {
+    console.log(`isAvg: ${event.target.result.value}`);
+    tickLength = event.target.result.value;
+  };
+
+  // contractions
+  const contractionStore = tx.objectStore(ContractionStore);
+  contractionStore.openCursor().onsuccess = (event) => {
+    const cursor = event.target.result;
+    if (cursor) {
+      if (cursor.key % 2 === 1) {
+        contractionHistory.push([cursor.value]);
+        console.log(
+          `${cursor.key}: new contraction - start-time: is ${cursor.value}`
+        );
+      } else {
+        contractionHistory[contractionHistory.length - 1].push(cursor.value);
+        console.log(`${cursor.key}: end-time: is ${cursor.value}`);
+      }
+      cursor.continue();
     } else {
-      document.getElementById(id).classList.remove("hidden");
+      console.log("Done adding contractions!");
     }
-  });
+  };
+
+  tx.oncomplete = (event) => {
+    console.log("db transactions complete, compute derived state");
+    // if there is saved state
+    if (contractionHistory.length > 0) {
+      // add labor start time
+      updateNode(
+        startTimeId,
+        new Date(contractionHistory[0][0]).toLocaleString()
+      );
+
+      // isContracting boolean,
+      // based off if previous contraction is unfinished
+      isContracting =
+        contractionHistory[contractionHistory.length - 1].length === 1;
+
+      if (isContracting && tickLength > 0) {
+        console.log("starting timer, saved data has incomplete contraction");
+        startTimer();
+      }
+
+      // update button text based off if we're contracting
+      updateButtonNode();
+
+      // contraction count
+      updateNode(numberOfId, contractionHistory.length);
+
+      // calculate average values of current data
+      initAvgs();
+
+      // latest or avg contraction length
+      updateLengthNode();
+
+      // latest or avg time between
+      updateTimeBetweenNode();
+    } else {
+      console.log("no contraction history to derive from");
+    }
+    // if there's food or drink history, update time
+    updateTimeSince(new Date().getTime());
+  };
 };
+
+// timer methods //
+
+// update timer length
+// restart timer if necessary
+// adjust settings display
+const timerSettingChange = (event) => {
+  const val = parseInt(event.target.value);
+  if (val == 0 && tickLength > 0) {
+    document.getElementById(timerSettingLabelId).classList.add("inactive");
+    if (isContracting) {
+      const startDateTime = new Date();
+      startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
+      updateNode(activeLengthId, startDateTime.toLocaleTimeString());
+    }
+  } else if (tickLength == 0 && val > 0) {
+    updateTimeSince(new Date().getTime());
+    document.getElementById(timerSettingLabelId).classList.remove("inactive");
+  }
+  tickLength = val;
+  if (intervalId != -1) {
+    window.clearInterval(intervalId);
+    startTimer();
+  }
+
+  updateDb("tickLength", tickLength);
+};
+
+// runs every tickLength seconds
+const timerTick = () => {
+  updateTimeSince(new Date().getTime());
+};
+
+const startTimer = () => {
+  intervalId = window.setInterval(timerTick, tickLength * 1000);
+};
+
+// contraction methods //
 
 // main toggle method
 const toggleContraction = () => {
@@ -102,30 +365,7 @@ const toggleContraction = () => {
     endContraction(now);
   }
   updateButtonNode();
-};
-
-const timerSettingChange = (event) => {
-  const val = parseInt(event.target.value);
-  if (val == 0 && tickLength > 0) {
-    document.getElementById(timerSettingLabelId).classList.add("inactive");
-    if (isContracting) {
-      const startDateTime = new Date();
-      startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
-      updateNode(activeLengthId, startDateTime.toLocaleTimeString());
-    }
-  } else if (tickLength == 0 && val > 0) {
-    updateTimeSince(new Date().getTime());
-    document.getElementById(timerSettingLabelId).classList.remove("inactive");
-  }
-  tickLength = val;
-  if (intervalId != -1) {
-    window.clearInterval(intervalId);
-    intervalId = window.setInterval(timerTick, tickLength * 1000);
-  }
-};
-
-const timerTick = () => {
-  updateTimeSince(new Date().getTime());
+  updateDb("contraction", now);
 };
 
 // add new contraction to contractionHistory
@@ -140,7 +380,7 @@ const startContraction = (nowDate) => {
   const activeLengthStr =
     tickLength > 0 ? msToMinuteStr(0) : nowDate.toLocaleTimeString();
   updateNode(activeLengthId, activeLengthStr);
-  intervalId = window.setInterval(timerTick, tickLength * 1000);
+  startTimer();
 };
 
 // push end time of contraction to contraction history
@@ -158,13 +398,9 @@ const endContraction = (now) => {
   }
 };
 
-const toggleAvgInfo = () => {
-  console.log("toggle avg called");
-  isAvg = !isAvg;
-  updateLengthNode();
-  updateTimeBetweenNode();
-};
+// Average Methods //
 
+// called when restoring saved history
 const initAvgs = () => {
   // init tb
   const numContractions = contractionHistory.length;
@@ -187,6 +423,18 @@ const initAvgs = () => {
     }, 0) / numVals;
 };
 
+// latest or avg info display
+const toggleAvgInfo = () => {
+  console.log("toggle avg called");
+  isAvg = !isAvg;
+  updateLengthNode();
+  updateTimeBetweenNode();
+
+  updateDb("isAvg", isAvg);
+};
+
+// called in contraction methods
+// when new values available
 const updateLengthAvg = () => {
   const numContractions = contractionHistory.length;
   // we just do a normal avg until we have more than our window's length
@@ -225,17 +473,13 @@ const updateTimeBetweenAvg = (tb) => {
   avgTimeBetween += (newTb - oldTb) / avgWindow;
 };
 
-// arr: number[]
-const simpleAvg = (arr) => {
-  return arr.reduce((sum, val) => sum + val, 0) / arr.length;
-};
-
-// energy methods
+// energy iterate methods
 const addFood = () => {
   const now = new Date();
   lastFood = now.getTime();
   updateNode(lastFoodId, now.toLocaleTimeString());
   updateTimeSince(now);
+  updateDb("lastFood", lastFood);
 };
 
 const addDrink = () => {
@@ -243,9 +487,12 @@ const addDrink = () => {
   lastDrink = now.getTime();
   updateNode(lastDrinkId, now.toLocaleTimeString());
   updateTimeSince(now);
+  updateDb("lastDrink", lastDrink);
 };
 
-// utility methods
+// utility methods //
+
+// history convenience
 const getLatestIdx = () => {
   const numContractions = contractionHistory.length;
   if (numContractions === 0 || contractionHistory[0].length === 1) {
@@ -272,6 +519,12 @@ const calcLength = (c) => {
   return c[1] - c[0];
 };
 
+// arr: number[]
+const simpleAvg = (arr) => {
+  return arr.reduce((sum, val) => sum + val, 0) / arr.length;
+};
+
+// print convenience
 // ms: number
 const msToMinuteStr = (ms) => {
   const sec = ms / 1000;
@@ -280,7 +533,6 @@ const msToMinuteStr = (ms) => {
   return `${printInt(min)}:${printInt(sec % 60)}`;
 };
 
-// ms: number
 const msToHourStr = (ms) => {
   const sec = ms / 1000;
   const min = sec / 60;
@@ -293,6 +545,8 @@ const msToHourStr = (ms) => {
   return out;
 };
 
+// n | 0
+// quick floor function, I know that my numbers will function as 32bit, positive integers
 const printInt = (n) => {
   return padNumber(n | 0);
 };
@@ -301,6 +555,7 @@ const padNumber = (n) => {
   return n >= 10 ? "" + n : "0" + n;
 };
 
+// html node update methods
 const updateNode = (id, newText) => {
   document.getElementById(id).textContent = newText;
 };
@@ -308,7 +563,7 @@ const updateNode = (id, newText) => {
 const pauseSymbol = "\u{23F8}";
 const playSymbol = "\u{25B6}";
 const updateButtonNode = () => {
-  if (contractionHistory.length == 1) {
+  if (contractionHistory.length > 0) {
     updateNode(contractButtonTextId, "Contraction");
   }
   updateNode(buttonSymbolId, isContracting ? pauseSymbol : playSymbol);
@@ -359,4 +614,18 @@ const updateTimeSince = (now) => {
       msToMinuteStr(now - contractionHistory[contractionHistory.length - 1][0])
     );
   }
+};
+
+// toggle display tabs
+const displaySection = (section) => {
+  if (section === energySectionId) {
+    updateTimeSince(new Date().getTime());
+  }
+  sectionIds.forEach((id) => {
+    if (section != id) {
+      document.getElementById(id).classList.add("hidden");
+    } else {
+      document.getElementById(id).classList.remove("hidden");
+    }
+  });
 };
