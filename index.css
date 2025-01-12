@@ -108,7 +108,7 @@ input[type="checkbox"]:checked + .checkboxLabel {
   width: 70%;
 }
 
-.setting {
+.settingLabel {
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -118,9 +118,24 @@ input[type="checkbox"]:checked + .checkboxLabel {
   width: 90%;
 }
 
+#no-timer-label {
+  width: 90%;
+  margin: auto;
+}
+
 .inactive {
   text-decoration: line-through;
   color: hsl(0, 0%, 39%);
+}
+
+#setting-input {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  margin: auto;
+  width: 90%;
+  font-size: 1.1rem;
 }
 
 .numberInput {

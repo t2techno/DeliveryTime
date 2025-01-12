@@ -234,10 +234,13 @@ const initState = (db) => {
   settingsStore.get("isAvg").onsuccess = (event) => {
     console.log(`isAvg: ${event.target.result.value}`);
     isAvg = event.target.result.value;
+    if (isAvg) {
+      document.getElementById("average-checkbox").checked = true;
+    }
   };
 
   settingsStore.get("tickLength").onsuccess = (event) => {
-    console.log(`isAvg: ${event.target.result.value}`);
+    console.log(`tickLength: ${event.target.result.value}`);
     tickLength = event.target.result.value;
   };
 
@@ -311,7 +314,7 @@ const initState = (db) => {
 const timerSettingChange = (event) => {
   const val = parseInt(event.target.value);
   if (val == 0 && tickLength > 0) {
-    document.getElementById(timerSettingLabelId).classList.add("inactive");
+    updateNodeClasslist(timerSettingLabelId, "inactive", true);
     if (isContracting) {
       const startDateTime = new Date();
       startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
@@ -319,12 +322,24 @@ const timerSettingChange = (event) => {
     }
   } else if (tickLength == 0 && val > 0) {
     updateTimeSince(new Date().getTime());
-    document.getElementById(timerSettingLabelId).classList.remove("inactive");
+    updateNodeClasslist(timerSettingLabelId, "inactive", false);
   }
+  if (val > 1 && tickLength <= 1) {
+    updateNode("timer-settings-seconds", "\xa0Seconds");
+  } else if (tickLength > 1 && val <= 1) {
+    updateNode("timer-settings-seconds", "\xa0Second");
+  }
+
+  if (val == 0 && tickLength > 0) {
+    updateNodeClasslist("no-timer-label", "hidden", false);
+  } else {
+    updateNodeClasslist("no-timer-label", "hidden", true);
+  }
+
   tickLength = val;
   if (intervalId != -1) {
     window.clearInterval(intervalId);
-    startTimer();
+    intervalId = window.setInterval(timerTick, tickLength * 1000);
   }
 
   updateDb("tickLength", tickLength);
@@ -560,6 +575,14 @@ const updateNode = (id, newText) => {
   document.getElementById(id).textContent = newText;
 };
 
+const updateNodeClasslist = (id, className, isAdd) => {
+  if (isAdd) {
+    document.getElementById(id).classList.add(className);
+  } else {
+    document.getElementById(id).classList.remove(className);
+  }
+};
+
 const pauseSymbol = "\u{23F8}";
 const playSymbol = "\u{25B6}";
 const updateButtonNode = () => {
@@ -623,9 +646,9 @@ const displaySection = (section) => {
   }
   sectionIds.forEach((id) => {
     if (section != id) {
-      document.getElementById(id).classList.add("hidden");
+      updateNodeClasslist(id, "hidden", true);
     } else {
-      document.getElementById(id).classList.remove("hidden");
+      updateNodeClasslist(id, "hidden", false);
     }
   });
 };
