@@ -1,25 +1,31 @@
 // element ids
+
+// labor state
 const startTimeId = "start-time";
 const numberOfId = "num-contractions";
 const lengthId = "contract-length";
 const timeBetweenId = "time-between";
-const activeLengthId = "active-length";
-const activeStartId = "active-start";
 const contractButtonTextId = "contract-button-text";
 const buttonSymbolId = "contract-button-symbol";
-const laborSectionId = "labor-info-wrapper";
+const activeLengthId = "active-length";
+const activeStartId = "active-start";
 
+// energy
 const lastDrinkId = "last-drink";
 const sinceLastDrinkId = "since-last-drink";
 const lastFoodId = "last-food";
+const sinceLastFoodId = "since-last-food";
 
+// settings
 const timerSettingLabelId = "timer-setting-label";
 const timerSettingId = "timer-setting";
 
-const sinceLastFoodId = "since-last-food";
-const energySectionId = "energy-info-wrapper";
-const settingsSectionId = "settings-wrapper";
-const sectionIds = [laborSectionId, energySectionId, settingsSectionId];
+// display sections
+const tabLaborInputId = "tab-labor-input";
+const laborContentId = "tab-labor-content";
+const energyContentId = "tab-energy-content";
+const settingsContentId = "tab-settings-content";
+const sectionIds = [laborContentId, energyContentId, settingsContentId];
 
 // state
 // db state
@@ -243,8 +249,8 @@ const resetApp = () => {
   // mimic expected event object structure to set my own value
   document.getElementById("timer-setting").value = 1;
   timerSettingChange({ target: { value: 1 } });
-  document.getElementById("labor-info").checked = true;
-  displaySection(laborSectionId);
+  document.getElementById(tabLaborInputId).checked = true;
+  displaySection(laborContentId);
 };
 
 //open db
@@ -711,7 +717,7 @@ const updateTimeSinceNodes = (nowDate) => {
 
 // toggle display tabs
 const displaySection = (section) => {
-  if (section === energySectionId) {
+  if (section === energyContentId) {
     updateTimeSinceNodes(new Date());
   }
   sectionIds.forEach((id) => {

@@ -9,55 +9,53 @@
   </head>
   <body>
     <main>
-      <div class="wrapper">
-        <div id="header">
-          <h1>Labor Timer</h1>
-        </div>
-        <div id="tabs">
-          <div class="tabWrapper">
-            <input
-              type="radio"
-              name="infoDisplay"
-              value="labor"
-              id="labor-info"
-              checked
-            />
-            <label
-              class="radioLabel"
-              for="labor-info"
-              onclick="displaySection('labor-info-wrapper')"
-              >Labor</label
-            >
-            <input
-              type="radio"
-              name="infoDisplay"
-              value="energy"
-              id="energy-info"
-            />
-            <label
-              class="radioLabel"
-              for="energy-info"
-              onclick="displaySection('energy-info-wrapper')"
-              >Energy</label
-            >
-            <input
-              type="radio"
-              name="infoDisplay"
-              value="settings"
-              id="settings-info"
-            />
-            <label
-              class="radioLabel"
-              for="settings-info"
-              onclick="displaySection('settings-wrapper')"
-              >Settings</label
-            >
-          </div>
-        </div>
-        <!-- Content -->
+      <div id="main-wrapper">
+        <h1 id="main-header">Labor Timer</h1>
 
-        <!-- Labor Info -->
-        <div id="labor-info-wrapper">
+        <!-- Section Tabs -->
+        <div id="tab-wrapper">
+          <input
+            type="radio"
+            name="section-display"
+            value="labor"
+            id="tab-labor-input"
+            checked
+          />
+          <label
+            class="radioLabel"
+            for="tab-labor-input"
+            onclick="displaySection('tab-labor-content')"
+            >Labor</label
+          >
+          <input
+            type="radio"
+            name="section-display"
+            value="energy"
+            id="tab-energy-input"
+          />
+          <label
+            class="radioLabel"
+            for="tab-energy-input"
+            onclick="displaySection('tab-energy-content')"
+            >Energy</label
+          >
+          <input
+            type="radio"
+            name="section-display"
+            value="settings"
+            id="tab-settings-input"
+          />
+          <label
+            class="radioLabel"
+            for="settings-info"
+            onclick="displaySection('tab-settings-content')"
+            >Settings</label
+          >
+        </div>
+
+        <!-- Conditional Tab Content -->
+        <!-- Labor Content -->
+        <div id="tab-labor-content">
           <div class="rowWrapper">
             <div class="infoContent">
               <input
@@ -101,7 +99,8 @@
           </div>
         </div>
 
-        <div id="energy-info-wrapper" class="hidden">
+        <!-- Energy Content  -->
+        <div id="tab-energy-content" class="hidden">
           <div class="rowWrapper">
             <div class="infoContent">
               <h2 class="label">Drink:</h2>
@@ -122,7 +121,8 @@
           </div>
         </div>
 
-        <div id="settings-wrapper" class="hidden">
+        <!-- Settings Content -->
+        <div id="tab-settings-content" class="hidden">
           <div class="rowWrapper">
             <div class="settingContent">
               <div class="settingLabel">
@@ -154,7 +154,7 @@
           </div>
         </div>
 
-        <!-- Bottom -->
+        <!-- Static Bottom Content -->
         <div class="activeContraction">
           <hr />
           <div class="infoContent">
