@@ -403,6 +403,7 @@ const startTimer = () => {
   if (intervalId != -1) {
     console.log("cancelling old timer");
     window.clearInterval(intervalId);
+    intervalId = -1;
   }
   if (tickLength > 0) {
     console.log("starting timer with ticklength " + tickLength);
@@ -513,7 +514,9 @@ const updateLengthAvg = () => {
     avgLength =
       contractionHistory.reduce((sum, c) => {
         sum += c[1] - c[0];
+        return sum;
       }, 0) / numContractions;
+    console.log("new avg: " + avgLength);
     return;
   }
 
@@ -529,6 +532,7 @@ const updateTimeBetweenAvg = (tb) => {
     avgTimeBetween =
       contractionHistory.slice(1).reduce((sum, c, idx) => {
         sum += c[0] - contractionHistory[idx][0];
+        return sum;
       }, 0) /
       (numContractions - 1);
     return;
@@ -692,8 +696,6 @@ const updateTimeSinceNodes = (nowDate) => {
   newString = lastDrink > 0 ? msToHourStr(now - lastDrink) + " ago" : "--:--";
   updateNode(sinceLastDrinkId, newString);
 
-  // todo: This isn't working?
-  // or check the timer method
   if (isContracting) {
     newString =
       tickLength > 0
