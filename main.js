@@ -243,6 +243,8 @@ const resetApp = () => {
   // mimic expected event object structure to set my own value
   document.getElementById("timer-setting").value = 1;
   timerSettingChange({ target: { value: 1 } });
+  document.getElementById("labor-info").checked = true;
+  displaySection(laborSectionId);
 };
 
 //open db
@@ -375,7 +377,7 @@ const timerSettingChange = (event) => {
     updateTimeSinceNodes(nowDate);
     updateNodeClasslist(timerSettingLabelId, "inactive", false);
   }
-  if (val > 1 && tickLength <= 1) {
+  if (val !== 1 && tickLength == 1) {
     updateNode("timer-settings-seconds", "\xa0Seconds");
   } else if (val === 1 && tickLength != 1) {
     updateNode("timer-settings-seconds", "\xa0Second");
@@ -390,7 +392,7 @@ const timerSettingChange = (event) => {
   tickLength = val;
   if (intervalId != -1) {
     window.clearInterval(intervalId);
-    intervalId = window.setInterval(timerTick, tickLength * 1000);
+    startTimer();
   }
 
   updateDb("tickLength", tickLength);
@@ -672,8 +674,6 @@ const updateTimeBetweenNode = () => {
         contractionHistory[contractionHistory.length - 1][0] -
         contractionHistory[contractionHistory.length - 2][0];
 
-      newString = msToHourStr(timeBetween);
-      newString = msToHourStr(timeBetween);
       newString = msToHourStr(timeBetween);
     }
   }
