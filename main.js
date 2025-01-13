@@ -388,12 +388,8 @@ const timerSettingChange = (event) => {
   } else {
     updateNodeClasslist("no-timer-label", "hidden", true);
   }
-
   tickLength = val;
-  if (intervalId != -1) {
-    window.clearInterval(intervalId);
-    startTimer();
-  }
+  startTimer();
 
   updateDb("tickLength", tickLength);
 };
@@ -404,7 +400,14 @@ const timerTick = () => {
 };
 
 const startTimer = () => {
-  intervalId = window.setInterval(timerTick, tickLength * 1000);
+  if (intervalId != -1) {
+    console.log("cancelling old timer");
+    window.clearInterval(intervalId);
+  }
+  if (tickLength > 0) {
+    console.log("starting timer with ticklength " + tickLength);
+    intervalId = window.setInterval(timerTick, tickLength * 1000);
+  }
 };
 
 // contraction methods //
