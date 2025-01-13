@@ -232,7 +232,7 @@ const resetApp = () => {
   updateLengthNode();
   updateTimeBetweenNode();
   updateButtonNode();
-  updateTimeSinceNodes();
+  updateTimeSinceNodes(new Date());
   updateNode(lastFoodId, "--:--");
   updateNode(lastDrinkId, "--:--");
   document.getElementById("average-checkbox").checked = false;
@@ -352,7 +352,7 @@ const initState = (db) => {
       console.log("no contraction history to derive from");
     }
     // if there's food or drink history, update time
-    updateTimeSinceNodes(new Date().getTime());
+    updateTimeSinceNodes(new Date());
   };
 };
 
@@ -363,15 +363,16 @@ const initState = (db) => {
 // adjust settings display
 const timerSettingChange = (event) => {
   const val = parseInt(event.target.value);
+  const nowDate = new Date();
   if (val == 0 && tickLength > 0) {
     updateNodeClasslist(timerSettingLabelId, "inactive", true);
     if (isContracting) {
-      const startDateTime = new Date();
+      const startDateTime = nowDate;
       startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
       updateNode(activeLengthId, startDateTime.toLocaleTimeString());
     }
   } else if (tickLength == 0 && val > 0) {
-    updateTimeSinceNodes(new Date().getTime());
+    updateTimeSinceNodes(nowDate);
     updateNodeClasslist(timerSettingLabelId, "inactive", false);
   }
   if (val > 1 && tickLength <= 1) {
@@ -397,7 +398,7 @@ const timerSettingChange = (event) => {
 
 // runs every tickLength seconds
 const timerTick = () => {
-  updateTimeSinceNodes(new Date().getTime());
+  updateTimeSinceNodes(new Date());
 };
 
 const startTimer = () => {
@@ -416,7 +417,7 @@ const toggleContraction = () => {
     updateNode(startTimeId, nowDate.toLocaleString());
   }
 
-  updateTimeSinceNodes(now);
+  updateTimeSinceNodes(nowDate);
 
   // start contraction
   if (!isContracting) {
@@ -540,18 +541,18 @@ const updateTimeBetweenAvg = (tb) => {
 
 // energy iterate methods
 const addFood = () => {
-  const now = new Date();
-  lastFood = now.getTime();
-  updateNode(lastFoodId, now.toLocaleTimeString());
-  updateTimeSinceNodes(now);
+  const nowDate = new Date();
+  lastFood = nowDate.getTime();
+  updateNode(lastFoodId, nowDate.toLocaleTimeString());
+  updateTimeSinceNodes(nowDate);
   updateDb("lastFood", lastFood);
 };
 
 const addDrink = () => {
-  const now = new Date();
-  lastDrink = now.getTime();
-  updateNode(lastDrinkId, now.toLocaleTimeString());
-  updateTimeSinceNodes(now);
+  const nowDate = new Date();
+  lastDrink = nowDate.getTime();
+  updateNode(lastDrinkId, nowDate.toLocaleTimeString());
+  updateTimeSinceNodes(nowDate);
   updateDb("lastDrink", lastDrink);
 };
 
@@ -679,7 +680,8 @@ const updateTimeBetweenNode = () => {
   updateNode(timeBetweenId, newString);
 };
 
-const updateTimeSinceNodes = (now) => {
+const updateTimeSinceNodes = (nowDate) => {
+  const now = nowDate.getTime();
   let newString = "";
   newString = lastFood > 0 ? msToHourStr(now - lastFood) + " ago" : "--:--";
   updateNode(sinceLastFoodId, newString);
@@ -687,19 +689,25 @@ const updateTimeSinceNodes = (now) => {
   newString = lastDrink > 0 ? msToHourStr(now - lastDrink) + " ago" : "--:--";
   updateNode(sinceLastDrinkId, newString);
 
-  newString =
-    isContracting && tickLength > 0
-      ? msToMinuteStr(
-          nowTime - contractionHistory[contractionHistory.length - 1][0]
-        )
-      : "--:--";
+  // todo: This isn't working?
+  // or check the timer method
+  if (isContracting) {
+    newString =
+      tickLength > 0
+        ? msToMinuteStr(
+            now - contractionHistory[contractionHistory.length - 1][0]
+          )
+        : nowDate.toLocaleTimeString();
+  } else {
+    newString = "--:--";
+  }
   updateNode(activeLengthId, newString);
 };
 
 // toggle display tabs
 const displaySection = (section) => {
   if (section === energySectionId) {
-    updateTimeSinceNodes(new Date().getTime());
+    updateTimeSinceNodes(new Date());
   }
   sectionIds.forEach((id) => {
     if (section != id) {
