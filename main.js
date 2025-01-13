@@ -10,13 +10,16 @@ const buttonSymbolId = "contract-button-symbol";
 const activeLengthId = "active-length";
 const activeStartId = "active-start";
 
-// energy
+// input
+const displayAvgCheckboxId = "labor-display-avg-checkbox";
+
+// energy state
 const lastDrinkId = "last-drink";
 const sinceLastDrinkId = "since-last-drink";
 const lastFoodId = "last-food";
 const sinceLastFoodId = "since-last-food";
 
-// settings
+// settings state
 const timerSettingLabelId = "timer-setting-label";
 const timerSettingId = "timer-setting";
 
@@ -241,7 +244,7 @@ const resetApp = () => {
   updateTimeSinceNodes(new Date());
   updateNode(lastFoodId, "--:--");
   updateNode(lastDrinkId, "--:--");
-  document.getElementById("average-checkbox").checked = false;
+  document.getElementById(displayAvgCheckboxId).checked = false;
 
   updateNode(startTimeId, "--:--");
   updateNode(numberOfId, 0);

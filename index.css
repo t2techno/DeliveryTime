@@ -1,5 +1,6 @@
 /* ToDo: HTML and CSS audit / reorg */
 
+/* global wrapper */
 #main-wrapper {
   position: relative;
   border: 1px solid black;
@@ -15,6 +16,7 @@
   color: white;
 }
 
+/* Tab section */
 #tab-wrapper {
   display: flex;
   justify-content: space-around;
@@ -32,53 +34,22 @@
   cursor: pointer;
 }
 
+/* Controlling radio values via label clicks */
 input[type="radio"] {
   display: none;
 }
 
+/* Active Label display */
 input[type="radio"]:checked + .radioLabel {
   background-color: hsl(0, 0%, 92%);
   border-bottom: 4px solid black;
 }
 
-.hidden {
-  display: none;
-}
+/* Conditional Display Sections */
 
-.checkboxLabel {
-  border: 1px solid black;
-  display: inline-flex;
-  justify-content: center;
-  align-items: baseline;
-  cursor: pointer;
-}
+/* Used in all sections */
 
-.avgLabel {
-  width: 35px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: line-through;
-}
-
-input[type="checkbox"] {
-  display: none;
-}
-
-input[type="checkbox"]:checked + .checkboxLabel {
-  background-color: hsl(0, 0%, 92%);
-  text-decoration: underline;
-}
-
-.infoHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  padding-block: 2px;
-}
-
+/* Full width content wrapper that uses odd/even background color */
 .rowWrapper {
   width: 100%;
   padding-block: 2px;
@@ -91,6 +62,8 @@ input[type="checkbox"]:checked + .checkboxLabel {
 .rowWrapper:nth-of-type(even) {
   background-color: hsl(0, 0%, 92%);
 }
+
+/* Width limited content container within bckground colored row  */
 .infoContent {
   position: relative;
   display: flex;
@@ -99,6 +72,38 @@ input[type="checkbox"]:checked + .checkboxLabel {
   flex-wrap: wrap;
   margin: auto;
   width: 70%;
+}
+
+/* Labor Info */
+
+/* Avg Checkbox - using label to control hidden input */
+#labor-display-avg-label {
+  width: 35px;
+  height: 25px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: baseline;
+  border: 1px solid black;
+  text-decoration: line-through;
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+/* Active state when displaying Average values */
+input[type="checkbox"]:checked + #labor-display-avg-label {
+  background-color: hsl(0, 0%, 92%);
+  text-decoration: underline;
+}
+
+.infoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-block: 2px;
 }
 
 .sinceEnergy {
@@ -203,4 +208,9 @@ input[type="checkbox"]:checked + .checkboxLabel {
 .label {
   font-size: 1.15rem;
   text-align: center;
+}
+
+/* Generic Utility */
+.hidden {
+  display: none;
 }
