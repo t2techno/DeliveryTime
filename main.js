@@ -1,13 +1,11 @@
-// element ids
+// HTML element ids
 
 // labor state
 const startTimeId = "start-time";
 const countId = "contraction-count";
 const lengthId = "contraction-length";
 const timeBetweenId = "contraction-time-between";
-
-const activeLengthId = "active-length";
-const activeStartId = "active-start";
+const activeLengthId = "active-contraction-length";
 
 // energy state
 const lastDrinkId = "last-drink";
@@ -21,15 +19,15 @@ const tickLengthId = "tick-length-input";
 const tickLengthSecondsId = "tick-length-seconds-text";
 const noTickLabelId = "no-tick-label";
 
-// input
+// inputs
 const displayAvgCheckboxId = "labor-display-avg-checkbox";
+const tabLaborInputId = "tab-labor-input";
 
 // button
 const contractButtonTextId = "contract-button-text";
 const buttonSymbolId = "contract-button-symbol";
 
 // display sections
-const tabLaborInputId = "tab-labor-input";
 const laborContentId = "tab-labor-content";
 const energyContentId = "tab-energy-content";
 const settingsContentId = "tab-settings-content";
@@ -39,11 +37,33 @@ const sectionIds = [laborContentId, energyContentId, settingsContentId];
 // db state
 let dbVersion = 0;
 
-// General Energy and Settings, one point data
 const SettingsStore = "SettingsStore";
 const EnergyStore = "EnergyStore";
 const ContractionStore = "ContractionStore";
 
+// timer state
+let intervalId = -1;
+let tickLength = 1;
+
+// contraction state
+let isContracting = false;
+let avgLength = 0;
+let avgTimeBetween = 0;
+
+// display avg flag
+let isAvg = false;
+
+// display average of last <avgWindow> values
+const avgWindow = 5;
+
+// energy state
+let lastFood = 0;
+let lastDrink = 0;
+
+// [[startTime, endTime]]
+let contractionHistory = [];
+
+// define db methods and open database//
 // settings store
 const dbSettingDefaults = [
   { key: "isAvg", value: false },
@@ -58,29 +78,8 @@ const dbEnergyDefaults = [
 // IDBDatabase
 let db;
 
-// timer state
-let intervalId = -1;
-let tickLength = 1;
-
-// contraction state
-let isContracting = false;
-let avgLength = 0;
-let avgTimeBetween = 0;
-
-// avg
-let isAvg = false;
-
-// num values to use for average
-const avgWindow = 5;
-
-// energy state
-let lastFood = 0;
-let lastDrink = 0;
-
-let contractionHistory = []; //[[startTime, endTime]]
-
-// db methods //
 // open success
+// inits timer state with db result
 const dbOpenSuccess = (event) => {
   if (!event.type == "success") {
     console.error("success handler, but event type is not success", event);
@@ -89,11 +88,12 @@ const dbOpenSuccess = (event) => {
 
   console.log("successfully opened db");
   db = event.target.result;
-  initState(db);
+  initApp(db);
   db.onerror = dbOnError;
 };
 
 // open error
+// todo, handle this
 const dbOpenError = (event) => {
   // most likely b/c they didn't give permission
   // pop up explanation alert if so
@@ -107,6 +107,7 @@ const dbOnError = (event) => {
   console.error(`Database error: ${event.target.error?.message}`);
 };
 
+// initialize db from scratch
 const dbOnUpgrade = (event) => {
   // Save the IDBDatabase interface
   db = event.target.result;
@@ -132,7 +133,8 @@ const dbOnUpgrade = (event) => {
   };
 };
 
-const initDbStores = (isReset) => {
+// deletes history/energy values resets settings
+const resetDbStores = (isReset) => {
   // init settings store
   initSettingsStore(isReset);
   initEnergyStore(isReset);
@@ -146,6 +148,8 @@ const initDbStores = (isReset) => {
   };
 };
 
+// called in dbOnUpgrade and resetDbStores
+// isReset makes the operation a put
 const initSettingsStore = (isReset) => {
   console.log("initing Settings store");
   const settingObjectStore = db
@@ -162,6 +166,8 @@ const initSettingsStore = (isReset) => {
   console.log("setting object store initialized!");
 };
 
+// called in dbOnUpgrade and resetDbStores
+// isReset makes the operation a put
 const initEnergyStore = (isReset) => {
   console.log("initing Energy store");
   const energyObjectStore = db
@@ -178,6 +184,11 @@ const initEnergyStore = (isReset) => {
   console.log("energy object store initialized!");
 };
 
+// update value in database
+// possible keys:
+// lastFood, lastDrink - EnergyStore
+// isAvg, tickLength   - SettingsStore
+// contraction         - ContractionStore
 const updateDb = (key, value) => {
   let tx;
   switch (key) {
@@ -221,64 +232,17 @@ const updateDb = (key, value) => {
   }
 };
 
-const resetApp = () => {
-  // reset state variables
-  intervalId = -1;
-
-  // contraction state
-  isContracting = false;
-  avgLength = 0;
-  avgTimeBetween = 0;
-
-  // avg
-  isAvg = false;
-
-  // energy state
-  lastFood = 0;
-  lastDrink = 0;
-
-  contractionHistory = [];
-
-  // reset database
-  initDbStores(true);
-
-  // reset text nodes
-  updateLengthNode();
-  updateTimeBetweenNode();
-  updateButtonNode();
-  updateTimeSinceNodes(new Date());
-  updateNode(lastFoodId, "--:--");
-  updateNode(lastDrinkId, "--:--");
-  document.getElementById(displayAvgCheckboxId).checked = false;
-
-  updateNode(startTimeId, "--:--");
-  updateNode(countId, 0);
-
-  // mimic expected event object structure to set my own value
-  document.getElementById(tickLengthId).value = 1;
-  timerSettingChange({ target: { value: 1 } });
-  document.getElementById(tabLaborInputId).checked = true;
-  displaySection(laborContentId);
-};
-
-//open db
-const dbOpenRequest = window.indexedDB.open("ContractionTimerDatabase", 1);
-
-// add event handlers
-dbOpenRequest.onsuccess = dbOpenSuccess;
-dbOpenRequest.onerror = dbOpenError;
-dbOpenRequest.onupgradeneeded = dbOnUpgrade;
-
-// init from pre-saved data
-const initState = (db) => {
-  // timer input change listener
+// load data from database
+const initApp = (db) => {
+  // tick length input change listener
   document
     .getElementById(tickLengthId)
-    .addEventListener("change", timerSettingChange);
+    .addEventListener("change", tickLengthChange);
 
+  // database transaction spanning all stores
   const tx = db.transaction([ContractionStore, SettingsStore, EnergyStore]);
 
-  // energy store
+  // load energy store - lastFood and lastDrink
   const energyStore = tx.objectStore(EnergyStore);
   energyStore.get("lastFood").onsuccess = (event) => {
     console.log(`last food: ${event.target.result.value}`);
@@ -296,7 +260,7 @@ const initState = (db) => {
     }
   };
 
-  // settings store
+  // load settings store - isAvg and tickLength
   const settingsStore = tx.objectStore(SettingsStore);
   settingsStore.get("isAvg").onsuccess = (event) => {
     console.log(`isAvg: ${event.target.result.value}`);
@@ -307,13 +271,14 @@ const initState = (db) => {
   settingsStore.get("tickLength").onsuccess = (event) => {
     console.log(`tickLength: ${event.target.result.value}`);
     document.getElementById(tickLengthId).value = event.target.result.value;
-    timerSettingChange({ target: { value: event.target.result.value } });
+    tickLengthChange({ target: { value: event.target.result.value } });
   };
 
-  // contractions
+  // load contraction store for contraction history
   const contractionStore = tx.objectStore(ContractionStore);
   contractionStore.openCursor().onsuccess = (event) => {
     const cursor = event.target.result;
+    // odd index is start time, even values are end times
     if (cursor) {
       if (cursor.key % 2 === 1) {
         contractionHistory.push([cursor.value]);
@@ -330,6 +295,8 @@ const initState = (db) => {
     }
   };
 
+  // tx complete means all db data is done loading, can now compute derived state
+  // labor start time, isContracting, average length/time-between
   tx.oncomplete = (event) => {
     console.log("db transactions complete, compute derived state");
     // if there is saved state
@@ -341,7 +308,7 @@ const initState = (db) => {
       );
 
       // isContracting boolean,
-      // based off if previous contraction is unfinished
+      // based off if latest contraction is unfinished
       isContracting =
         contractionHistory[contractionHistory.length - 1].length === 1;
 
@@ -372,12 +339,70 @@ const initState = (db) => {
   };
 };
 
+// resets db, text nodes, and state to default values
+const resetApp = () => {
+  // reset state variables
+  intervalId = -1;
+
+  // contraction state
+  isContracting = false;
+  avgLength = 0;
+  avgTimeBetween = 0;
+
+  // avg display
+  isAvg = false;
+
+  // energy state
+  lastFood = 0;
+  lastDrink = 0;
+
+  contractionHistory = [];
+
+  // reset database
+  resetDbStores(true);
+
+  // reset text nodes
+  // labor content
+  document.getElementById(displayAvgCheckboxId).checked = false;
+  updateNode(startTimeId, "--:--");
+  updateLengthNode();
+  updateTimeBetweenNode();
+  updateNode(countId, 0);
+
+  // Energy Content
+  updateTimeSinceNodes(new Date());
+  updateNode(lastFoodId, "--:--");
+  updateNode(lastDrinkId, "--:--");
+
+  // Settings Content
+  document.getElementById(tickLengthId).value = 1;
+  // mimic expected event object structure to set my own value
+  tickLengthChange({ target: { value: 1 } });
+
+  updateButtonNode();
+
+  // select and open labor tab
+  document.getElementById(tabLaborInputId).checked = true;
+  displaySection(laborContentId);
+};
+
+// This runs immediately upon page load //
+//open db
+const dbOpenRequest = window.indexedDB.open("ContractionTimerDatabase", 1);
+
+// add event handlers
+dbOpenRequest.onsuccess = dbOpenSuccess;
+dbOpenRequest.onerror = dbOpenError;
+dbOpenRequest.onupgradeneeded = dbOnUpgrade;
+
+// End page load code //
+
 // timer methods //
 
-// update timer length
+// update tick length
 // restart timer if necessary
 // adjust settings display
-const timerSettingChange = (event) => {
+const tickLengthChange = (event) => {
   const val = parseInt(event.target.value);
   const nowDate = new Date();
   if (val == 0 && tickLength > 0) {
