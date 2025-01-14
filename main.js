@@ -65,7 +65,7 @@ let contractionHistory = [];
 
 // define db methods and open database//
 // settings store
-const dbSettingDefaults = [
+const dbSettingsDefaults = [
   { key: "isAvg", value: false },
   { key: "tickLength", value: 1 },
 ];
@@ -156,7 +156,7 @@ const initSettingsStore = (isReset) => {
     .transaction(SettingsStore, "readwrite")
     .objectStore(SettingsStore);
 
-  dbSettingDefaults.forEach((setting) => {
+  dbSettingsDefaults.forEach((setting) => {
     if (isReset) {
       settingObjectStore.put(setting);
     } else {
@@ -450,7 +450,7 @@ const startTimer = () => {
   }
 };
 
-// contraction methods //
+// Contraction methods //
 
 // main toggle method
 const toggleContraction = () => {
@@ -489,7 +489,7 @@ const startContraction = (nowDate) => {
     updateTimeBetweenNode();
   }
   const activeLengthStr =
-    tickLength > 0 ? msToMinuteStr(0) : nowDate.toLocaleTimeString();
+    tickLength > 0 ? msToTimeStr(0) : nowDate.toLocaleTimeString();
   updateNode(activeLengthId, activeLengthStr);
   startTimer();
 };
@@ -510,10 +510,11 @@ const endContraction = (now) => {
 };
 
 // Average Methods //
+// Keeps the average of the last <avgWindow> values
 
 // called when restoring saved history
 const initAvgs = () => {
-  // init tb
+  // init timebetween
   const numContractions = contractionHistory.length;
   if (numContractions > 1) {
     const numVals = Math.min(numContractions - 1, avgWindow);
@@ -544,8 +545,30 @@ const toggleAvgInfo = () => {
   updateDb("isAvg", isAvg);
 };
 
-// called in contraction methods
-// when new values available
+// called on contraction start
+const updateTimeBetweenAvg = (tb) => {
+  const numContractions = contractionHistory.length;
+  // one less time-between than number of contractions
+  if (numContractions - 1 <= avgWindow) {
+    avgTimeBetween =
+      contractionHistory
+        .slice(1)
+        .reduce((sum, c, idx) => sum + c[0] - contractionHistory[idx][0], 0) /
+      (numContractions - 1);
+    return;
+  }
+
+  const newTb =
+    contractionHistory[numContractions - 1][0] -
+    contractionHistory[numContractions - 2][0];
+
+  const oldTb =
+    contractionHistory[numContractions - avgWindow - 1][0] -
+    contractionHistory[numContractions - avgWindow - 2][0];
+  avgTimeBetween += (newTb - oldTb) / avgWindow;
+};
+
+// called on contraction end
 const updateLengthAvg = () => {
   const numContractions = contractionHistory.length;
   // we just do a normal avg until we have more than our window's length
@@ -562,29 +585,6 @@ const updateLengthAvg = () => {
   const newL = calcLength(contractionHistory[numContractions - 1]);
   const oldL = calcLength(contractionHistory[numContractions - avgWindow - 1]);
   avgLength += (newL - oldL) / avgWindow;
-};
-
-const updateTimeBetweenAvg = (tb) => {
-  const numContractions = contractionHistory.length;
-  // one less time-between than number of contractions
-  if (numContractions - 1 <= avgWindow) {
-    avgTimeBetween =
-      contractionHistory.slice(1).reduce((sum, c, idx) => {
-        sum += c[0] - contractionHistory[idx][0];
-        return sum;
-      }, 0) /
-      (numContractions - 1);
-    return;
-  }
-
-  const newTb =
-    contractionHistory[numContractions - 1][0] -
-    contractionHistory[numContractions - 2][0];
-
-  const oldTb =
-    contractionHistory[numContractions - avgWindow - 1][0] -
-    contractionHistory[numContractions - avgWindow - 2][0];
-  avgTimeBetween += (newTb - oldTb) / avgWindow;
 };
 
 // energy iterate methods
@@ -606,48 +606,30 @@ const addDrink = () => {
 
 // utility methods //
 
-// history convenience
-const getLatestIdx = () => {
-  const numContractions = contractionHistory.length;
-  if (numContractions === 0 || contractionHistory[0].length === 1) {
-    return -1;
-  }
-
-  return contractionHistory[numContractions - 1].length > 1
-    ? numContractions - 1
-    : numContractions - 2;
-};
-
+// number of full contractions
 const getContractionCount = () => {
   const numContractions = contractionHistory.length;
   if (numContractions == 0) {
     return 0;
   }
 
-  return contractionHistory[numContractions - 1]?.length > 1
+  return contractionHistory[numContractions - 1].length > 1
     ? numContractions
     : numContractions - 1;
+};
+
+// index of last full contraction
+const getLatestIdx = () => {
+  return getContractionCount() - 1;
 };
 
 const calcLength = (c) => {
   return c[1] - c[0];
 };
 
-// arr: number[]
-const simpleAvg = (arr) => {
-  return arr.reduce((sum, val) => sum + val, 0) / arr.length;
-};
-
 // print convenience
 // ms: number
-const msToMinuteStr = (ms) => {
-  const sec = ms / 1000;
-  const min = sec / 60;
-
-  return `${printInt(min)}:${printInt(sec % 60)}`;
-};
-
-const msToHourStr = (ms) => {
+const msToTimeStr = (ms) => {
   const sec = ms / 1000;
   const min = sec / 60;
   const hr = min / 60;
@@ -674,6 +656,7 @@ const updateNode = (id, newText) => {
   document.getElementById(id).textContent = newText;
 };
 
+// add or remove class to element by id
 const updateNodeClasslist = (id, className, isAdd) => {
   if (isAdd) {
     document.getElementById(id).classList.add(className);
@@ -701,8 +684,8 @@ const updateLengthNode = () => {
     newString = "--:--";
   } else {
     newString = isAvg
-      ? msToMinuteStr(avgLength)
-      : msToMinuteStr(calcLength(contractionHistory[getLatestIdx()]));
+      ? msToTimeStr(avgLength)
+      : msToTimeStr(calcLength(contractionHistory[getLatestIdx()]));
   }
 
   updateNode(lengthId, newString);
@@ -714,13 +697,13 @@ const updateTimeBetweenNode = () => {
     newString = "--:--";
   } else {
     if (isAvg) {
-      newString = msToMinuteStr(avgTimeBetween);
+      newString = msToTimeStr(avgTimeBetween);
     } else {
       const timeBetween =
         contractionHistory[contractionHistory.length - 1][0] -
         contractionHistory[contractionHistory.length - 2][0];
 
-      newString = msToHourStr(timeBetween);
+      newString = msToTimeStr(timeBetween);
     }
   }
   updateNode(timeBetweenId, newString);
@@ -729,16 +712,16 @@ const updateTimeBetweenNode = () => {
 const updateTimeSinceNodes = (nowDate) => {
   const now = nowDate.getTime();
   let newString = "";
-  newString = lastFood > 0 ? msToHourStr(now - lastFood) + " ago" : "--:--";
+  newString = lastFood > 0 ? msToTimeStr(now - lastFood) + " ago" : "--:--";
   updateNode(sinceLastFoodId, newString);
 
-  newString = lastDrink > 0 ? msToHourStr(now - lastDrink) + " ago" : "--:--";
+  newString = lastDrink > 0 ? msToTimeStr(now - lastDrink) + " ago" : "--:--";
   updateNode(sinceLastDrinkId, newString);
 
   if (isContracting) {
     newString =
       tickLength > 0
-        ? msToMinuteStr(
+        ? msToTimeStr(
             now - contractionHistory[contractionHistory.length - 1][0]
           )
         : nowDate.toLocaleTimeString();
