@@ -63,6 +63,15 @@ input[type="radio"]:checked + .radioLabel {
   background-color: hsl(0, 0%, 92%);
 }
 
+.label {
+  font-size: 1.15rem;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
 /* Width limited content container within bckground colored row  */
 .rowContent {
   position: relative;
@@ -139,6 +148,10 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
   color: hsl(0, 0%, 39%);
 }
 
+#tick-length-input {
+  width: 2.5rem;
+}
+
 #no-tick-label {
   width: 90%;
   margin: auto;
@@ -148,17 +161,16 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
   width: 50%;
 }
 
-#tick-length-input {
-  width: 2.5rem;
-}
-
 /* Bottom Content */
-.activeContraction {
+
+/* Active contraction display */
+#active-contraction-wrapper {
   position: absolute;
   bottom: 12%;
   width: 100%;
 }
 
+/* Buttons */
 #buttonRow {
   position: absolute;
   bottom: 0%;
@@ -189,18 +201,4 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
 #contract-button {
   flex: 2;
   border-radius: 10px 10px 0 0;
-}
-
-#clear-button {
-  margin-block: 4px;
-}
-
-.label {
-  font-size: 1.15rem;
-  text-align: center;
-}
-
-/* Generic Utility */
-.hidden {
-  display: none;
 }
