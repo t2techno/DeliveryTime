@@ -215,8 +215,18 @@ const updateDb = (key, value) => {
     case "contraction": {
       tx = db
         .transaction(ContractionStore, "readwrite")
-        .objectStore(ContractionStore)
-        .add(value);
+        .objectStore(ContractionStore);
+
+      const latestVal = getHistoryLast();
+      if (latestVal.length == 1) {
+        // new contraction
+        tx.add(latestVal);
+      } else {
+        // update latest contraction in store
+        tx.openCursor(null, "prev").onsuccess = (event) => {
+          event.target.result.update(latestVal);
+        };
+      }
       break;
     }
 
@@ -279,16 +289,9 @@ const initApp = (db) => {
   contractionStore.openCursor().onsuccess = (event) => {
     const cursor = event.target.result;
     // odd index is start time, even values are end times
+    // ToDo - I can't rely on auto-increment index, need to redo this with arrays
     if (cursor) {
-      if (cursor.key % 2 === 1) {
-        contractionHistory.push([cursor.value]);
-        console.log(
-          `${cursor.key}: new contraction - start-time: is ${cursor.value}`
-        );
-      } else {
-        contractionHistory[contractionHistory.length - 1].push(cursor.value);
-        console.log(`${cursor.key}: end-time: is ${cursor.value}`);
-      }
+      contractionHistory.push(cursor.value);
       cursor.continue();
     } else {
       console.log("Done adding contractions!");
@@ -309,8 +312,7 @@ const initApp = (db) => {
 
       // isContracting boolean,
       // based off if latest contraction is unfinished
-      isContracting =
-        contractionHistory[contractionHistory.length - 1].length === 1;
+      isContracting = getHistoryLast().length === 1;
 
       if (isContracting && tickLength > 0) {
         console.log("starting timer, saved data has incomplete contraction");
@@ -409,7 +411,7 @@ const tickLengthChange = (event) => {
     updateNodeClasslist(tickLengthLabelId, "inactive", true);
     if (isContracting) {
       const startDateTime = nowDate;
-      startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
+      startDateTime.setTime(getHistoryLast());
       updateNode(activeLengthId, startDateTime.toLocaleTimeString());
     }
   } else if (tickLength == 0 && val > 0) {
@@ -514,14 +516,18 @@ const endContraction = (now) => {
 
 // called when restoring saved history
 const initAvgs = () => {
-  // init timebetween
+  // init time-between
+  // need at least 2 start times
   const numContractions = contractionHistory.length;
   if (numContractions > 1) {
     const numVals = Math.min(numContractions - 1, avgWindow);
     const startI = Math.max(numContractions - avgWindow, 1);
-    const avgSum = contractionHistory.slice(startI).reduce((sum, c, idx) => {
-      return sum + c[0] - contractionHistory[startI + idx - 1][0];
-    }, 0);
+    const avgSum = contractionHistory
+      .slice(startI)
+      .reduce(
+        (sum, c, idx) => sum + c[0] - contractionHistory[startI + idx - 1][0],
+        0
+      );
     avgTimeBetween = avgSum / numVals;
   }
   // init length
@@ -530,9 +536,9 @@ const initAvgs = () => {
   const numVals = Math.min(numFullContractions, avgWindow);
   const startI = Math.max(numFullContractions - avgWindow, 0);
   avgLength =
-    contractionHistory.slice(startI, startI + numVals).reduce((sum, c) => {
-      return sum + c[1] - c[0];
-    }, 0) / numVals;
+    contractionHistory
+      .slice(startI, startI + numVals)
+      .reduce((sum, c) => sum + c[1] - c[0], 0) / numVals;
 };
 
 // latest or avg info display
@@ -574,10 +580,8 @@ const updateLengthAvg = () => {
   // we just do a normal avg until we have more than our window's length
   if (numContractions <= avgWindow) {
     avgLength =
-      contractionHistory.reduce((sum, c) => {
-        sum += c[1] - c[0];
-        return sum;
-      }, 0) / numContractions;
+      contractionHistory.reduce((sum, c) => sum + c[1] - c[0], 0) /
+      numContractions;
     console.log("new avg: " + avgLength);
     return;
   }
@@ -622,6 +626,9 @@ const getContractionCount = () => {
 const getLatestIdx = () => {
   return getContractionCount() - 1;
 };
+
+// returns the last contraction in history
+const getHistoryLast = () => contractionHistory[contractionHistory.length - 1];
 
 const calcLength = (c) => {
   return c[1] - c[0];
@@ -668,9 +675,9 @@ const updateNodeClasslist = (id, className, isAdd) => {
 const pauseSymbol = "\u{23F8}";
 const playSymbol = "\u{25B6}";
 const updateButtonNode = () => {
-  let newString;
   if (!contractionHistory.length) {
-    newString = "Begin Labor";
+    updateNode(contractButtonTextId, "Begin Labor");
+    updateNode(buttonSymbolId, "");
   } else {
     updateNode(contractButtonTextId, "Contraction");
     updateNode(buttonSymbolId, isContracting ? pauseSymbol : playSymbol);
@@ -700,7 +707,7 @@ const updateTimeBetweenNode = () => {
       newString = msToTimeStr(avgTimeBetween);
     } else {
       const timeBetween =
-        contractionHistory[contractionHistory.length - 1][0] -
+        getHistoryLast()[0] -
         contractionHistory[contractionHistory.length - 2][0];
 
       newString = msToTimeStr(timeBetween);
@@ -721,9 +728,7 @@ const updateTimeSinceNodes = (nowDate) => {
   if (isContracting) {
     newString =
       tickLength > 0
-        ? msToTimeStr(
-            now - contractionHistory[contractionHistory.length - 1][0]
-          )
+        ? msToTimeStr(now - getHistoryLast()[0])
         : nowDate.toLocaleTimeString();
   } else {
     newString = "--:--";
