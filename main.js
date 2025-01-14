@@ -2,16 +2,12 @@
 
 // labor state
 const startTimeId = "start-time";
-const numberOfId = "num-contractions";
-const lengthId = "contract-length";
-const timeBetweenId = "time-between";
-const contractButtonTextId = "contract-button-text";
-const buttonSymbolId = "contract-button-symbol";
+const countId = "contraction-count";
+const lengthId = "contraction-length";
+const timeBetweenId = "contraction-time-between";
+
 const activeLengthId = "active-length";
 const activeStartId = "active-start";
-
-// input
-const displayAvgCheckboxId = "labor-display-avg-checkbox";
 
 // energy state
 const lastDrinkId = "last-drink";
@@ -20,8 +16,17 @@ const lastFoodId = "last-food";
 const sinceLastFoodId = "since-last-food";
 
 // settings state
-const timerSettingLabelId = "timer-setting-label";
-const timerSettingId = "timer-setting";
+const tickLengthLabelId = "tick-length-label";
+const tickLengthId = "tick-length-input";
+const tickLengthSecondsId = "tick-length-seconds-text";
+const noTickLabelId = "no-tick-label";
+
+// input
+const displayAvgCheckboxId = "labor-display-avg-checkbox";
+
+// button
+const contractButtonTextId = "contract-button-text";
+const buttonSymbolId = "contract-button-symbol";
 
 // display sections
 const tabLaborInputId = "tab-labor-input";
@@ -247,10 +252,10 @@ const resetApp = () => {
   document.getElementById(displayAvgCheckboxId).checked = false;
 
   updateNode(startTimeId, "--:--");
-  updateNode(numberOfId, 0);
+  updateNode(countId, 0);
 
   // mimic expected event object structure to set my own value
-  document.getElementById("timer-setting").value = 1;
+  document.getElementById(tickLengthId).value = 1;
   timerSettingChange({ target: { value: 1 } });
   document.getElementById(tabLaborInputId).checked = true;
   displaySection(laborContentId);
@@ -268,7 +273,7 @@ dbOpenRequest.onupgradeneeded = dbOnUpgrade;
 const initState = (db) => {
   // timer input change listener
   document
-    .getElementById(timerSettingId)
+    .getElementById(tickLengthId)
     .addEventListener("change", timerSettingChange);
 
   const tx = db.transaction([ContractionStore, SettingsStore, EnergyStore]);
@@ -296,12 +301,12 @@ const initState = (db) => {
   settingsStore.get("isAvg").onsuccess = (event) => {
     console.log(`isAvg: ${event.target.result.value}`);
     isAvg = event.target.result.value;
-    document.getElementById("average-checkbox").checked = isAvg;
+    document.getElementById(displayAvgCheckboxId).checked = isAvg;
   };
 
   settingsStore.get("tickLength").onsuccess = (event) => {
     console.log(`tickLength: ${event.target.result.value}`);
-    document.getElementById("timer-setting").value = event.target.result.value;
+    document.getElementById(tickLengthId).value = event.target.result.value;
     timerSettingChange({ target: { value: event.target.result.value } });
   };
 
@@ -349,7 +354,7 @@ const initState = (db) => {
       updateButtonNode();
 
       // contraction count
-      updateNode(numberOfId, contractionHistory.length);
+      updateNode(countId, contractionHistory.length);
 
       // calculate average values of current data
       initAvgs();
@@ -376,7 +381,7 @@ const timerSettingChange = (event) => {
   const val = parseInt(event.target.value);
   const nowDate = new Date();
   if (val == 0 && tickLength > 0) {
-    updateNodeClasslist(timerSettingLabelId, "inactive", true);
+    updateNodeClasslist(tickLengthLabelId, "inactive", true);
     if (isContracting) {
       const startDateTime = nowDate;
       startDateTime.setTime(contractionHistory[contractionHistory.length - 1]);
@@ -384,18 +389,18 @@ const timerSettingChange = (event) => {
     }
   } else if (tickLength == 0 && val > 0) {
     updateTimeSinceNodes(nowDate);
-    updateNodeClasslist(timerSettingLabelId, "inactive", false);
+    updateNodeClasslist(tickLengthLabelId, "inactive", false);
   }
   if (val !== 1 && tickLength == 1) {
-    updateNode("timer-settings-seconds", "\xa0Seconds");
+    updateNode(tickLengthSecondsId, "\xa0Seconds");
   } else if (val === 1 && tickLength != 1) {
-    updateNode("timer-settings-seconds", "\xa0Second");
+    updateNode(tickLengthSecondsId, "\xa0Second");
   }
 
   if (val == 0 && tickLength > 0) {
-    updateNodeClasslist("no-timer-label", "hidden", false);
+    updateNodeClasslist(noTickLabelId, "hidden", false);
   } else {
-    updateNodeClasslist("no-timer-label", "hidden", true);
+    updateNodeClasslist(noTickLabelId, "hidden", true);
   }
   tickLength = val;
   startTimer();
@@ -439,7 +444,7 @@ const toggleContraction = () => {
     console.log("starting");
     isContracting = true;
     startContraction(nowDate);
-    updateNode(numberOfId, contractionHistory.length);
+    updateNode(countId, contractionHistory.length);
   } else {
     console.log("stopping");
     isContracting = false;

@@ -47,7 +47,7 @@
           />
           <label
             class="radioLabel"
-            for="settings-info"
+            for="tab-settings-input"
             onclick="displaySection('tab-settings-content')"
             >Settings</label
           >
@@ -57,7 +57,7 @@
         <!-- Labor Content -->
         <div id="tab-labor-content">
           <div class="rowWrapper">
-            <div class="infoContent">
+            <div class="rowContent">
               <input
                 type="checkbox"
                 name="average"
@@ -74,27 +74,27 @@
             </div>
           </div>
           <div class="rowWrapper">
-            <div class="infoContent">
+            <div class="rowContent">
               <h2 class="label">Labor began:</h2>
               <p id="start-time">--:--</p>
             </div>
           </div>
           <div class="rowWrapper">
-            <div class="infoContent">
+            <div class="rowContent">
               <h3>Count:</h3>
-              <p id="num-contractions">0</p>
+              <p id="contraction-count">0</p>
             </div>
           </div>
           <div class="rowWrapper">
-            <div class="infoContent">
+            <div class="rowContent">
               <h3>Length:</h3>
-              <p id="contract-length">--:--</p>
+              <p id="contraction-length">--:--</p>
             </div>
           </div>
           <div class="rowWrapper">
-            <div class="infoContent">
+            <div class="rowContent">
               <h3>Time between:</h3>
-              <p id="time-between">--:--</p>
+              <p id="contraction-time-between">--:--</p>
             </div>
           </div>
         </div>
@@ -102,20 +102,20 @@
         <!-- Energy Content  -->
         <div id="tab-energy-content" class="hidden">
           <div class="rowWrapper">
-            <div class="infoContent">
+            <div class="rowContent">
               <h2 class="label">Drink:</h2>
               <p id="last-drink">--:--</p>
             </div>
-            <div class="sinceEnergy">
+            <div class="flexEndContent">
               <p id="since-last-drink"></p>
             </div>
           </div>
           <div class="rowWrapper">
-            <div class="infoContent">
+            <div class="rowContent">
               <h3>Food:</h3>
               <p id="last-food">--:--</p>
             </div>
-            <div class="sinceEnergy">
+            <div class="flexEndContent">
               <p id="since-last-food"></p>
             </div>
           </div>
@@ -125,27 +125,24 @@
         <div id="tab-settings-content" class="hidden">
           <div class="rowWrapper">
             <div class="settingContent">
-              <div class="settingLabel">
-                <h2 id="timer-setting-label">Timer Update</h2>
-              </div>
-              <div id="setting-input">
+              <h2 class="settingLabel" id="tick-length-label">Timer Update</h2>
+              <div id="tick-length-wrapper">
                 <p>Every &nbsp;</p>
                 <input
-                  id="timer-setting"
+                  id="tick-length-input"
                   type="number"
                   min="0"
                   max="60"
                   value="1"
-                  class="numberInput"
                 />
-                <p id="timer-settings-seconds">&nbsp;Second</p>
+                <p id="tick-length-seconds-text">&nbsp;Second</p>
               </div>
-              <p id="no-timer-label" class="hidden">Only display start time</p>
+              <p id="no-tick-label" class="hidden">Only display start time</p>
             </div>
           </div>
           <div class="rowWrapper">
             <div class="settingContent">
-              <h2 class="settingLabel" id="timer-setting-label">Reset App</h2>
+              <h2 class="settingLabel">Reset App</h2>
               <!-- <p>Erase all content?</p> -->
               <button type="button" id="reset-button" onclick="resetApp()">
                 Reset
@@ -154,10 +151,10 @@
           </div>
         </div>
 
-        <!-- Static Bottom Content -->
+        <!-- Bottom Content -->
         <div class="activeContraction">
           <hr />
-          <div class="infoContent">
+          <div class="rowContent">
             <h2 class="label">Active:</h2>
             <p id="active-length">--:--</p>
           </div>

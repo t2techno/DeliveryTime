@@ -64,7 +64,7 @@ input[type="radio"]:checked + .radioLabel {
 }
 
 /* Width limited content container within bckground colored row  */
-.infoContent {
+.rowContent {
   position: relative;
   display: flex;
   justify-content: space-between;
@@ -98,20 +98,16 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
   text-decoration: underline;
 }
 
-.infoHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  padding-block: 2px;
-}
+/* Energy Section */
 
-.sinceEnergy {
+.flexEndContent {
   display: flex;
   justify-content: flex-end;
   margin: auto;
   width: 70%;
 }
+
+/* Settings section */
 
 .settingContent {
   width: 90%;
@@ -125,23 +121,10 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
   align-items: baseline;
   flex-wrap: wrap;
   margin: auto;
+  font-size: 1.4rem;
 }
 
-#clear-button {
-  width: 50%;
-}
-
-#no-timer-label {
-  width: 90%;
-  margin: auto;
-}
-
-.inactive {
-  text-decoration: line-through;
-  color: hsl(0, 0%, 39%);
-}
-
-#setting-input {
+#tick-length-wrapper {
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -150,19 +133,26 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
   font-size: 1.1rem;
 }
 
-.numberInput {
+/* Applied to tick-length-label when set to 0 */
+.inactive {
+  text-decoration: line-through;
+  color: hsl(0, 0%, 39%);
+}
+
+#no-tick-label {
+  width: 90%;
+  margin: auto;
+}
+
+#reset-button {
+  width: 50%;
+}
+
+#tick-length-input {
   width: 2.5rem;
 }
 
-.dark {
-  background-color: hsl(0, 0%, 85%);
-}
-
-.info {
-  display: flex;
-  gap: 8px;
-}
-
+/* Bottom Content */
 .activeContraction {
   position: absolute;
   bottom: 12%;
