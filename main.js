@@ -366,6 +366,7 @@ const resetApp = () => {
 
   // reset text nodes
   // labor content
+  updateNodeClasslist(displayAvgWrapperId, "inactive", !isAvg);
   document.getElementById(displayAvgCheckboxId).checked = false;
   updateNode(startTimeId, "--:--");
   updateLengthNode();
