@@ -45,6 +45,13 @@ input[type="radio"]:checked + .radioLabel {
   border-bottom: 4px solid black;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .radioLabel:hover,
+  .radioLabel:focus {
+    border-bottom: 4px solid hsl(0, 0%, 82%);
+  }
+}
+
 /* Conditional Display Sections */
 
 /* Used in all sections */
@@ -186,6 +193,12 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
   justify-content: center;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
+}
+
+.button:hover,
+.button:focus {
+  border-color: hsl(0, 0%, 92%);
 }
 
 #food-button {
