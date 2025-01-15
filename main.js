@@ -21,6 +21,7 @@ const noTickLabelId = "no-tick-label";
 
 // inputs
 const displayAvgCheckboxId = "labor-display-avg-checkbox";
+const displayAvgWrapperId = "labor-display-avg-wrapper";
 const tabLaborInputId = "tab-labor-input";
 
 // button
@@ -547,6 +548,7 @@ const toggleAvgInfo = () => {
   isAvg = !isAvg;
   updateLengthNode();
   updateTimeBetweenNode();
+  updateNodeClasslist(displayAvgWrapperId, "inactive", !isAvg);
 
   updateDb("isAvg", isAvg);
 };

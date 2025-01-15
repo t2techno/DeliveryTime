@@ -94,14 +94,28 @@ input[type="radio"]:checked + .radioLabel {
 
 /* Avg Checkbox - using label to control hidden input */
 #labor-display-avg-label {
+  color: black;
+  cursor: pointer;
+}
+
+#labor-display-avg-wrapper {
   width: 35px;
   height: 25px;
   display: inline-flex;
   justify-content: center;
   align-items: baseline;
-  border: 1px solid black;
-  text-decoration: line-through;
+  border: 2px solid black;
+  border-radius: 4px;
+  color: black;
   cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #labor-display-avg-wrapper:hover,
+  #labor-display-avg-wrapper:focus {
+    color: hsl(0, 0%, 62%);
+    border-color: hsl(0, 0%, 52%);
+  }
 }
 
 input[type="checkbox"] {
@@ -166,6 +180,15 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
 
 #reset-button {
   width: 50%;
+  cursor: pointer;
+  border: 2px solid black;
+  border-radius: 4px;
+}
+
+#reset-button:hover,
+#reset-button:focus {
+  border-color: hsl(0, 0%, 42%);
+  background-color: white;
 }
 
 /* Bottom Content */
@@ -198,7 +221,8 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
 
 .button:hover,
 .button:focus {
-  border-color: hsl(0, 0%, 92%);
+  background-color: white;
+  border-color: hsl(0, 0%, 52%);
 }
 
 #food-button {
