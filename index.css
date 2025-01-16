@@ -191,6 +191,7 @@ input[type="checkbox"]:checked + #labor-display-avg-label {
   background-color: white;
 }
 
+/* Reset Dialog Modal */
 #reset-dialog {
   margin: auto;
   width: 240px;
@@ -201,12 +202,20 @@ dialog::backdrop {
   opacity: 0.75;
 }
 
-#reset-button {
+#dialog-button-row {
+  display: flex;
+  gap: 4px;
+  justify-content: space-around;
+  align-items: center;
   margin-top: 4px;
+}
+
+.dialogButton {
   cursor: pointer;
   border: 2px solid black;
   border-radius: 4px;
   background-color: hsl(0, 0%, 92%);
+  width: 45%;
 }
 
 #reset-button:hover,

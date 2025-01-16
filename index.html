@@ -197,14 +197,25 @@
 
         <dialog id="reset-dialog">
           <p>Are you sure you'd like to<br />delete all information?</p>
-          <button
-            autofocus
-            type="button"
-            id="reset-button"
-            onclick="resetApp()"
-          >
-            Yes, Reset App
-          </button>
+          <div id="dialog-button-row">
+            <button
+              autofocus
+              type="button"
+              id="reset-button"
+              class="dialogButton"
+              onclick="resetApp()"
+            >
+              Yes
+            </button>
+            <button
+              type="button"
+              id="close-dialog-button"
+              class="dialogButton"
+              onclick="closeDialog()"
+            >
+              No
+            </button>
+          </div>
         </dialog>
       </div>
     </main>

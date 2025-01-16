@@ -391,13 +391,17 @@ const resetApp = () => {
   // select and open labor tab
   document.getElementById(tabLaborInputId).checked = true;
   displaySection(laborContentId);
-  document.getElementById(resetDialogId).close();
+  closeDialog();
 };
 
 // Settings reset button triggers this, giving user opportunity to not delete their data
 const openDialog = () => {
   document.getElementById(resetDialogId).showModal();
 };
+
+const closeDialog = () => {
+  document.getElementById(resetDialogId).close();
+}
 
 // This runs immediately upon page load //
 //open db
