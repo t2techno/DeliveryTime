@@ -148,7 +148,11 @@
             <div class="settingContent">
               <h2 class="settingLabel">Reset App</h2>
               <!-- <p>Erase all content?</p> -->
-              <button type="button" id="reset-button" onclick="resetApp()">
+              <button
+                type="button"
+                id="open-dialog-button"
+                onclick="openDialog()"
+              >
                 Reset
               </button>
             </div>
@@ -190,6 +194,18 @@
             + Drink
           </button>
         </div>
+
+        <dialog id="reset-dialog">
+          <p>Are you sure you'd like to<br />delete all information?</p>
+          <button
+            autofocus
+            type="button"
+            id="reset-button"
+            onclick="resetApp()"
+          >
+            Yes, Reset App
+          </button>
+        </dialog>
       </div>
     </main>
   </body>

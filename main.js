@@ -28,6 +28,9 @@ const tabLaborInputId = "tab-labor-input";
 const contractButtonTextId = "contract-button-text";
 const buttonSymbolId = "contract-button-symbol";
 
+// reset dialog
+const resetDialogId = "reset-dialog";
+
 // display sections
 const laborContentId = "tab-labor-content";
 const energyContentId = "tab-energy-content";
@@ -388,6 +391,12 @@ const resetApp = () => {
   // select and open labor tab
   document.getElementById(tabLaborInputId).checked = true;
   displaySection(laborContentId);
+  document.getElementById(resetDialogId).close();
+};
+
+// Settings reset button triggers this, giving user opportunity to not delete their data
+const openDialog = () => {
+  document.getElementById(resetDialogId).showModal();
 };
 
 // This runs immediately upon page load //
