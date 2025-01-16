@@ -5,7 +5,7 @@ Since I now have a newborn, I will be coming back to polish this up later.
 
 | Base UI        | Logs view    | Post Use  |
 | :-------------: |:-------------:| :-----:|
-| ![Alt text](./screenshots/empty.jpg?raw=true "Base UI")      | ![Alt text](./screenshots/deliveryLogs.jpg?raw=true "Logs view") | ![Alt text](./screenshots/deliveryTimeButtons.jpg?raw=true "Post Birth")
+| ![Base Timer UI](https://github.com/t2techno/DeliveryTime/blob/readMe/original_version_screenshots/base.jpg?raw=true "Base UI")      | ![View of logs](https://github.com/t2techno/DeliveryTime/blob/readMe/original_version_screenshots/deliveryLogs.jpg?raw=true "Logs view") | ![Example of button colors](https://github.com/t2techno/DeliveryTime/blob/readMe/original_version_screenshots/deliveryTimeButtons.jpg?raw=true "Post Birth")
 
 ## Features
 
