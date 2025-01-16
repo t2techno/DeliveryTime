@@ -6,7 +6,7 @@ A purely client side implementation, labor history is saved in the user's browse
 
 | Contraction Info        | Energy Info    | Settings  |
 | :-------------: |:-------------:| :-----:|
-| ![Contraction Info](https://github.com/t2techno/DeliveryTime/blob/readMe/low_budget_device_screenshots/contractionInfo.png?raw=true "Contraction Info")      | ![Energy Info](https://github.com/t2techno/DeliveryTime/blob/readMe/low_budget_device_screenshots/energyInfo.png?raw=true "Energy Info") | ![Settings](https://github.com/t2techno/DeliveryTime/blob/readMe/low_budget_device_screenshots/settingsInfo.png?raw=true "Settings")
+| ![Contraction Info](https://github.com/t2techno/DeliveryTime/blob/readMe/low_budget_device_screenshots/contractionInfo.png?raw=true "Contraction Info") | ![Energy Info](https://github.com/t2techno/DeliveryTime/blob/readMe/low_budget_device_screenshots/energyInfo.png?raw=true "Energy Info") | ![Settings](https://github.com/t2techno/DeliveryTime/blob/readMe/low_budget_device_screenshots/settingsInfo.png?raw=true "Settings")
 
 ## Features
 - Contraction Info
@@ -30,4 +30,3 @@ A purely client side implementation, labor history is saved in the user's browse
 ## ToDo:
 - Internationalization of text
 - History page to list out labor history
-- Alert warning on reset button click, giving user a chance to change mind and not erase data
