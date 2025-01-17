@@ -28,5 +28,6 @@ A purely client side implementation, labor history is saved in the user's browse
  
 
 ## ToDo:
+- Improve visual and non-mouse accessibility 
 - Internationalization of text
 - History page to list out labor history
