@@ -1,4 +1,5 @@
 # Delivery Time - low_budget_device
+An app made to be helpful to birth giving people and partners during labor and delivery.
 
 A Labor timer written in plain html, css, and javascript. <br/>
 Designed for low budget phones, specifically kaios devices with a standard screen size of 240x320 pixels. <br/>
