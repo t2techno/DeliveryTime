@@ -1,9 +1,0 @@
-Hospital bag/ToDo-ToGrab list
-  - 5 starred thing - show up whe you leave to the hospital
-
-Medicine reminder section
-collapsable reminder section. Border clues to which things need reminding
-Contraction info
-  - collapsable, but switches between key values and time-line view
-
-Change localstorage over to IndexDb
