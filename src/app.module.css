@@ -1,11 +1,10 @@
-.laborWrapper {
+.pageWrapper {
   margin: auto;
+  width: 100%;
+  max-width: 1440px;
+  padding: 16px;
   display: flex;
-  justify-content: space-around;
-  gap: 12px;
-  flex-wrap: wrap;
-  border: solid 1px black;
-  border-radius: 8px;
-  padding: 12px;
-  max-width: 800px;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
 }

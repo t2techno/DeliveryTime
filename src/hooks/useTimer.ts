@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
+export interface TimerData {
+  timeElapsed: number;
+  startTime: number;
+}
+
 interface UseTimerValue {
   startTime: number;
   tickLength: number;
