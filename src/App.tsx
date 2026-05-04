@@ -66,7 +66,6 @@ function App() {
           handleEnergy={handleEnergy}
           lastDrink={lastEnergyString("drink")}
           lastFood={lastEnergyString("food")}
-          lastPotty="--:--"
         />
       </div>
     </>
