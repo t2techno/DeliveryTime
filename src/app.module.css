@@ -1,10 +1,54 @@
 .pageWrapper {
   margin: auto;
   width: 100%;
-  max-width: 1440px;
+  max-width: 480px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 32px;
+}
+
+.header {
+  color: var(--primary);
+  padding: 8px 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iconWrapper {
+  max-width: 48px;
+  max-height: 48px;
+}
+
+.body {
+  padding: 12px 16px;
+  border: solid 1px var(--primaryBorder);
+  border-radius: 24px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.laborStart {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--primaryAlpha);
+  border: solid 2px var(--primaryBorder);
+  border-radius: 12px;
+}
+
+.laborBegan {
+  color: var(--primary);
+  font-size: 16px;
+}
+
+.totalContractionLabel {
+  display: flex;
+  gap: 8px;
 }

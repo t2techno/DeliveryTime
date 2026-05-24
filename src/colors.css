@@ -1,0 +1,6 @@
+:root {
+  --primary-hsl: 294, 40%, 36%;
+  --primary: hsl(var(--primary-hsl));
+  --primaryAlpha: hsl(var(--primary-hsl), 5%);
+  --primaryBorder: hsl(var(--primary-hsl), 50%);
+}
