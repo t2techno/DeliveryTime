@@ -1,4 +1,7 @@
 import Card from "../Card";
+import { Apple } from "../Icons/Apple";
+import { Drop } from "../Icons/Drop";
+import styles from "./human-section.module.css";
 
 export type EnergyCategory = "food" | "drink";
 
@@ -14,18 +17,28 @@ const HumanSection: React.FC<HumanSectionProps> = ({
   lastDrink,
 }) => {
   return (
-    <Card>
-      <h3>Energy Info</h3>
-      <div style={{ display: "flex", gap: 12 }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <p>Last Food: {lastFood}</p>
-          <button onClick={() => handleEnergy("food")}>+Food</button>
+    <Card className={styles.card}>
+      <div className={styles.grid}>
+        <div className={`${styles.info} ${styles.food}`}>
+          <Apple className={styles.food} /> {lastFood}
         </div>
-
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <p>Last Drink: {lastDrink}</p>
-          <button onClick={() => handleEnergy("drink")}>+ Drink</button>
+        <div className={`${styles.info} ${styles.drink}`}>
+          <Drop className={styles.drink} /> {lastDrink}
         </div>
+        <button
+          className={`${styles.button} ${styles.food}`}
+          onClick={() => handleEnergy("food")}
+        >
+          <Apple className={styles.food} />
+          Add Food
+        </button>
+        <button
+          className={`${styles.button} ${styles.drink}`}
+          onClick={() => handleEnergy("drink")}
+        >
+          <Drop className={styles.drink} />
+          Add Drink
+        </button>
       </div>
     </Card>
   );

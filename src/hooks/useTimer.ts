@@ -39,13 +39,13 @@ export const useTimer = (): UseTimerValue => {
 
   const startTimer = (time?: number) => {
     setStartTime(time ?? new Date().getTime());
-    setTimeElapsed(0);
   };
 
   const stopTimer = () => {
     window.clearInterval(timerIdRef.current);
     timerIdRef.current = -1;
     setStartTime(-1);
+    setTimeElapsed(0);
   };
 
   return {

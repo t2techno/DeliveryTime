@@ -1,0 +1,43 @@
+.card {
+  flex-direction: column;
+  width: 100%;
+  background-color: transparent;
+}
+
+.grid {
+  display: grid;
+
+  /* define the number of grid columns */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  border: solid 2px black;
+  padding-inline: 12px;
+  gap: 4px;
+}
+
+.food {
+  background-color: var(--food-light);
+  border-color: var(--food);
+}
+
+.drink {
+  background-color: var(--drink-light);
+  border-color: var(--drink);
+}
+
+.button {
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}

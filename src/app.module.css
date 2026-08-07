@@ -38,7 +38,7 @@
 .laborStart {
   width: 100%;
   padding: 16px;
-  background-color: var(--primaryAlpha);
+  background-color: var(--primary-background);
   border: solid 2px var(--primaryBorder);
   border-radius: 12px;
 }
@@ -46,6 +46,10 @@
 .laborBegan {
   color: var(--primary);
   font-size: 16px;
+}
+
+.totalCard {
+  justify-content: space-between;
 }
 
 .totalContractionLabel {

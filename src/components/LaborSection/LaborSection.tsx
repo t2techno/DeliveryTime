@@ -1,4 +1,5 @@
 import type { TimerData } from "../../hooks/useTimer";
+import { secToTimeStr } from "../../utilities/numberUtilities";
 import styles from "./labor-section.module.css";
 
 interface LaborSectionProps {
@@ -18,14 +19,15 @@ const LaborSection: React.FC<LaborSectionProps> = ({
   return (
     <div className={styles.wrapper}>
       <h2>Current Contraction</h2>
-      <p className={styles.bigTime}>{timeElapsed}</p>
+      <p className={styles.bigTime}>{secToTimeStr(timeElapsed)}</p>
       <p>{isRunning ? "timer running" : ""}</p>
       <button
+        className={`${styles.mainButton} ${isRunning ? styles.running : ""}`}
         onClick={() => {
           isRunning ? stopTimer() : startTimer();
         }}
       >
-        {isRunning ? "Stop Contraction" : "Start Contraction"}
+        {isRunning ? "End Contraction" : "Start Contraction"}
       </button>
     </div>
   );

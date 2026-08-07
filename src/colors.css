@@ -1,6 +1,10 @@
 :root {
   --primary-hsl: 294, 40%, 36%;
   --primary: hsl(var(--primary-hsl));
-  --primaryAlpha: hsl(var(--primary-hsl), 5%);
-  --primaryBorder: hsl(var(--primary-hsl), 50%);
+  --primary-background: hsla(var(--primary-hsl), 5%);
+  --primaryBorder: hsla(var(--primary-hsl), 50%);
+  --food-light: hsl(46, 89%, 96%);
+  --food: hsl(43, 70%, 48%);
+  --drink-light: hsl(210, 56%, 96%);
+  --drink: hsl(210, 53%, 45%);
 }

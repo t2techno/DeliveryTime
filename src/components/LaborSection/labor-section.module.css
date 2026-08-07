@@ -1,4 +1,32 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bigTime {
+  font-size: 2rem;
+}
+
 .laborInfo {
   display: flex;
   flex-direction: column;
+}
+
+.mainButton {
+  cursor: pointer;
+  width: 90%;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-background);
+  border-color: var(--primary);
+}
+
+.running {
+  background-color: var(--primary);
+  color: white;
 }

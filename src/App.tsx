@@ -87,7 +87,7 @@ function App() {
             />
             <TimeCard label={"Length of last contraction"} icon="timer" />
           </div>
-          <Card>
+          <Card className={styles.totalCard}>
             <div className={styles.totalContractionLabel}>
               <ContractionIcon />
               <p>Total Contractions:</p>
@@ -95,7 +95,6 @@ function App() {
             <p>{contractions.length}</p>
           </Card>
           <LaborSection
-            contractions={contractions}
             timerData={{ timeElapsed, startTime }}
             startTimer={handleTimerStart}
             stopTimer={handleTimerStop}

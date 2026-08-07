@@ -26,3 +26,19 @@ export const msToTimeStr = (ms?: number) => {
 
   return out;
 };
+
+export const secToTimeStr = (sec?: number) => {
+  console.log(sec);
+  if (sec === undefined) {
+    return "--:--";
+  }
+
+  const min = sec / 60;
+  const hr = min / 60;
+  const out =
+    hr >= 1
+      ? `${printInt(hr)}:${printInt(min % 60)}:${printInt(sec % 60)}`
+      : `${printInt(min)}:${printInt(sec % 60)}`;
+
+  return out;
+};
