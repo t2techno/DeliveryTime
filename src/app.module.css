@@ -27,6 +27,9 @@
   padding: 12px 16px;
   border: solid 1px var(--primaryBorder);
   border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .row {

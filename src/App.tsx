@@ -12,6 +12,7 @@ import {
   Contraction as ContractionIcon,
   Settings,
 } from "./components/Icons";
+import Toggle from "./components/Toggle";
 
 function App() {
   const { startTime, tickLength, timeElapsed, startTimer, stopTimer } =
@@ -77,8 +78,14 @@ function App() {
         </div>
         <div className={styles.body}>
           <div className={styles.row}>
-            <p>Average</p>
-            <p>Exact</p>
+            <Toggle
+              optionOne="average"
+              optionTwo="exact"
+              currentValue="average"
+              onChange={() => {
+                console.log("newValue");
+              }}
+            />
           </div>
           <div className={styles.row}>
             <TimeCard
