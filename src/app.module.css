@@ -38,6 +38,10 @@
   gap: 8px;
 }
 
+.row.toggle {
+  justify-content: end;
+}
+
 .laborStart {
   width: 100%;
   padding: 16px;

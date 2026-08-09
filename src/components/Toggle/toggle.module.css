@@ -1,29 +1,48 @@
 .wrapper {
+  min-width: 150px;
   position: relative;
   display: flex;
   justify-content: space-around;
   align-items: center;
   gap: 16px;
-  padding: 8px;
   overflow: hidden;
   border-radius: 8px;
 }
 
-.background {
-  position: absolute;
-  left: 0;
-  width: 60%;
-  height: 100%;
-  background-color: var(--primary);
-  border-radius: 8px;
+.input {
+  display: none;
 }
 
 .option {
+  height: 100%;
+  cursor: pointer;
   z-index: 1;
   color: inherit;
+  padding: 8px;
+  border-radius: 8px;
+  border: solid 1px transparent;
+}
+
+.option:hover {
+  border-color: var(--primary);
 }
 
 .active.option {
   z-index: 1;
   color: white;
+}
+
+.background {
+  position: absolute;
+  left: 0;
+  width: 57%;
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 8px;
+  transition: transform 250ms ease-in-out;
+}
+
+.optionTwoBackground {
+  transform: translateX(100%);
+  transition: transform 250ms ease-in-out;
 }

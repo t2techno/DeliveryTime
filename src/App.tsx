@@ -18,6 +18,7 @@ function App() {
   const { startTime, tickLength, timeElapsed, startTimer, stopTimer } =
     useTimer();
 
+  const [isAverage, setIsAverage] = useState(false);
   const [contractions, setContractions] = useState<Array<Contraction>>([]);
   const [drink, setDrink] = useState<Array<number>>([]);
   const [food, setFood] = useState<Array<number>>([]);
@@ -77,13 +78,13 @@ function App() {
           <p>Today, 6:00 AM</p>
         </div>
         <div className={styles.body}>
-          <div className={styles.row}>
+          <div className={`${styles.row} ${styles.toggle}`}>
             <Toggle
-              optionOne="average"
-              optionTwo="exact"
-              currentValue="average"
-              onChange={() => {
-                console.log("newValue");
+              optionOne={{ label: "Average", value: "average" }}
+              optionTwo={{ label: "Exact", value: "exact" }}
+              currentValue={isAverage ? "average" : "exact"}
+              onChange={(newVal: string) => {
+                setIsAverage(newVal === "average");
               }}
             />
           </div>

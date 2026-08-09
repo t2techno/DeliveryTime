@@ -1,9 +1,14 @@
 import { useCallback } from "react";
 import styles from "./toggle.module.css";
 
+interface ToggleInput {
+  label: string;
+  value: string;
+}
+
 interface ToggleProps {
-  optionOne: string;
-  optionTwo: string;
+  optionOne: ToggleInput;
+  optionTwo: ToggleInput;
   currentValue: string;
   onChange: (newValue: string) => void;
 }
@@ -23,17 +28,28 @@ const Toggle: React.FC<ToggleProps> = ({
 
   return (
     <div className={styles.wrapper}>
-      <p
-        className={`${styles.option} ${isActive(optionOne) ? styles.active : ""}`}
-      >
-        {optionOne}
-      </p>
-      <p
-        className={`${styles.option} ${isActive(optionTwo) ? styles.active : ""}`}
-      >
-        {optionTwo}
-      </p>
-      <div className={styles.background} />
+      {[optionOne, optionTwo].map(({ label, value }) => (
+        <label
+          key={`${value}-key`}
+          htmlFor={label}
+          className={`${styles.option} ${isActive(value) ? styles.active : ""}`}
+        >
+          {label}
+          <input
+            type="radio"
+            id={label}
+            className={styles.input}
+            name={label}
+            value={value}
+            checked={isActive(value)}
+            onChange={() => onChange(value)}
+          />
+        </label>
+      ))}
+
+      <div
+        className={`${styles.background} ${isActive(optionOne.value) ? "" : styles.optionTwoBackground}`}
+      />
     </div>
   );
 };
