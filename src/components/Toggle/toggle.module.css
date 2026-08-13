@@ -1,4 +1,5 @@
 .wrapper {
+  cursor: pointer;
   min-width: 150px;
   position: relative;
   display: flex;
@@ -15,7 +16,6 @@
 
 .option {
   height: 100%;
-  cursor: pointer;
   z-index: 1;
   color: inherit;
   padding: 8px;
@@ -23,7 +23,7 @@
   border: solid 1px transparent;
 }
 
-.option:hover {
+.wrapper:hover > .inactive {
   border-color: var(--primary);
 }
 
@@ -35,14 +35,15 @@
 .background {
   position: absolute;
   left: 0;
-  width: 57%;
+  width: 41%;
   height: 100%;
   background-color: var(--primary);
   border-radius: 8px;
-  transition: transform 250ms ease-in-out;
+  transition: all 250ms ease-in-out;
 }
 
 .optionTwoBackground {
   transform: translateX(100%);
-  transition: transform 250ms ease-in-out;
+  width: 50%;
+  transition: all 250ms ease-in-out;
 }

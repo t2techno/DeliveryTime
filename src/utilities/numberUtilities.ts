@@ -11,8 +11,7 @@ export const padNumber = (n: number) => {
 // print convenience
 // ms: number
 export const msToTimeStr = (ms?: number) => {
-  console.log(ms);
-  if (ms === undefined) {
+  if (!ms || ms === -1) {
     return "--:--";
   }
 
@@ -28,8 +27,7 @@ export const msToTimeStr = (ms?: number) => {
 };
 
 export const secToTimeStr = (sec?: number) => {
-  console.log(sec);
-  if (sec === undefined) {
+  if (!sec || sec === -1) {
     return "--:--";
   }
 

@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useTimer } from "./hooks/useTimer";
-import { emptyTime, type Contraction } from "./utilities/dataUtilities";
 import LaborSection from "./components/LaborSection";
-import HumanSection, { type EnergyCategory } from "./components/HumanSection";
+import HumanSection from "./components/HumanSection";
 import styles from "./app.module.css";
 import TimeCard from "./components/TimeCard";
 import Card from "./components/Card";
@@ -13,53 +11,31 @@ import {
   Settings,
 } from "./components/Icons";
 import Toggle from "./components/Toggle";
+import useSettings from "./hooks/useSettings";
+import useDb from "./hooks/useDb";
 
 function App() {
-  const { startTime, tickLength, timeElapsed, startTimer, stopTimer } =
-    useTimer();
+  const { startTime, timeElapsed, startTimer, stopTimer } = useTimer();
 
-  const [isAverage, setIsAverage] = useState(false);
-  const [contractions, setContractions] = useState<Array<Contraction>>([]);
-  const [drink, setDrink] = useState<Array<number>>([]);
-  const [food, setFood] = useState<Array<number>>([]);
+  const { isAvg, toggleIsAvg /*tickLength, setTickLength*/ } = useSettings();
+  const {
+    laborStart,
+    numContractions,
+    updateContraction,
+    lastFood,
+    lastDrink,
+    updateEnergy,
+  } = useDb();
 
   const handleTimerStart = () => {
     const now = new Date();
-    setContractions((current) => [...current, { start: now.getTime() }]);
+    updateContraction();
     startTimer(now.getTime());
   };
 
   const handleTimerStop = () => {
-    const now = new Date();
-    setContractions((current) => {
-      const next = [...current];
-      next[next.length - 1].end = now.getTime();
-      return next;
-    });
+    updateContraction();
     stopTimer();
-  };
-
-  const handleEnergy = (category: EnergyCategory) => {
-    const now = new Date();
-    if (category === "food") {
-      setFood((current) => [...current, now.getTime()]);
-    } else {
-      setDrink((current) => [...current, now.getTime()]);
-    }
-  };
-
-  const lastEnergyString = (category: EnergyCategory) => {
-    if (category === "food") {
-      const lastFood = food.at(-1);
-      return lastFood !== undefined
-        ? new Date(lastFood).toLocaleTimeString()
-        : emptyTime;
-    } else {
-      const lastDrink = drink.at(-1);
-      return lastDrink !== undefined
-        ? new Date(lastDrink).toLocaleTimeString()
-        : emptyTime;
-    }
   };
 
   return (
@@ -75,17 +51,15 @@ function App() {
             <Clock />
             <h2 className={styles.laborBegan}>Labor began</h2>
           </div>
-          <p>Today, 6:00 AM</p>
+          <p>{laborStart > 0 ? new Date(laborStart).getDate() : "--:--"}</p>
         </div>
         <div className={styles.body}>
           <div className={`${styles.row} ${styles.toggle}`}>
             <Toggle
-              optionOne={{ label: "Average", value: "average" }}
-              optionTwo={{ label: "Exact", value: "exact" }}
-              currentValue={isAverage ? "average" : "exact"}
-              onChange={(newVal: string) => {
-                setIsAverage(newVal === "average");
-              }}
+              optionOne={{ label: "Exact", value: "exact" }}
+              optionTwo={{ label: "Average", value: "average" }}
+              currentValue={isAvg ? "average" : "exact"}
+              toggleValue={toggleIsAvg}
             />
           </div>
           <div className={styles.row}>
@@ -99,8 +73,8 @@ function App() {
             <div className={styles.totalContractionLabel}>
               <ContractionIcon />
               <p>Total Contractions:</p>
+              <p>{numContractions}</p>
             </div>
-            <p>{contractions.length}</p>
           </Card>
           <LaborSection
             timerData={{ timeElapsed, startTime }}
@@ -110,9 +84,9 @@ function App() {
         </div>
 
         <HumanSection
-          handleEnergy={handleEnergy}
-          lastDrink={lastEnergyString("drink")}
-          lastFood={lastEnergyString("food")}
+          handleEnergy={updateEnergy}
+          lastDrink={lastDrink}
+          lastFood={lastFood}
         />
       </div>
     </>

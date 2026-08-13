@@ -10,14 +10,14 @@ interface ToggleProps {
   optionOne: ToggleInput;
   optionTwo: ToggleInput;
   currentValue: string;
-  onChange: (newValue: string) => void;
+  toggleValue: () => void;
 }
 
 const Toggle: React.FC<ToggleProps> = ({
   optionOne,
   optionTwo,
   currentValue,
-  onChange,
+  toggleValue,
 }) => {
   const isActive = useCallback(
     (option: string) => {
@@ -27,12 +27,12 @@ const Toggle: React.FC<ToggleProps> = ({
   );
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} onClick={toggleValue}>
       {[optionOne, optionTwo].map(({ label, value }) => (
         <label
           key={`${value}-key`}
           htmlFor={label}
-          className={`${styles.option} ${isActive(value) ? styles.active : ""}`}
+          className={`${styles.option} ${isActive(value) ? styles.active : styles.inactive}`}
         >
           {label}
           <input
@@ -42,7 +42,6 @@ const Toggle: React.FC<ToggleProps> = ({
             name={label}
             value={value}
             checked={isActive(value)}
-            onChange={() => onChange(value)}
           />
         </label>
       ))}

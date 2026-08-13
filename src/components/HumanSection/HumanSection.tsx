@@ -1,15 +1,19 @@
+import type { EnergyType } from "../../db/db";
+import { emptyTime } from "../../utilities/dataUtilities";
 import Card from "../Card";
 import { Apple } from "../Icons/Apple";
 import { Drop } from "../Icons/Drop";
 import styles from "./human-section.module.css";
 
-export type EnergyCategory = "food" | "drink";
-
 interface HumanSectionProps {
-  handleEnergy: (type: EnergyCategory) => void;
-  lastFood: string;
-  lastDrink: string;
+  handleEnergy: (type: EnergyType) => void;
+  lastFood: number;
+  lastDrink: number;
 }
+
+const msToTimeString = (time: number) => {
+  return time > 0 ? new Date(time).toLocaleTimeString() : emptyTime;
+};
 
 const HumanSection: React.FC<HumanSectionProps> = ({
   handleEnergy,
@@ -20,10 +24,10 @@ const HumanSection: React.FC<HumanSectionProps> = ({
     <Card className={styles.card}>
       <div className={styles.grid}>
         <div className={`${styles.info} ${styles.food}`}>
-          <Apple className={styles.food} /> {lastFood}
+          <Apple className={styles.food} /> {msToTimeString(lastFood)}
         </div>
         <div className={`${styles.info} ${styles.drink}`}>
-          <Drop className={styles.drink} /> {lastDrink}
+          <Drop className={styles.drink} /> {msToTimeString(lastDrink)}
         </div>
         <button
           className={`${styles.button} ${styles.food}`}
