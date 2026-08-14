@@ -42,6 +42,7 @@ const Toggle: React.FC<ToggleProps> = ({
             name={label}
             value={value}
             checked={isActive(value)}
+            onChange={toggleValue}
           />
         </label>
       ))}

@@ -15,6 +15,7 @@
 }
 
 .option {
+  cursor: pointer;
   height: 100%;
   z-index: 1;
   color: inherit;

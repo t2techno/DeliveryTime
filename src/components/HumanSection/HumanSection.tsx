@@ -1,25 +1,16 @@
-import type { EnergyType } from "../../db/db";
+import useDb from "../../hooks/useDb";
 import { emptyTime } from "../../utilities/dataUtilities";
 import Card from "../Card";
 import { Apple } from "../Icons/Apple";
 import { Drop } from "../Icons/Drop";
 import styles from "./human-section.module.css";
 
-interface HumanSectionProps {
-  handleEnergy: (type: EnergyType) => void;
-  lastFood: number;
-  lastDrink: number;
-}
-
 const msToTimeString = (time: number) => {
   return time > 0 ? new Date(time).toLocaleTimeString() : emptyTime;
 };
 
-const HumanSection: React.FC<HumanSectionProps> = ({
-  handleEnergy,
-  lastFood,
-  lastDrink,
-}) => {
+const HumanSection = () => {
+  const { lastFood, lastDrink, updateEnergy } = useDb();
   return (
     <Card className={styles.card}>
       <div className={styles.grid}>
@@ -31,14 +22,14 @@ const HumanSection: React.FC<HumanSectionProps> = ({
         </div>
         <button
           className={`${styles.button} ${styles.food}`}
-          onClick={() => handleEnergy("food")}
+          onClick={() => updateEnergy("food")}
         >
           <Apple className={styles.food} />
           Add Food
         </button>
         <button
           className={`${styles.button} ${styles.drink}`}
-          onClick={() => handleEnergy("drink")}
+          onClick={() => updateEnergy("drink")}
         >
           <Drop className={styles.drink} />
           Add Drink
