@@ -1,40 +1,19 @@
-import useDb from "../../hooks/useDb";
 import { useTimer } from "../../hooks/useTimer";
 import Card from "../Card";
 import LaborSection from "../LaborSection";
 import TimeCard from "../TimeCard";
-import Toggle from "../Toggle";
 import { Contraction as ContractionIcon } from "../../components/Icons";
 import styles from "./contraction-section.module.css";
-import useSettings from "../../hooks/useSettings";
+import { useContext } from "react";
+import { DbContext } from "../../providers/db/DbProvider";
 
 const ContractionSection = () => {
-  const { isAvg, toggleIsAvg } = useSettings();
-  const { startTime, timeElapsed, startTimer, stopTimer } = useTimer();
+  const { numContractions, updateContraction, lastContraction } =
+    useContext(DbContext);
 
-  const { numContractions, updateContraction } = useDb();
-
-  const handleTimerStart = () => {
-    const now = new Date();
-    updateContraction();
-    startTimer(now.getTime());
-  };
-
-  const handleTimerStop = () => {
-    updateContraction();
-    stopTimer();
-  };
-
+  const { timeElapsed } = useTimer(lastContraction);
   return (
     <div className={styles.body}>
-      <div className={`${styles.row} ${styles.toggle}`}>
-        <Toggle
-          optionOne={{ label: "Exact", value: "exact" }}
-          optionTwo={{ label: "Average", value: "average" }}
-          currentValue={isAvg ? "average" : "exact"}
-          toggleValue={toggleIsAvg}
-        />
-      </div>
       <div className={styles.row}>
         <TimeCard
           label={"Time between last two contractions"}
@@ -50,9 +29,11 @@ const ContractionSection = () => {
         </div>
       </Card>
       <LaborSection
-        timerData={{ timeElapsed, startTime }}
-        startTimer={handleTimerStart}
-        stopTimer={handleTimerStop}
+        isRunning={
+          lastContraction ? lastContraction.contraction.length === 1 : false
+        }
+        timeElapsed={timeElapsed}
+        buttonAction={updateContraction}
       />
     </div>
   );

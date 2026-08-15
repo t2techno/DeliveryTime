@@ -13,10 +13,6 @@
   gap: 8px;
 }
 
-.row.toggle {
-  justify-content: end;
-}
-
 .totalCard {
   justify-content: space-between;
 }

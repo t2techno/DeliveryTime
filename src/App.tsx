@@ -2,11 +2,12 @@ import HumanSection from "./components/HumanSection";
 import styles from "./app.module.css";
 import { Clock } from "./components/Icons/Clock";
 import { CenterHeart, Settings } from "./components/Icons";
-import useDb from "./hooks/useDb";
 import ContractionSection from "./components/ContractionSection";
+import { useContext } from "react";
+import { DbContext } from "./providers/db/DbProvider";
 
 function App() {
-  const { laborStart } = useDb();
+  const { laborStart } = useContext(DbContext);
 
   return (
     <>
@@ -21,7 +22,9 @@ function App() {
             <Clock />
             <h2 className={styles.laborBegan}>Labor began</h2>
           </div>
-          <p>{laborStart > 0 ? new Date(laborStart).getDate() : "--:--"}</p>
+          <p>
+            {laborStart > 0 ? new Date(laborStart).toLocaleString() : "--:--"}
+          </p>
         </div>
         <ContractionSection />
         <HumanSection />

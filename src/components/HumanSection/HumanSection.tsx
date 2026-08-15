@@ -1,16 +1,17 @@
-import useDb from "../../hooks/useDb";
+import { useContext } from "react";
 import { emptyTime } from "../../utilities/dataUtilities";
 import Card from "../Card";
 import { Apple } from "../Icons/Apple";
 import { Drop } from "../Icons/Drop";
 import styles from "./human-section.module.css";
+import { DbContext } from "../../providers/db/DbProvider";
 
 const msToTimeString = (time: number) => {
   return time > 0 ? new Date(time).toLocaleTimeString() : emptyTime;
 };
 
 const HumanSection = () => {
-  const { lastFood, lastDrink, updateEnergy } = useDb();
+  const { lastFood, lastDrink, updateEnergy } = useContext(DbContext);
   return (
     <Card className={styles.card}>
       <div className={styles.grid}>

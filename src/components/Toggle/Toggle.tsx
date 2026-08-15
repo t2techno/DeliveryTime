@@ -27,7 +27,14 @@ const Toggle: React.FC<ToggleProps> = ({
   );
 
   return (
-    <div className={styles.wrapper} onClick={toggleValue}>
+    <div
+      className={styles.wrapper}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        toggleValue();
+      }}
+    >
       {[optionOne, optionTwo].map(({ label, value }) => (
         <label
           key={`${value}-key`}
@@ -42,7 +49,12 @@ const Toggle: React.FC<ToggleProps> = ({
             name={label}
             value={value}
             checked={isActive(value)}
-            onChange={toggleValue}
+            onChange={(e) => {
+              // This will probably only be targeted by screen readers
+              e.stopPropagation();
+              e.preventDefault();
+              toggleValue();
+            }}
           />
         </label>
       ))}
