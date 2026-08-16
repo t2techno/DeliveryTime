@@ -1,10 +1,10 @@
 import styles from "./icons.module.css";
 
-export const Settings = () => {
+export const Settings: React.FC<{ className?: string }> = ({ className }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={styles.svg}
+      className={`${styles.svg} ${className ?? ""}`}
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth={2}

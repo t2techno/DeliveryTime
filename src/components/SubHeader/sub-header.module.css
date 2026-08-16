@@ -1,0 +1,17 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.laborStart {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--primary-background);
+  border: solid 2px var(--primaryBorder);
+  border-radius: 12px;
+}
+
+.laborBegan {
+  color: var(--primary);
+}
