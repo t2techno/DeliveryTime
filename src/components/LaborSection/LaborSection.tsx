@@ -1,4 +1,3 @@
-import type { TimerData } from "../../hooks/useTimer";
 import { secToTimeStr } from "../../utilities/numberUtilities";
 import styles from "./labor-section.module.css";
 
