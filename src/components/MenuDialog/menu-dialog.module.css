@@ -14,16 +14,15 @@
   position: relative;
   inset: 0;
   padding: 32px;
+  min-height: 100vmax;
 }
 
 .drawer {
   z-index: 4;
   position: absolute;
   top: 0;
-  bottom: 0;
   right: 0;
   width: 50%;
-  height: 100%;
   max-width: 300px;
   min-width: 200px;
   display: flex;

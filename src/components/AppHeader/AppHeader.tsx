@@ -1,5 +1,5 @@
 import { CenterHeart } from "../Icons";
-import SettingsDialog from "../SettingsDialog";
+import SettingsPopover from "../SettingsPopover";
 import styles from "./app-header.module.css";
 
 const AppHeader = () => {
@@ -7,7 +7,7 @@ const AppHeader = () => {
     <div className={styles.header}>
       <CenterHeart />
       <h1>Labor Timer</h1>
-      <SettingsDialog />
+      <SettingsPopover />
     </div>
   );
 };

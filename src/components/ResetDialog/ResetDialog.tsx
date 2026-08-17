@@ -3,6 +3,7 @@ import * as BaseDialog from "@radix-ui/react-dialog";
 import DbContext from "../../providers/db/DbContext";
 import SettingsContext from "../../providers/settings/SettingsContext";
 import styles from "./reset-alert.module.css";
+import X from "../Icons/X";
 
 interface ResetDialogProps {
   isOpen: boolean;
@@ -29,36 +30,40 @@ const ResetDialog: React.FC<ResetDialogProps> = ({ isOpen, onOpenChange }) => {
           Reset App
         </button>
       </BaseDialog.Trigger>
-      <BaseDialog.Content>
-        <BaseDialog.Title className={styles.title}>
-          Delete Labor Data
-        </BaseDialog.Title>
-        <p>
-          Are you sure you'd like to delete all information about this labor?
-        </p>
-        <div className={styles.buttonRow}>
-          <button
-            autoFocus
-            type="button"
-            id="reset-button"
-            className={styles.dialogButton}
-            onClick={() => resetApp()}
-          >
-            Yes
-          </button>
-          <button
-            type="button"
-            id="close-dialog-button"
-            className={styles.dialogButton}
-            onClick={() => close()}
-          >
-            No
-          </button>
-        </div>
-        <BaseDialog.Close asChild>
-          <button className={styles.closeBtn}>Close</button>
-        </BaseDialog.Close>
-      </BaseDialog.Content>
+      <BaseDialog.Portal>
+        <BaseDialog.Overlay className={styles.overlay} />
+        <BaseDialog.Content className={styles.contentWrapper}>
+          <BaseDialog.Title className={styles.title}>
+            Delete Labor Data
+          </BaseDialog.Title>
+          <p>
+            Are you sure you'd like to delete all information about this labor?
+          </p>
+          <div className={styles.buttonRow}>
+            <button
+              autoFocus
+              type="button"
+              id="reset-button"
+              className={styles.dialogButton}
+              onClick={() => resetApp()}
+            >
+              Yes
+            </button>
+            <button
+              type="button"
+              id="close-dialog-button"
+              className={styles.dialogButton}
+              onClick={() => onOpenChange(false)}
+            >
+              No
+            </button>
+          </div>
+
+          <BaseDialog.Close className={styles.closeButton} aria-label="Close">
+            <X />
+          </BaseDialog.Close>
+        </BaseDialog.Content>
+      </BaseDialog.Portal>
     </BaseDialog.Root>
   );
 };
