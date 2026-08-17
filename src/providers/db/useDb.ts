@@ -15,7 +15,7 @@ interface UseDbValue {
 }
 
 const useDb = (): UseDbValue => {
-  const contractions = useLiveQuery(() => db.contractions.toArray()) ?? [];
+  const contractions = useLiveQuery(() => db.contractions.toArray(), [], []);
 
   const energy = useLiveQuery(() => db.energy.toArray()) ?? [];
 
@@ -50,8 +50,8 @@ const useDb = (): UseDbValue => {
     }
   }, []);
 
-  const resetDb = useCallback(() => {
-    db.delete({ disableAutoOpen: false });
+  const resetDb = useCallback(async () => {
+    await Promise.all(db.tables.map((table) => table.clear()));
   }, []);
 
   return {
