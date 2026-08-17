@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import styles from "./sub-header.module.css";
-import { DbContext } from "../../providers/db/DbProvider";
+import DbContext from "../../providers/db/DbContext";
 import { Clock } from "../Icons";
 
 const SubHeader = () => {

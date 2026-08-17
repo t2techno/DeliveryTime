@@ -4,7 +4,7 @@ import Card from "../Card";
 import { Apple } from "../Icons/Apple";
 import { Drop } from "../Icons/Drop";
 import styles from "./human-section.module.css";
-import { DbContext } from "../../providers/db/DbProvider";
+import DbContext from "../../providers/db/DbContext";
 
 const msToTimeString = (time: number) => {
   return time > 0 ? new Date(time).toLocaleTimeString() : emptyTime;

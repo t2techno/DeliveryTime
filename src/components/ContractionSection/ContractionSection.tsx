@@ -5,7 +5,7 @@ import TimeCard from "../TimeCard";
 import { Contraction as ContractionIcon } from "../../components/Icons";
 import styles from "./contraction-section.module.css";
 import { useContext } from "react";
-import { DbContext } from "../../providers/db/DbProvider";
+import DbContext from "../../providers/db/DbContext";
 
 const ContractionSection = () => {
   const { numContractions, updateContraction, lastContraction } =

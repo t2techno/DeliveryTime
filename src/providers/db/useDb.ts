@@ -11,11 +11,11 @@ interface UseDbValue {
   updateContraction: () => Promise<void>;
   energy: EnergyStore[];
   updateEnergy: (type: EnergyType) => Promise<void>;
+  resetDb: () => void;
 }
 
 const useDb = (): UseDbValue => {
   const contractions = useLiveQuery(() => db.contractions.toArray()) ?? [];
-  console.log({ contractions });
 
   const energy = useLiveQuery(() => db.energy.toArray()) ?? [];
 
@@ -50,11 +50,16 @@ const useDb = (): UseDbValue => {
     }
   }, []);
 
+  const resetDb = useCallback(() => {
+    db.delete({ disableAutoOpen: false });
+  }, []);
+
   return {
     contractions,
     updateContraction,
     energy,
     updateEnergy,
+    resetDb,
   };
 };
 

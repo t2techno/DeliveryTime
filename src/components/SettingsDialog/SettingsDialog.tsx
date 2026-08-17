@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import MenuDialog from "../MenuDialog";
 import styles from "./settings-dialog.module.css";
+import SettingsContext from "../../providers/settings/SettingsContext";
+import ResetDialog from "../ResetDialog";
 
 const SettingsDialog = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const { tickLength, setTickLength } = useContext(SettingsContext);
+
   return (
     <MenuDialog
       isOpen={settingsOpen}
@@ -11,25 +16,29 @@ const SettingsDialog = () => {
         setSettingsOpen((current) => !current);
       }}
     >
-      <div className="settingContent">
+      <div className={styles.settingsContent}>
         <h2 className="settingLabel" id="tick-length-label">
           Timer Update
         </h2>
-        <div id="tick-length-wrapper">
+        <div className={styles.tickLengthWrapper}>
           <p>Every &nbsp;</p>
           <input
-            id="tick-length-input"
+            className={styles.tickLengthInput}
             type="number"
             min="0"
             max="60"
-            value="1"
+            value={tickLength}
+            onChange={(e) => {
+              setTickLength(Number(e.target.value));
+            }}
           />
-          <p id="tick-length-seconds-text">&nbsp;Second</p>
+          <p>&nbsp;{tickLength === 1 ? "Second" : "Seconds"}</p>
         </div>
-        <p id="no-tick-label" className={styles.hidden}>
-          Only display start time
-        </p>
+        {tickLength === 0 && (
+          <p className={styles.zeroTimeText}>Only display start time</p>
+        )}
       </div>
+      <ResetDialog isOpen={resetDialogOpen} onOpenChange={setResetDialogOpen} />
     </MenuDialog>
   );
 };

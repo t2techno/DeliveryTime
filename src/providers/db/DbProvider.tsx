@@ -1,35 +1,10 @@
-import { createContext, useMemo, type PropsWithChildren } from "react";
-import type { ContractionStore, EnergyType } from "./db";
+import { useMemo, type PropsWithChildren } from "react";
 import useDb from "./useDb";
-
-export interface DbContextValue {
-  laborStart: number;
-  lastContraction: ContractionStore | undefined;
-  numContractions: number;
-  updateContraction: () => Promise<void>;
-  lastFood: number;
-  lastDrink: number;
-  updateEnergy: (type: EnergyType) => Promise<void>;
-}
-
-const emptyContextValue: DbContextValue = {
-  laborStart: -1,
-  lastContraction: { id: -1, contraction: [] },
-  numContractions: 0,
-  updateContraction: async () => {
-    console.error("Update Contraction method not implemented");
-  },
-  lastFood: -1,
-  lastDrink: -1,
-  updateEnergy: async () => {
-    console.error("Update Energy method not implemented");
-  },
-};
-
-export const DbContext = createContext<DbContextValue>(emptyContextValue);
+import DbContext from "./DbContext";
 
 const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const { contractions, updateContraction, energy, updateEnergy } = useDb();
+  const { contractions, updateContraction, energy, updateEnergy, resetDb } =
+    useDb();
   const laborStart = useMemo(
     () =>
       contractions && contractions?.length > 0
@@ -71,6 +46,7 @@ const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
         lastFood,
         lastDrink,
         updateEnergy,
+        resetDb,
       }}
     >
       {children}

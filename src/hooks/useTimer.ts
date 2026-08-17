@@ -1,5 +1,5 @@
 import { useCallback, useContext, useRef, useState } from "react";
-import { SettingsContext } from "../providers/settings/SettingsProvider";
+import SettingsContext from "../providers/settings/SettingsContext";
 import type { ContractionStore } from "../providers/db/db";
 
 export interface TimerData {

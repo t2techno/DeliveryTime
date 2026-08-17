@@ -1,4 +1,4 @@
-.settingContent {
+.settingsContent {
   width: 90%;
   margin: auto;
 }
@@ -13,7 +13,7 @@
   font-size: 1.4rem;
 }
 
-#tick-length-wrapper {
+.tickLengthWrapper {
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -28,11 +28,11 @@
   color: hsl(0, 0%, 39%);
 }
 
-#tick-length-input {
+.tickLengthInput {
   width: 2.5rem;
 }
 
-#no-tick-label {
+.zeroTimeText {
   width: 90%;
   margin: auto;
 }
