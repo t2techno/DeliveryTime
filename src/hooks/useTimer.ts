@@ -30,7 +30,10 @@ export const useTimer = (lastContraction?: ContractionStore): UseTimerValue => {
 
   if (lastContraction && tickLength > 0) {
     if (!lastContraction?.end && timerIdRef.current < 0) {
-      timerIdRef.current = window.setInterval(onTick, tickLength * 1000);
+      timerIdRef.current = window.setInterval(
+        onTick,
+        currentTickLength.current * 1000,
+      );
       // if the page is refreshed with a contraction running
       onTick();
     } else if (lastContraction?.end && timerIdRef.current > 0) {
@@ -40,8 +43,16 @@ export const useTimer = (lastContraction?: ContractionStore): UseTimerValue => {
       // I could technically keep the inter-time difference and continue the same cadence
       // todo: keep the timing consistent
       currentTickLength.current = tickLength;
-      timerIdRef.current = window.setInterval(onTick, tickLength * 1000);
+      timerIdRef.current = window.setInterval(
+        onTick,
+        currentTickLength.current * 1000,
+      );
     }
+  } else if (tickLength === 0 && timerIdRef.current > 0) {
+    // This means we had the ticklength changed to 0 during timer
+    // update tickLength ref and stop timer
+    currentTickLength.current = tickLength;
+    stopTimer();
   }
 
   return {

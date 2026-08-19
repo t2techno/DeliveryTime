@@ -58,8 +58,11 @@ export const contractionLength = (
 };
 
 export const getLastFullContractionLength = (
-  contractions: Array<ContractionStore>,
+  contractions?: Array<ContractionStore>,
 ): string => {
+  if (!contractions) {
+    return emptyTime;
+  }
   const lastFullContraction = getLastFullContraction(contractions);
   const lastContractionLength = contractionLength(lastFullContraction);
 

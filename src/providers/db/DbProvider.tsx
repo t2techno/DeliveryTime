@@ -1,7 +1,10 @@
 import { useMemo, type PropsWithChildren } from "react";
 import useDb from "./useDb";
 import DbContext from "./DbContext";
-import { getLastFullContractionLength } from "../../utilities/dataUtilities";
+import {
+  getLastFullContractionLength,
+  getTimeBetween,
+} from "../../utilities/dataUtilities";
 
 const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { contractions, updateContraction, energy, updateEnergy, resetDb } =
@@ -17,8 +20,13 @@ const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
     [contractions],
   );
 
-  const lastContractionLength = useMemo(
-    () => getLastFullContractionLength(contractions),
+  const lastFullContractionLength = useMemo(
+    () => getLastFullContractionLength(contractions && contractions),
+    [contractions],
+  );
+
+  const timeBetweenLastTwoContractions = useMemo(
+    () => getTimeBetween(contractions),
     [contractions],
   );
 
@@ -46,6 +54,8 @@ const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
         laborStart,
         numContractions,
         lastContraction,
+        lastFullContractionLength,
+        timeBetweenLastTwoContractions,
         updateContraction,
         lastFood,
         lastDrink,

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import styles from "./settings-popover.module.css";
 import SettingsContext from "../../providers/settings/SettingsContext";
@@ -11,10 +11,22 @@ const SettingsPopover = () => {
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const { tickLength, setTickLength } = useContext(SettingsContext);
 
+  const toggleOpen = useCallback(() => {
+    setSettingsOpen((current) => !current);
+  }, []);
+
+  const close = useCallback(() => {
+    setSettingsOpen(false);
+  }, []);
+
   return (
-    <Popover.Root>
+    <Popover.Root open={settingsOpen}>
       <Popover.Trigger asChild>
-        <button className={styles.openButton} aria-label="Open Settings">
+        <button
+          className={styles.openButton}
+          aria-label="Open Settings"
+          onClick={toggleOpen}
+        >
           <Settings />
         </button>
       </Popover.Trigger>
@@ -49,6 +61,7 @@ const SettingsPopover = () => {
           <ResetDialog
             isOpen={resetDialogOpen}
             onOpenChange={setResetDialogOpen}
+            onReset={close}
           />
         </Popover.Content>
       </Popover.Portal>

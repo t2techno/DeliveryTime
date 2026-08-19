@@ -3,7 +3,9 @@ import type { ContractionStore, EnergyType } from "./db";
 
 export interface DbContextValue {
   laborStart: number;
-  lastContraction: ContractionStore | undefined;
+  lastContraction?: ContractionStore;
+  lastFullContractionLength: string;
+  timeBetweenLastTwoContractions: string;
   numContractions: number;
   updateContraction: () => Promise<void>;
   lastFood: number;
@@ -14,7 +16,8 @@ export interface DbContextValue {
 
 const emptyContextValue: DbContextValue = {
   laborStart: -1,
-  lastContraction: { id: -1, start: -1 },
+  lastFullContractionLength: "--:--",
+  timeBetweenLastTwoContractions: "--:--",
   numContractions: 0,
   updateContraction: async () => {
     console.error("Update Contraction method not implemented");

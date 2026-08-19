@@ -1,4 +1,3 @@
-import { useTimer } from "../../hooks/useTimer";
 import Card from "../Card";
 import LaborSection from "../LaborSection";
 import TimeCard from "../TimeCard";
@@ -9,7 +8,12 @@ import DbContext from "../../providers/db/DbContext";
 
 const ContractionSection = () => {
   const { numContractions } = useContext(DbContext);
-  const { lastContraction, updateContraction } = useContext(DbContext);
+  const {
+    lastContraction,
+    lastFullContractionLength,
+    timeBetweenLastTwoContractions,
+    updateContraction,
+  } = useContext(DbContext);
 
   return (
     <div className={styles.body}>
@@ -17,8 +21,13 @@ const ContractionSection = () => {
         <TimeCard
           label={"Time between last two contractions"}
           icon="interval"
+          time={lastFullContractionLength}
         />
-        <TimeCard label={"Length of last contraction"} icon="timer" />
+        <TimeCard
+          label={"Length of last contraction"}
+          icon="timer"
+          time={timeBetweenLastTwoContractions}
+        />
       </div>
       <Card className={styles.totalCard}>
         <div className={styles.totalContractionLabel}>

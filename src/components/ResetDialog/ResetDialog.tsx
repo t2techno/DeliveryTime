@@ -8,9 +8,14 @@ import X from "../Icons/X";
 interface ResetDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onReset: () => void;
 }
 
-const ResetDialog: React.FC<ResetDialogProps> = ({ isOpen, onOpenChange }) => {
+const ResetDialog: React.FC<ResetDialogProps> = ({
+  isOpen,
+  onOpenChange,
+  onReset,
+}) => {
   const { resetDb } = useContext(DbContext);
   const { resetSettings } = useContext(SettingsContext);
 
@@ -18,6 +23,7 @@ const ResetDialog: React.FC<ResetDialogProps> = ({ isOpen, onOpenChange }) => {
     resetDb();
     resetSettings();
     onOpenChange(false);
+    onReset();
   };
 
   return (
