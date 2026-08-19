@@ -2,9 +2,11 @@ import { Dexie, type EntityTable } from "dexie";
 
 const DB_VERSION = 1;
 
+// Todo: Could add intensity indicator
 interface ContractionStore {
   id: number;
-  contraction: Array<number>;
+  start: number;
+  end?: number;
 }
 
 type EnergyType = "food" | "drink";
@@ -21,7 +23,7 @@ const db = new Dexie("ContractionTimerDatabase") as Dexie & {
 };
 
 db.version(DB_VERSION).stores({
-  contractions: "++id, contraction",
+  contractions: "++id, start, end",
   energy: "++id, type, time",
 });
 

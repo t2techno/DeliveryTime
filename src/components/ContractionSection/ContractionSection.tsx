@@ -8,10 +8,9 @@ import { useContext } from "react";
 import DbContext from "../../providers/db/DbContext";
 
 const ContractionSection = () => {
-  const { numContractions, updateContraction, lastContraction } =
-    useContext(DbContext);
+  const { numContractions } = useContext(DbContext);
+  const { lastContraction, updateContraction } = useContext(DbContext);
 
-  const { timeElapsed } = useTimer(lastContraction);
   return (
     <div className={styles.body}>
       <div className={styles.row}>
@@ -29,11 +28,8 @@ const ContractionSection = () => {
         </div>
       </Card>
       <LaborSection
-        isRunning={
-          lastContraction ? lastContraction.contraction.length === 1 : false
-        }
-        timeElapsed={timeElapsed}
-        buttonAction={updateContraction}
+        lastContraction={lastContraction}
+        updateContraction={updateContraction}
       />
     </div>
   );

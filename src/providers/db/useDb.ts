@@ -25,16 +25,13 @@ const useDb = (): UseDbValue => {
 
     try {
       // Starting new contraction
-      if (
-        lastContraction === undefined ||
-        lastContraction.contraction.length === 2
-      ) {
+      if (lastContraction === undefined || lastContraction.end) {
         await db.contractions.add({
-          contraction: [now.getTime()],
+          start: now.getTime(),
         });
       } else {
         await db.contractions.update(lastContraction.id, {
-          contraction: [...lastContraction.contraction, now.getTime()],
+          end: now.getTime(),
         });
       }
     } catch (err) {

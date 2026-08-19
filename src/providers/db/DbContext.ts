@@ -14,7 +14,7 @@ export interface DbContextValue {
 
 const emptyContextValue: DbContextValue = {
   laborStart: -1,
-  lastContraction: { id: -1, contraction: [] },
+  lastContraction: { id: -1, start: -1 },
   numContractions: 0,
   updateContraction: async () => {
     console.error("Update Contraction method not implemented");

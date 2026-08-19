@@ -28,7 +28,7 @@ export const msToTimeStr = (ms?: number) => {
 
 export const secToTimeStr = (sec?: number) => {
   if (!sec || sec === -1) {
-    return "--:--";
+    return "00:00";
   }
 
   const min = sec / 60;

@@ -1,13 +1,9 @@
+import type { ContractionStore } from "../providers/db/db";
 import { msToTimeStr } from "./numberUtilities";
-
-export interface Contraction {
-  start: number;
-  end?: number;
-}
 
 export const emptyTime = "--:--";
 
-export const getTimeBetween = (contractions: Array<Contraction>) => {
+export const getTimeBetween = (contractions: Array<ContractionStore>) => {
   if (contractions.length < 2) {
     return emptyTime;
   }
@@ -22,15 +18,15 @@ export const getTimeBetween = (contractions: Array<Contraction>) => {
   return msToTimeStr(a.start - b.start);
 };
 
-export const getLaborStart = (contractions: Array<Contraction>) => {
+export const getLaborStart = (contractions: Array<ContractionStore>) => {
   return contractions.length > 0
     ? new Date(contractions[0].start).toLocaleString()
     : emptyTime;
 };
 
 export const getLastFullContraction = (
-  contractions: Array<Contraction>,
-): Contraction | undefined => {
+  contractions: Array<ContractionStore>,
+): ContractionStore | undefined => {
   if (contractions.length === 0 || contractions[0].end === undefined) {
     return undefined;
   }
@@ -44,7 +40,7 @@ export const getLastFullContraction = (
 };
 
 export const contractionLength = (
-  contraction: Contraction | undefined,
+  contraction: ContractionStore | undefined,
 ): number => {
   console.log("checking length on:", contraction);
   if (contraction === undefined) {
@@ -56,15 +52,14 @@ export const contractionLength = (
       ? new Date().getTime() - contraction.start
       : contraction.end - contraction.start;
 
-  console.log("answer:", answer);
+  console.log("contraction length:", answer);
 
   return answer;
 };
 
 export const getLastFullContractionLength = (
-  contractions: Array<Contraction>,
+  contractions: Array<ContractionStore>,
 ): string => {
-  console.log("checking contractions", contractions);
   const lastFullContraction = getLastFullContraction(contractions);
   const lastContractionLength = contractionLength(lastFullContraction);
 
@@ -73,7 +68,9 @@ export const getLastFullContractionLength = (
     : emptyTime;
 };
 
-export const getLastContractionStart = (contractions: Array<Contraction>) => {
+export const getLastContractionStart = (
+  contractions: Array<ContractionStore>,
+) => {
   if (contractions.length === 0) {
     return emptyTime;
   }

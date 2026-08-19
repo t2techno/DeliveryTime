@@ -13,8 +13,10 @@ function App() {
         <DbProvider>
           <AppHeader />
           <SubHeader />
-          <ContractionSection />
-          <HumanSection />
+          <div className={styles.infoWrapper}>
+            <ContractionSection />
+            <HumanSection />
+          </div>
         </DbProvider>
       </SettingsProvider>
     </div>

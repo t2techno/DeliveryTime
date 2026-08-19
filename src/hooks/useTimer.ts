@@ -18,7 +18,7 @@ export const useTimer = (lastContraction?: ContractionStore): UseTimerValue => {
 
   const onTick = useCallback(() => {
     const now = new Date().getTime();
-    const then = lastContraction?.contraction[0] ?? now;
+    const then = lastContraction?.start ?? now;
     setTimeElapsed(Math.floor((now - then) / 1000));
   }, [lastContraction]);
 
@@ -28,19 +28,20 @@ export const useTimer = (lastContraction?: ContractionStore): UseTimerValue => {
     setTimeElapsed(0);
   };
 
-  if (lastContraction?.contraction.length === 1 && timerIdRef.current < 0) {
-    timerIdRef.current = window.setInterval(onTick, tickLength * 1000);
-  } else if (
-    lastContraction?.contraction.length === 2 &&
-    timerIdRef.current > 0
-  ) {
-    stopTimer();
-  } else if (currentTickLength.current !== tickLength) {
-    window.clearInterval(timerIdRef.current);
-    // I could technically keep the inter-time difference and continue
-    // todo: keep the timing consistent
-    currentTickLength.current = tickLength;
-    timerIdRef.current = window.setInterval(onTick, tickLength * 1000);
+  if (lastContraction && tickLength > 0) {
+    if (!lastContraction?.end && timerIdRef.current < 0) {
+      timerIdRef.current = window.setInterval(onTick, tickLength * 1000);
+      // if the page is refreshed with a contraction running
+      onTick();
+    } else if (lastContraction?.end && timerIdRef.current > 0) {
+      stopTimer();
+    } else if (currentTickLength.current !== tickLength) {
+      window.clearInterval(timerIdRef.current);
+      // I could technically keep the inter-time difference and continue the same cadence
+      // todo: keep the timing consistent
+      currentTickLength.current = tickLength;
+      timerIdRef.current = window.setInterval(onTick, tickLength * 1000);
+    }
   }
 
   return {

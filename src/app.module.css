@@ -8,3 +8,9 @@
   align-items: center;
   gap: 32px;
 }
+
+.infoWrapper {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
