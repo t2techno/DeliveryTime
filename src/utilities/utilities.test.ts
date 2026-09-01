@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
+  getAvgContractionLength,
+  getAvgTimeBetween,
   emptyTime,
   getContractionLength,
   getLaborStart,
@@ -163,11 +165,11 @@ describe("getTimeBetween method", () => {
     expect(
       getTimeBetween(contractionStoreA, contractionStoreB),
       "a less than b",
-    ).toBe("00:09");
+    ).toBe(9900);
     expect(
       getTimeBetween(contractionStoreB, contractionStoreA),
       "b less than a",
-    ).toBe("00:09");
+    ).toBe(9900);
   });
 });
 
@@ -221,7 +223,7 @@ describe("getLastFullContraction method", () => {
 describe("getContractionLength method", () => {
   it("handles invalid data gracefully", () => {
     const start = 100;
-    expect(getContractionLength(), "undefined contraction").toBe(-1);
+    expect(getContractionLength(), "undefined contraction").toBe(0);
     expect(
       getContractionLength({ id: 0, start }),
       "contraction with no end",
@@ -229,7 +231,7 @@ describe("getContractionLength method", () => {
     expect(
       getContractionLength({ id: 0, start: 100, end: 10 }),
       "contraction with end less than start",
-    ).toBe(-1);
+    ).toBe(0);
   });
 
   it("handles normal data", () => {
@@ -245,10 +247,10 @@ describe("getLastFullContractionLength method", () => {
     const end = 1000;
     const contraction = { id: 0, start, end };
 
-    expect(getLastFullContractionLength()).toBe(emptyTime);
-    expect(getLastFullContractionLength([])).toBe(emptyTime);
+    expect(getLastFullContractionLength()).toBe(0);
+    expect(getLastFullContractionLength([])).toBe(0);
     expect(getLastFullContractionLength([...contractions, contraction])).toBe(
-      msToTimeStr(getContractionLength(contraction)),
+      getContractionLength(contraction),
     );
   });
 });
@@ -256,26 +258,140 @@ describe("getLastFullContractionLength method", () => {
 describe("getLastContractionStart method", () => {
   const start = 100;
   const end = 1000;
+  const targetContraction = { id: 1, start, end };
 
   it("handles invalid data gracefully", () => {
-    expect(getLastContractionStart(), "undefined array").toBe(emptyTime);
-    expect(getLastContractionStart([]), "empty array").toBe(emptyTime);
+    expect(getLastContractionStart(), "undefined array").toBe(0);
+    expect(getLastContractionStart([]), "empty array").toBe(0);
   });
 
   it("handles normal data", () => {
     expect(
       getLastContractionStart([{ id: 1, start }]),
       "contraction no end",
-    ).toBe(new Date(start).toLocaleTimeString());
+    ).toBe(start);
 
     expect(
-      getLastContractionStart([{ id: 1, start, end }]),
+      getLastContractionStart([targetContraction]),
       "one contraction",
-    ).toBe(new Date(start).toLocaleTimeString());
+    ).toBe(start);
 
     expect(
-      getLastContractionStart([...contractions, { id: 1, start, end }]),
+      getLastContractionStart([...contractions, targetContraction]),
       "many contractions",
-    ).toBe(new Date(start).toLocaleTimeString());
+    ).toBe(start);
   });
 });
+
+describe("avgContractionLength method", () => {
+  it("handles invalid data gracefully", () => {
+    expect(getAvgContractionLength(), "undefined contraction array").toBe(0);
+    expect(getAvgContractionLength([]), "empty contraction array").toBe(0);
+  });
+
+  it("handles regular data", () => {
+    const data = [{ id: 0, start: 0, end: 1000 }]; // 1000
+    expect(getAvgContractionLength(data, 5), "one contraction array").toBe(
+      1000,
+    );
+
+    data.push({ id: 1, start: 1001, end: 3500 }); // 2499
+    expect(getAvgContractionLength(data, 5), "two contraction array").toBe(
+      1749.5,
+    );
+
+    data.push(
+      ...[
+        { id: 2, start: 3501, end: 3505 }, // 4
+        { id: 3, start: 3506, end: 3600 }, // 94
+        { id: 4, start: 3605, end: 4100 }, // 495
+      ],
+    );
+    expect(
+      getAvgContractionLength(data, 5),
+      "array length equal to avgSize",
+    ).toBeCloseTo(818.4);
+
+    data.push({ id: 5, start: 4101, end: 5000 }); // 899
+
+    expect(
+      getAvgContractionLength(data, 5),
+      "array length greater than avgSize",
+    ).toBeCloseTo(798.2);
+
+    expect(
+      getAvgContractionLength(data, 3),
+      "unchanged array with different avgSizes work",
+    ).toBeCloseTo(496);
+
+    expect(
+      getAvgContractionLength(data, 6),
+      "unchanged array with different avgSizes work",
+    ).toBeCloseTo(831.83);
+
+    expect(
+      getAvgContractionLength(data, 0),
+      "avgSize 0 averages all values",
+    ).toBeCloseTo(831.83);
+  });
+});
+
+describe("avgTimeBetween method", () => {
+  it("handles invalide data gracefully", () => {
+    expect(getAvgTimeBetween(), "undefined array").toBe(0);
+    expect(getAvgTimeBetween([]), "empty array").toBe(0);
+    expect(getAvgTimeBetween([contractionStoreA]), "array of one element").toBe(
+      0,
+    );
+  });
+
+  it("handles normal data", () => {
+    const step = 50;
+    const data = new Array(10).fill(0).map((_, idx) => ({
+      id: idx,
+      start: Math.pow(idx, idx + 1) * step + 20,
+      end: Math.pow(idx, idx + 1) * step + 21,
+    }));
+
+    expect(getAvgTimeBetween(data.slice(0, 2), 5), "Array of size two").toBe(
+      50,
+    );
+    expect(getAvgTimeBetween(data.slice(1, 3), 5), "length avgSize - 3").toBe(
+      350,
+    );
+
+    expect(getAvgTimeBetween(data.slice(0, 3), 5), "length = avgSize - 2").toBe(
+      200,
+    );
+    expect(getAvgTimeBetween(data.slice(0, 4), 5), "length = avgSize - 1").toBe(
+      1350,
+    );
+    expect(getAvgTimeBetween(data.slice(0, 5), 5), "length = avgSize").toBe(
+      12800,
+    );
+    expect(getAvgTimeBetween(data.slice(0, 6), 5), "length = avgSize+1").toBe(
+      156250,
+    );
+    expect(getAvgTimeBetween(data.slice(0, 8), 5), "length = avgSize+2").toBe(
+      57647930,
+    );
+    expect(getAvgTimeBetween(data, 5), "length is much longer").toBe(
+      34867833770,
+    );
+  });
+});
+
+/* 
+[
+    { id: 0, start: 20, end: 21 },
+    { id: 1, start: 70, end: 71 },             // 50
+    { id: 2, start: 420, end: 421 },           // 350
+    { id: 3, start: 4070, end: 4071 },         // 3650
+    { id: 4, start: 51220, end: 51221 },       // 47150
+    { id: 5, start: 781270, end: 781271 },     // 730_051
+    { id: 6, start: 13996820, end: 13996821 }, // 13_215_550
+    { id: 7, start: 288240070, end: 288240071 }, // 274_243_250
+    { id: 8, start: 6710886420, end: 6710886421 }, // 6_422_646_350
+    { id: 9, start: 174339220070, end: 174339220071 } //167_628_333_650
+  ]
+*/

@@ -2,7 +2,8 @@ import { useContext, useMemo, type PropsWithChildren } from "react";
 import useDb from "./useDb";
 import DbContext from "./DbContext";
 import {
-  getContractionLength,
+  getAvgTimeBetween,
+  getAvgContractionLength,
   getLastFullContractionLength,
   getTimeBetween,
 } from "../../utilities/utilities";
@@ -29,35 +30,20 @@ const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
     [contractions],
   );
 
-  const avgContractionLength = useMemo(() => {
-    // initial case, no contractions yet
-    if (!contractions || !contractions[0].end) {
-      return "--:--";
-    }
+  const avgContractionLength = useMemo(
+    () => getAvgContractionLength(contractions, avgSize),
+    [contractions, avgSize],
+  );
 
-    const trimmedContractions = contractions[contractions.length - 1].end
-      ? contractions
-      : contractions.slice(0, -1);
+  const timeBetweenLastTwoContractions = useMemo(
+    () => getTimeBetween(contractions.at(-1), contractions.at(-2)),
+    [contractions],
+  );
 
-    // a value of 0 internally means we're going to avg all values
-    return avgSize === 0
-      ? trimmedContractions.reduce(
-          (avg, contraction) =>
-            avg + getContractionLength(contraction) / contractions.length,
-          0,
-        )
-      : trimmedContractions
-          .slice(-1 * avgSize)
-          .reduce(
-            (avg, contraction) =>
-              avg + getContractionLength(contraction) / avgSize,
-            0,
-          );
-  }, [avgSize, contractions]);
-
-  const timeBetweenLastTwoContractions = useMemo(() => {
-    getTimeBetween(contractions.at(-1), contractions.at(-2));
-  }, [contractions]);
+  const avgTimeBetweenContractions = useMemo(
+    () => getAvgTimeBetween(contractions, avgSize),
+    [avgSize, contractions],
+  );
 
   const food = useMemo(
     () => energy?.filter((val) => val.type === "food") ?? [],
@@ -81,10 +67,14 @@ const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
     <DbContext.Provider
       value={{
         laborStart,
-        numContractions,
+        stats: {
+          numContractions,
+          lastFullContractionLength,
+          avgContractionLength,
+          timeBetweenLastTwoContractions,
+          avgTimeBetweenContractions,
+        },
         lastContraction,
-        lastFullContractionLength,
-        timeBetweenLastTwoContractions,
         updateContraction,
         lastFood,
         lastDrink,

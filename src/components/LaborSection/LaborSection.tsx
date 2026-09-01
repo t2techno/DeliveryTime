@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react";
-import { secToTimeStr } from "../../utilities/numberUtilities";
+import { secToTimeStr } from "../../utilities/utilities";
 import styles from "./labor-section.module.css";
 import SettingsContext from "../../providers/settings/SettingsContext";
 import { useTimer } from "../../hooks/useTimer";

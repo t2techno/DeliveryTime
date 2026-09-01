@@ -1,12 +1,17 @@
 import { createContext } from "react";
 import type { ContractionStore, EnergyType } from "./db";
 
+export interface ContractionStats {
+  numContractions: number;
+  lastFullContractionLength: number;
+  avgContractionLength: number;
+  timeBetweenLastTwoContractions: number;
+  avgTimeBetweenContractions: number;
+}
 export interface DbContextValue {
   laborStart: number;
   lastContraction?: ContractionStore;
-  lastFullContractionLength: string;
-  timeBetweenLastTwoContractions: string;
-  numContractions: number;
+  stats: ContractionStats;
   updateContraction: () => Promise<void>;
   lastFood: number;
   lastDrink: number;
@@ -16,9 +21,13 @@ export interface DbContextValue {
 
 const emptyContextValue: DbContextValue = {
   laborStart: -1,
-  lastFullContractionLength: "--:--",
-  timeBetweenLastTwoContractions: "--:--",
-  numContractions: 0,
+  stats: {
+    numContractions: 0,
+    lastFullContractionLength: 0,
+    avgContractionLength: 0,
+    timeBetweenLastTwoContractions: 0,
+    avgTimeBetweenContractions: 0,
+  },
   updateContraction: async () => {
     console.error("Update Contraction method not implemented");
   },

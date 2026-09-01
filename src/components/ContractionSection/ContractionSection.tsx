@@ -5,13 +5,16 @@ import { Contraction as ContractionIcon } from "../../components/Icons";
 import styles from "./contraction-section.module.css";
 import { useContext } from "react";
 import DbContext from "../../providers/db/DbContext";
+import { msToTimeStr } from "../../utilities/utilities";
 
 const ContractionSection = () => {
-  const { numContractions } = useContext(DbContext);
   const {
     lastContraction,
-    lastFullContractionLength,
-    timeBetweenLastTwoContractions,
+    stats: {
+      numContractions,
+      lastFullContractionLength,
+      timeBetweenLastTwoContractions,
+    },
     updateContraction,
   } = useContext(DbContext);
 
@@ -19,14 +22,14 @@ const ContractionSection = () => {
     <div className={styles.body}>
       <div className={styles.row}>
         <TimeCard
-          label={"Time between last two contractions"}
-          icon="interval"
-          time={lastFullContractionLength}
-        />
-        <TimeCard
           label={"Length of last contraction"}
           icon="timer"
-          time={timeBetweenLastTwoContractions}
+          time={msToTimeStr(lastFullContractionLength)}
+        />
+        <TimeCard
+          label={"Time between last two contractions"}
+          icon="interval"
+          time={msToTimeStr(timeBetweenLastTwoContractions)}
         />
       </div>
       <Card className={styles.totalCard}>

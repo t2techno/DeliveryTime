@@ -62,10 +62,10 @@ export const msToTimeStr = (ms?: number) => {
 
 export const getTimeBetween = (a?: ContractionStore, b?: ContractionStore) => {
   if (a === undefined || b === undefined || a.start < 0 || b.start < 0) {
-    return emptyTime;
+    return 0;
   }
 
-  return msToTimeStr(a.start < b.start ? b.start - a.start : a.start - b.start);
+  return a.start < b.start ? b.start - a.start : a.start - b.start;
 };
 
 export const getLaborStart = (contractions?: Array<ContractionStore>) => {
@@ -101,7 +101,7 @@ export const getContractionLength = (
     contraction === undefined ||
     (contraction?.end && contraction?.end < contraction.start)
   ) {
-    return -1;
+    return 0;
   }
 
   if (!contraction.end) {
@@ -113,27 +113,73 @@ export const getContractionLength = (
 
 export const getLastFullContractionLength = (
   contractions?: Array<ContractionStore>,
-): string => {
+): number => {
   if (!contractions) {
-    return emptyTime;
+    return 0;
   }
   const lastFullContraction = getLastFullContraction(contractions);
-  const lastContractionLength = getContractionLength(lastFullContraction);
-
-  return lastContractionLength > 0
-    ? msToTimeStr(lastContractionLength)
-    : emptyTime;
+  return getContractionLength(lastFullContraction);
 };
 
 export const getLastContractionStart = (
   contractions?: Array<ContractionStore>,
-) => {
+): number => {
   if (!contractions || contractions.length === 0) {
-    return emptyTime;
+    return 0;
   }
 
   const lastContraction = contractions.at(-1);
-  return lastContraction === undefined
-    ? emptyTime
-    : new Date(lastContraction.start).toLocaleTimeString();
+  return lastContraction === undefined ? 0 : lastContraction.start;
+};
+
+export const getAvgContractionLength = (
+  contractions?: Array<ContractionStore>,
+  avgSize: number = 5,
+) => {
+  if (!contractions || contractions.length === 0) {
+    return 0;
+  }
+
+  // avgSize of 0 means we include all values in calculation
+  // if there are less than avgSize, we need all of them anyway
+  if (avgSize === 0 || contractions.length < avgSize) {
+    const sum = contractions.reduce(
+      (avg, val) => avg + getContractionLength(val),
+      0,
+    );
+    return sum / contractions.length;
+  }
+
+  const lengthSum = contractions
+    .slice(contractions.length - avgSize)
+    .reduce((avg, val) => avg + getContractionLength(val), 0);
+  return lengthSum / avgSize;
+};
+
+export const getAvgTimeBetween = (
+  contractions?: Array<ContractionStore>,
+  avgSize: number = 5,
+) => {
+  if (!contractions || contractions.length < 2) {
+    return 0;
+  }
+
+  let trimmedList = contractions;
+  let divisor = contractions.length - 1;
+
+  // 5 time-between requires 6 contractions, so contraction length needs avgSize+1 length
+  if (avgSize > 0 && contractions.length > avgSize) {
+    trimmedList = contractions.slice(contractions.length - avgSize - 1);
+    divisor = avgSize;
+  }
+
+  const betweenSum = trimmedList.reduce(
+    (sum, contraction, idx) =>
+      idx < trimmedList.length - 1
+        ? sum + (trimmedList[idx + 1].start - contraction.start)
+        : sum,
+    0,
+  );
+
+  return betweenSum / divisor;
 };
