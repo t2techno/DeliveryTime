@@ -6,6 +6,7 @@ import styles from "./contraction-section.module.css";
 import { useContext } from "react";
 import DbContext from "../../providers/db/DbContext";
 import { msToTimeStr } from "../../utilities/utilities";
+import SettingsContext from "../../providers/settings/SettingsContext";
 
 const ContractionSection = () => {
   const {
@@ -13,23 +14,32 @@ const ContractionSection = () => {
     stats: {
       numContractions,
       lastFullContractionLength,
+      avgContractionLength,
       timeBetweenLastTwoContractions,
+      avgTimeBetweenContractions,
     },
     updateContraction,
   } = useContext(DbContext);
+
+  const { avgSize } = useContext(SettingsContext);
+  const avgAmount = numContractions > avgSize ? avgSize : numContractions;
 
   return (
     <div className={styles.body}>
       <div className={styles.row}>
         <TimeCard
-          label={"Length of last contraction"}
+          label={"Length of contractions"}
           icon="timer"
-          time={msToTimeStr(lastFullContractionLength)}
+          exact={msToTimeStr(lastFullContractionLength)}
+          avg={msToTimeStr(avgContractionLength)}
+          avgSize={avgAmount}
         />
         <TimeCard
-          label={"Time between last two contractions"}
+          label={"Time between contractions"}
           icon="interval"
-          time={msToTimeStr(timeBetweenLastTwoContractions)}
+          exact={msToTimeStr(timeBetweenLastTwoContractions)}
+          avg={msToTimeStr(avgTimeBetweenContractions)}
+          avgSize={avgAmount}
         />
       </div>
       <Card className={styles.totalCard}>

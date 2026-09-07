@@ -1,13 +1,16 @@
-import type { JSX } from "react";
+import { useContext, type JSX } from "react";
 import Card from "../Card";
 import { Interval } from "../Icons/Interval";
 import { Timer } from "../Icons/Timer";
 import styles from "./time-card.module.css";
+import DbContext from "../../providers/db/DbContext";
 
 type IconOption = "timer" | "interval";
 
 interface TimeCardProps {
-  time: string;
+  exact: string;
+  avg: string;
+  avgSize: number;
   label: string;
   icon: IconOption;
 }
@@ -17,15 +20,35 @@ const iconMap: Record<IconOption, JSX.Element> = {
   interval: <Interval />,
 };
 
-const TimeCard: React.FC<TimeCardProps> = ({ label, icon, time }) => {
+const TimeCard: React.FC<TimeCardProps> = ({
+  label,
+  icon,
+  exact,
+  avg,
+  avgSize,
+}) => {
   return (
     <Card>
       <div className={styles.row}>
-        <h2 className={styles.label}>{label}</h2>
         <div className={styles.icon}>{iconMap[icon]}</div>
+
+        <h2 className={styles.label}>{label}</h2>
       </div>
-      <p className={styles.time}>{time}</p>
-      <p>avg</p>
+      <div className={styles.colGrid}>
+        <div className={styles.avgCol}>
+          <p>Last</p>
+          <p className={styles.time}>{exact}</p>
+        </div>
+
+        <div className={styles.avgCol}>
+          {avgSize > 1 && (
+            <>
+              <p>Average of last {avgSize}</p>
+              <p className={styles.time}>{avg}</p>
+            </>
+          )}
+        </div>
+      </div>
     </Card>
   );
 };

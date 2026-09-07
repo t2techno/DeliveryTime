@@ -1,10 +1,11 @@
 .row {
   display: flex;
+  gap: 8px;
   justify-content: space-between;
 }
 
 .label {
-  font-size: 1.15rem;
+  font-size: 1rem;
   flex: 3;
 }
 
@@ -15,4 +16,11 @@
 
 .time {
   color: var(--primary);
+}
+
+.colGrid {
+  width: 100%;
+  padding-inline: 4px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
 }

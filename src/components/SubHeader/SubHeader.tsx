@@ -7,7 +7,7 @@ const SubHeader = () => {
   const { laborStart } = useContext(DbContext);
 
   return (
-    <div className={styles.laborStart}>
+    <div className={`max-width ${styles.laborStart}`}>
       <div className={styles.row}>
         <Clock />
         <h2 className={styles.laborBegan}>Labor began</h2>

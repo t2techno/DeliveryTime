@@ -5,11 +5,16 @@ import SettingsContext from "../../providers/settings/SettingsContext";
 import ResetDialog from "../ResetDialog";
 import { Settings } from "../Icons";
 import X from "../Icons/X";
+import DbContext from "../../providers/db/DbContext";
 
 const SettingsPopover = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
-  const { tickLength, setTickLength } = useContext(SettingsContext);
+  const { tickLength, setTickLength, avgSize, setAvgSize } =
+    useContext(SettingsContext);
+  const {
+    stats: { numContractions },
+  } = useContext(DbContext);
 
   const toggleOpen = useCallback(() => {
     setSettingsOpen((current) => !current);
@@ -20,7 +25,12 @@ const SettingsPopover = () => {
   }, []);
 
   return (
-    <Popover.Root open={settingsOpen}>
+    <Popover.Root
+      open={settingsOpen}
+      onOpenChange={(isOpen) => {
+        setSettingsOpen(isOpen);
+      }}
+    >
       <Popover.Trigger asChild>
         <button
           className={styles.openButton}
@@ -48,11 +58,27 @@ const SettingsPopover = () => {
                   setTickLength(Number(e.target.value));
                 }}
               />
-              <p>&nbsp;{tickLength === 1 ? "Second" : "Seconds"}</p>
+              <p>{tickLength === 1 ? "Second" : "Seconds"}</p>
             </div>
             {tickLength === 0 && (
               <p className={styles.zeroTimeText}>Only display start time</p>
             )}
+            {/* ToDo: input width fix, average all message fix */}
+            <div>
+              <label htmlFor="avgSizeInput">Average Size: </label>
+              <input
+                type="number"
+                id="avgSizeInput"
+                name="avgSizeInput"
+                value={avgSize}
+                min={0}
+                max={numContractions}
+                onChange={(e) => {
+                  setAvgSize(Number(e.target.value));
+                }}
+              />
+              {avgSize === 0 && <p>Average of all contractions</p>}
+            </div>
           </div>
           <Popover.Close className={styles.closeButton} aria-label="Close">
             <X />

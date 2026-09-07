@@ -47,6 +47,7 @@ const ResetDialog: React.FC<ResetDialogProps> = ({
           </p>
           <div className={styles.buttonRow}>
             <button
+              tabIndex={1}
               autoFocus
               type="button"
               id="reset-button"

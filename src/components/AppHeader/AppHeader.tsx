@@ -4,7 +4,7 @@ import styles from "./app-header.module.css";
 
 const AppHeader = () => {
   return (
-    <div className={styles.header}>
+    <div className={`max-width ${styles.header}`}>
       <CenterHeart />
       <h1>Labor Timer</h1>
       <SettingsPopover />

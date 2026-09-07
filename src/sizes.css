@@ -1,3 +1,6 @@
 .large-font {
   font-size: 2rem;
 }
+.max-width{
+  max-width: 480px;
+}
