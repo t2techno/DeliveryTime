@@ -41,3 +41,17 @@
   align-items: center;
   justify-content: center;
 }
+
+.food.button:hover,
+.food.button:focus {
+  background-color: var(--food);
+  border-color: var(--food-light);
+  color: white;
+}
+
+.drink.button:hover,
+.drink.button:focus {
+  background-color: var(--drink);
+  border-color:  var(--drink-light);
+  color: white;
+}

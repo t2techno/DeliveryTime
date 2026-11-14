@@ -7,3 +7,4 @@ export * from "./Interval";
 export * from "./Settings";
 export * from "./Timer";
 export * from "./X";
+export * from "./Edit";

@@ -1,3 +1,4 @@
+// import { useMemo } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import db, {
   type ContractionStore,
@@ -5,6 +6,7 @@ import db, {
   type EnergyType,
 } from "./db";
 import { useCallback } from "react";
+// import { convertOldData, interleaveData } from "./testData";
 
 interface UseDbValue {
   contractions: ContractionStore[];
@@ -14,10 +16,19 @@ interface UseDbValue {
   resetDb: () => void;
 }
 
-const useDb = (): UseDbValue => {
-  const contractions = useLiveQuery(() => db.contractions.toArray(), [], []);
+// const USE_TEST_DATA = true;
+// const { contractionStore, energyStore } = convertOldData();
 
-  const energy = useLiveQuery(() => db.energy.toArray()) ?? [];
+const useDb = (): UseDbValue => {
+  const dbContractions = useLiveQuery(() => db.contractions.toArray()) ?? [];
+
+  const dbEnergy = useLiveQuery(() => db.energy.toArray()) ?? [];
+
+  const contractions = dbContractions;
+  const energy = dbEnergy;
+
+  // const interleaved = useMemo(() => interleaveData(contractions, energy), []);
+  // console.log(interleaved);
 
   const updateContraction = useCallback(async () => {
     const now = new Date();

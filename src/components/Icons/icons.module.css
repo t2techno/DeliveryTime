@@ -11,8 +11,10 @@
 }
 
 .svg {
+  position: relative;
   max-width: 48px;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke: var(--primary);
+  z-index: 2;
 }

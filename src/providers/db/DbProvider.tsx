@@ -67,6 +67,7 @@ const DbProvider: React.FC<PropsWithChildren> = ({ children }) => {
     <DbContext.Provider
       value={{
         laborStart,
+        contractions,
         stats: {
           numContractions,
           lastFullContractionLength,

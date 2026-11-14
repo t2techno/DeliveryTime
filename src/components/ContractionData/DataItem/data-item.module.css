@@ -1,0 +1,39 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.column:last-of-type {
+  align-items: center;
+}
+
+.button {
+  position: relative;
+  overflow: hidden;
+  width: 40px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+}
+
+.trash {
+  mix-blend-mode: difference;
+}
+
+.fill {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background-color: rgb(255, 158, 158);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 250ms ease-out;
+}
+
+.fill.active {
+  transform: scaleX(1);
+  transition: transform var(--fill-time) linear;
+}

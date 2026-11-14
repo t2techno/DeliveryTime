@@ -1,6 +1,7 @@
 :root {
   --primary-hsl: 294, 40%, 36%;
   --primary: hsl(var(--primary-hsl));
+  --primary-light: hsl(294, 100%, 76%);
   --primary-background: hsla(var(--primary-hsl), 5%);
   --primaryBorder: hsla(var(--primary-hsl), 50%);
   --food-light: hsl(46, 89%, 96%);

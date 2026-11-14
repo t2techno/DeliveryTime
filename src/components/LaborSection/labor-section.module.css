@@ -23,10 +23,22 @@
   align-items: center;
   justify-content: center;
   background-color: var(--primary-background);
-  border-color: var(--primary);
+  border-color: var(--primary-light);
+}
+
+.mainButton:hover,
+.mainButton:focus {
+  background-color: var(--primary);
+  color: white;
 }
 
 .running {
   background-color: var(--primary);
   color: white;
+}
+
+.mainButton.running:hover,
+.mainButton.running:focus {
+  background-color: var(--primary-light);
+  border-color: var(--primary-light);
 }

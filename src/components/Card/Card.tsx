@@ -9,7 +9,7 @@ const Card: React.FC<PropsWithChildren<CardProps>> = ({
   className,
   children,
 }) => (
-  <div className={`${styles.wrapper} ${className ? className : ""}`}>
+  <div className={`${styles.cardWrapper} ${className ? className : ""}`}>
     {children}
   </div>
 );

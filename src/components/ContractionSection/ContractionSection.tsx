@@ -1,12 +1,14 @@
+import { useContext, useState } from "react";
 import Card from "../Card";
 import LaborSection from "../LaborSection";
 import TimeCard from "../TimeCard";
 import { Contraction as ContractionIcon } from "../../components/Icons";
-import styles from "./contraction-section.module.css";
-import { useContext } from "react";
 import DbContext from "../../providers/db/DbContext";
 import { msToTimeStr } from "../../utilities/utilities";
 import SettingsContext from "../../providers/settings/SettingsContext";
+import CollapsibleCard from "../Card/Collapsible";
+import styles from "./contraction-section.module.css";
+import ContractionData from "../ContractionData/ContractionData";
 
 const ContractionSection = () => {
   const {
@@ -23,6 +25,7 @@ const ContractionSection = () => {
 
   const { avgSize } = useContext(SettingsContext);
   const avgAmount = numContractions > avgSize ? avgSize : numContractions;
+  const [dataIsOpen, setDataIsOpen] = useState(true);
 
   return (
     <div className={styles.body}>
@@ -42,17 +45,31 @@ const ContractionSection = () => {
           avgSize={avgAmount}
         />
       </div>
-      <Card className={styles.totalCard}>
-        <div className={styles.totalContractionLabel}>
-          <ContractionIcon />
-          <p>Total Contractions:</p>
-          <p>{numContractions}</p>
-        </div>
-      </Card>
       <LaborSection
         lastContraction={lastContraction}
         updateContraction={updateContraction}
       />
+      <CollapsibleCard
+        isOpen={dataIsOpen}
+        onChange={(isOpen: boolean) => {
+          console.log("open change. New val: ", isOpen);
+          setDataIsOpen(isOpen);
+        }}
+        HeaderContent={
+          <Card className={styles.totalCard}>
+            <div className={styles.totalContractionLabel}>
+              <ContractionIcon />
+              <p>Total Contractions:</p>
+              <p>{numContractions}</p>
+            </div>
+            <button onClick={() => setDataIsOpen((open) => !open)}>
+              {dataIsOpen ? "X" : "O"}
+            </button>
+          </Card>
+        }
+      >
+        <ContractionData />
+      </CollapsibleCard>
     </div>
   );
 };

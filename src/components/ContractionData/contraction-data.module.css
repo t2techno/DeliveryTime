@@ -1,0 +1,16 @@
+.listWrapper {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  height: 256px;
+  overflow-y: scroll;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  height: 80px;
+}

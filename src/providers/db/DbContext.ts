@@ -10,6 +10,7 @@ export interface ContractionStats {
 }
 export interface DbContextValue {
   laborStart: number;
+  contractions: Array<ContractionStore>;
   lastContraction?: ContractionStore;
   stats: ContractionStats;
   updateContraction: () => Promise<void>;
@@ -21,6 +22,7 @@ export interface DbContextValue {
 
 const emptyContextValue: DbContextValue = {
   laborStart: -1,
+  contractions: [],
   stats: {
     numContractions: 0,
     lastFullContractionLength: 0,
